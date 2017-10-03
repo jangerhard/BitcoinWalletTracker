@@ -32,6 +32,9 @@ public class MainActivity extends AppCompatActivity {
                 getWalletInfo("1FfmbHfnpaZjKFvyi1okTjJJusN455paPH");
             }
         });
+
+        tvAccountName = (TextView) findViewById(R.id.tvAccountName);
+        tvAccountBalance = (TextView) findViewById(R.id.tvAccountBalance);
     }
 
     private void getWalletInfo(String hashAddress) {
