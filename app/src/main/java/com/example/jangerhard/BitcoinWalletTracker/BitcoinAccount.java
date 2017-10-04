@@ -18,6 +18,11 @@ public class BitcoinAccount {
 
     private String nickName = "NewAccount";
 
+    public BitcoinAccount(String address, String bal) {
+        this.address = address;
+        this.final_balance = BigInteger.valueOf(Long.valueOf(bal));
+    }
+
     public String getHash160() {
         return hash160;
     }
@@ -91,11 +96,12 @@ public class BitcoinAccount {
     public String getFormatedBalance() {
         String bal = getFinal_balance().toString();
 //        14226287 = 0.142
-        if (bal.length() < 9)
-            return "0." + bal.substring(0, 3) + " BTC";
-        else
-            return bal.substring(0, bal.length() - 8) +
-                    "." +
-                    bal.substring(bal.length() - 7, bal.length()) + " BTC";
+//        if (bal.length() < 9)
+//            return "0." + bal.substring(0, 3) + " BTC";
+//        else
+//            return bal.substring(0, bal.length() - 8) +
+//                    "." +
+//                    bal.substring(bal.length() - 7, bal.length()) + " BTC";
+        return bal;
     }
 }

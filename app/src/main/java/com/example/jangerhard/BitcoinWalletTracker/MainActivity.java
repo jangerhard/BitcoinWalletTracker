@@ -3,12 +3,21 @@ package com.example.jangerhard.BitcoinWalletTracker;
 import android.Manifest;
 import android.accounts.Account;
 import android.app.Activity;
+import android.content.res.Resources;
+import android.graphics.Rect;
+import android.support.v4.widget.ListViewAutoScrollHelper;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -28,28 +37,38 @@ import com.karumi.dexter.listener.single.PermissionListener;
 
 import org.json.JSONObject;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class MainActivity extends AppCompatActivity {
 
     private RequestQueue mRequestQueue;
     String url = "https://blockchain.info/";
-    TextView tvAccountName;
-    TextView tvAccountBalance;
     Activity mActivity;
-    SwipeRefreshLayout swipeRefreshLayout;
+    private List<BitcoinAccount> accountList;
+    private List<String> addresses;
+    AccountAdapter adapter;
+    int numRefreshed = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         mActivity = this;
-        swipeRefreshLayout =
-                (SwipeRefreshLayout) findViewById(R.id.swipe_refresh_layout);
-        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                refreshData();
-            }
-        });
+
+        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
+
+        accountList = new ArrayList<>();
+        addresses = new ArrayList<>();
+        adapter = new AccountAdapter(this, accountList);
+
+        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(this);
+        recyclerView.setLayoutManager(mLayoutManager);
+        recyclerView.addItemDecoration(new GridSpacingItemDecoration(2, dpToPx(10), true));
+        recyclerView.setItemAnimator(new DefaultItemAnimator());
+        recyclerView.setAdapter(adapter);
+
+        prepareAccounts();
 
         Button bGetAccount = (Button) findViewById(R.id.bGetAccount);
         bGetAccount.setOnClickListener(new View.OnClickListener() {
@@ -59,8 +78,17 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        tvAccountName = (TextView) findViewById(R.id.tvAccountName);
-        tvAccountBalance = (TextView) findViewById(R.id.tvAccountBalance);
+    }
+
+    private void prepareAccounts() {
+        /**
+         * Add test accounts
+         */
+
+        addresses.add("1FfmbHfnpaZjKFvyi1okTjJJusN455paPH");
+        addresses.add("1AJbsFZ64EpEfS5UAjAfcUG8pH8Jn3rn1F");
+        addresses.add("1A8JiWcwvpY7tAopUkSnGuEYHmzGYfZPiq");
+
     }
 
     private void refreshData() {
@@ -70,13 +98,11 @@ public class MainActivity extends AppCompatActivity {
                 .withListener(new PermissionListener() {
                     @Override
                     public void onPermissionGranted(PermissionGrantedResponse response) {
-                        getWalletInfo("1FfmbHfnpaZjKFvyi1okTjJJusN455paPH");
+                        getWalletInfo(addresses);
                     }
 
                     @Override
                     public void onPermissionDenied(PermissionDeniedResponse response) {
-                        if (swipeRefreshLayout.isRefreshing())
-                            swipeRefreshLayout.setRefreshing(false);
                         Toast.makeText(
                                 getBaseContext(),
                                 "You need to activate Internet permission!",
@@ -91,37 +117,54 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    private void getWalletInfo(String hashAddress) {
-        // Request a string response from the provided URL.
-        JsonObjectRequest jsObjRequest = new JsonObjectRequest
-                (Request.Method.GET, url + "rawaddr/" + hashAddress, null, new Response.Listener<JSONObject>() {
+    private void getWalletInfo(List<String> addresses) {
 
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        if (swipeRefreshLayout.isRefreshing())
-                            swipeRefreshLayout.setRefreshing(false);
+        for (String address : addresses) {
 
-                        BitcoinAccount acc = new Gson().fromJson(response.toString(), BitcoinAccount.class);
-                        acc.setNickName("TestAccount");
-                        Log.i("MainActivity", "Response: \n" + acc.toString());
+            // Create blank account
+            accountList.add(new BitcoinAccount("PENDING...", "0"));
 
-                        tvAccountName.setText(acc.getNickName());
-                        tvAccountBalance.setText("Balance: " + acc.getFormatedBalance());
-                    }
-                }, new Response.ErrorListener() {
+            // Request a string response from the provided URL.
+            JsonObjectRequest jsObjRequest = new JsonObjectRequest
+                    (Request.Method.GET,
+                            url + "rawaddr/" + address,
+                            null, new Response.Listener<JSONObject>() {
 
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        tvAccountName.setText("That didn't work..");
-                        Log.e("MainActivity", error.toString());
-                        if (swipeRefreshLayout.isRefreshing())
-                            swipeRefreshLayout.setRefreshing(false);
+                        @Override
+                        public void onResponse(JSONObject response) {
+                            handleRefreshedAccount(new Gson().fromJson(response.toString(), BitcoinAccount.class));
+                        }
+                    }, new Response.ErrorListener() {
 
-                    }
-                });
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                            Log.e("MainActivity", error.toString());
+                            Toast.makeText(getBaseContext(),
+                                    "That didn't work!",
+                                    Toast.LENGTH_SHORT).show();
+                        }
+                    });
 
-        // Add the request to the RequestQueue.
-        getVolleyRequestQueue().add(jsObjRequest);
+            // Add the request to the RequestQueue.
+            getVolleyRequestQueue().add(jsObjRequest);
+        }
+
+        adapter.notifyDataSetChanged();
+
+    }
+
+    private void handleRefreshedAccount(BitcoinAccount acc) {
+
+        acc.setNickName("TestAccount " + numRefreshed);
+        accountList.remove(numRefreshed);
+        accountList.add(numRefreshed, acc);
+        numRefreshed++;
+
+        if(numRefreshed >= addresses.size()){
+            adapter.notifyDataSetChanged();
+            numRefreshed = 0;
+        }
+
 
     }
 
@@ -131,5 +174,51 @@ public class MainActivity extends AppCompatActivity {
         }
 
         return mRequestQueue;
+    }
+
+    /**
+     * RecyclerView item decoration - give equal margin around grid item
+     */
+    public class GridSpacingItemDecoration extends RecyclerView.ItemDecoration {
+
+        private int spanCount;
+        private int spacing;
+        private boolean includeEdge;
+
+        public GridSpacingItemDecoration(int spanCount, int spacing, boolean includeEdge) {
+            this.spanCount = spanCount;
+            this.spacing = spacing;
+            this.includeEdge = includeEdge;
+        }
+
+        @Override
+        public void getItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
+            int position = parent.getChildAdapterPosition(view); // item position
+            int column = position % spanCount; // item column
+
+            if (includeEdge) {
+                outRect.left = spacing - column * spacing / spanCount; // spacing - column * ((1f / spanCount) * spacing)
+                outRect.right = (column + 1) * spacing / spanCount; // (column + 1) * ((1f / spanCount) * spacing)
+
+                if (position < spanCount) { // top edge
+                    outRect.top = spacing;
+                }
+                outRect.bottom = spacing; // item bottom
+            } else {
+                outRect.left = column * spacing / spanCount; // column * ((1f / spanCount) * spacing)
+                outRect.right = spacing - (column + 1) * spacing / spanCount; // spacing - (column + 1) * ((1f /    spanCount) * spacing)
+                if (position >= spanCount) {
+                    outRect.top = spacing; // item top
+                }
+            }
+        }
+    }
+
+    /**
+     * Converting dp to pixel
+     */
+    private int dpToPx(int dp) {
+        Resources r = getResources();
+        return Math.round(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, r.getDisplayMetrics()));
     }
 }
