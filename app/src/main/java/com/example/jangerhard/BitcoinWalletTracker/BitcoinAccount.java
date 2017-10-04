@@ -15,7 +15,8 @@ public class BitcoinAccount {
     private BigInteger total_received;
     private BigInteger total_sent;
     private BigInteger final_balance;
-    private Transaction txs;
+
+    private String nickName = "NewAccount";
 
     public String getHash160() {
         return hash160;
@@ -31,6 +32,7 @@ public class BitcoinAccount {
 
     public void setAddress(String address) {
         this.address = address;
+        setNickName(address);
     }
 
     public BigInteger getN_tx() {
@@ -73,11 +75,27 @@ public class BitcoinAccount {
         this.final_balance = final_balance;
     }
 
-    public Transaction getTxs() {
-        return txs;
+    public void setNickName(String name) {
+        nickName = name;
     }
 
-    public void setTxs(Transaction txs) {
-        this.txs = txs;
+    public String getNickName() {
+        return nickName;
+    }
+
+    @Override
+    public String toString() {
+        return getNickName() + " has a balance of " + getFinal_balance() + "btc.";
+    }
+
+    public String getFormatedBalance() {
+        String bal = getFinal_balance().toString();
+//        14226287 = 0.142
+        if (bal.length() < 9)
+            return "0." + bal.substring(0, 3) + " BTC";
+        else
+            return bal.substring(0, bal.length() - 8) +
+                    "." +
+                    bal.substring(bal.length() - 7, bal.length()) + " BTC";
     }
 }
