@@ -1,70 +1,77 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.widget.LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
+<android.support.v4.widget.SwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/swipe_refresh_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:padding="16dp"
-    android:weightSum="3"
     tools:context="com.example.jangerhard.BitcoinWalletTracker.MainActivity">
 
-    <LinearLayout
-        android:id="@+id/totalOverview"
+    <android.widget.LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:elevation="2dp">
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:padding="16dp"
+        android:weightSum="3">
 
-        <android.support.v7.widget.CardView
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:id="@+id/totalOverview"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal|center_vertical"
-            android:padding="16dp">
+            android:layout_weight="1"
+            android:elevation="2dp">
 
-            <Button
-                android:id="@+id/bGetAccount"
+            <android.support.v7.widget.CardView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Get account" />
-
-        </android.support.v7.widget.CardView>
-    </LinearLayout>
-
-    <ScrollView
-        android:id="@+id/allAccountsView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight="2">
-
-        <android.support.v7.widget.CardView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:padding="16dp">
-
-            <RelativeLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal|center_vertical"
                 android:padding="16dp">
 
-
-                <TextView
-                    android:id="@+id/tvAccountName"
+                <Button
+                    android:id="@+id/bGetAccount"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="ACCOUNT_NAME" />
+                    android:text="Get account" />
 
-                <TextView
-                    android:id="@+id/tvAccountBalance"
+            </android.support.v7.widget.CardView>
+        </LinearLayout>
+
+        <ScrollView
+            android:id="@+id/allAccountsView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="2">
+
+                <android.support.v7.widget.CardView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_below="@+id/tvAccountName"
-                    android:text="BALANCE" />
+                    android:layout_gravity="center"
+                    android:padding="16dp">
 
-            </RelativeLayout>
+                    <RelativeLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:padding="16dp">
 
-        </android.support.v7.widget.CardView>
-    </ScrollView>
 
-</android.widget.LinearLayout>
+                        <TextView
+                            android:id="@+id/tvAccountName"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="ACCOUNT_NAME" />
+
+                        <TextView
+                            android:id="@+id/tvAccountBalance"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_below="@+id/tvAccountName"
+                            android:text="BALANCE" />
+
+                    </RelativeLayout>
+
+                </android.support.v7.widget.CardView>
+        </ScrollView>
+
+    </android.widget.LinearLayout>
+</android.support.v4.widget.SwipeRefreshLayout>

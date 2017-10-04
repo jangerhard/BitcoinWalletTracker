@@ -3,12 +3,14 @@ package com.example.jangerhard.BitcoinWalletTracker;
 import android.Manifest;
 import android.accounts.Account;
 import android.app.Activity;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -33,40 +35,60 @@ public class MainActivity extends AppCompatActivity {
     TextView tvAccountName;
     TextView tvAccountBalance;
     Activity mActivity;
+    SwipeRefreshLayout swipeRefreshLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         mActivity = this;
+        swipeRefreshLayout =
+                (SwipeRefreshLayout) findViewById(R.id.swipe_refresh_layout);
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                refreshData();
+            }
+        });
 
         Button bGetAccount = (Button) findViewById(R.id.bGetAccount);
         bGetAccount.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Dexter.withActivity(mActivity)
-                        .withPermission(Manifest.permission.INTERNET)
-                        .withListener(new PermissionListener() {
-                            @Override
-                            public void onPermissionGranted(PermissionGrantedResponse response) {
-                                getWalletInfo("1FfmbHfnpaZjKFvyi1okTjJJusN455paPH");
-                            }
-
-                            @Override
-                            public void onPermissionDenied(PermissionDeniedResponse response) {
-
-                            }
-
-                            @Override
-                            public void onPermissionRationaleShouldBeShown(PermissionRequest permission, PermissionToken token) {
-                                token.continuePermissionRequest();
-                            }
-                        }).check();
+                refreshData();
             }
         });
 
         tvAccountName = (TextView) findViewById(R.id.tvAccountName);
         tvAccountBalance = (TextView) findViewById(R.id.tvAccountBalance);
+    }
+
+    private void refreshData() {
+
+        Dexter.withActivity(mActivity)
+                .withPermission(Manifest.permission.INTERNET)
+                .withListener(new PermissionListener() {
+                    @Override
+                    public void onPermissionGranted(PermissionGrantedResponse response) {
+                        getWalletInfo("1FfmbHfnpaZjKFvyi1okTjJJusN455paPH");
+                    }
+
+                    @Override
+                    public void onPermissionDenied(PermissionDeniedResponse response) {
+                        if (swipeRefreshLayout.isRefreshing())
+                            swipeRefreshLayout.setRefreshing(false);
+                        Toast.makeText(
+                                getBaseContext(),
+                                "You need to activate Internet permission!",
+                                Toast.LENGTH_SHORT).show();
+                    }
+
+                    @Override
+                    public void onPermissionRationaleShouldBeShown(PermissionRequest permission, PermissionToken token) {
+                        token.continuePermissionRequest();
+                    }
+                }).check();
+
     }
 
     private void getWalletInfo(String hashAddress) {
@@ -76,6 +98,8 @@ public class MainActivity extends AppCompatActivity {
 
                     @Override
                     public void onResponse(JSONObject response) {
+                        if (swipeRefreshLayout.isRefreshing())
+                            swipeRefreshLayout.setRefreshing(false);
 
                         BitcoinAccount acc = new Gson().fromJson(response.toString(), BitcoinAccount.class);
                         acc.setNickName("TestAccount");
@@ -90,6 +114,8 @@ public class MainActivity extends AppCompatActivity {
                     public void onErrorResponse(VolleyError error) {
                         tvAccountName.setText("That didn't work..");
                         Log.e("MainActivity", error.toString());
+                        if (swipeRefreshLayout.isRefreshing())
+                            swipeRefreshLayout.setRefreshing(false);
 
                     }
                 });
