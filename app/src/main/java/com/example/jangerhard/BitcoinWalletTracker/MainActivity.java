@@ -3,9 +3,11 @@ package com.example.jangerhard.BitcoinWalletTracker;
 import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
@@ -96,8 +98,7 @@ public class MainActivity extends AppCompatActivity {
         if (requestCode == BARCODE_READER_REQUEST_CODE) {
             if (resultCode == CommonStatusCodes.SUCCESS) {
                 if (data != null) {
-                    Barcode barcode = data.getParcelableExtra(BarcodeCaptureActivity.BarcodeObject);
-                    addBitcoinAccount(barcode.displayValue);
+                    addBarcode((Barcode) data.getParcelableExtra(BarcodeCaptureActivity.BarcodeObject));
                 } else
                     Toast.makeText(getBaseContext(), R.string.no_barcode_captured, Toast.LENGTH_SHORT).show();
             } else Log.e(LOG_TAG, String.format(getString(R.string.barcode_error_format),
@@ -105,12 +106,19 @@ public class MainActivity extends AppCompatActivity {
         } else super.onActivityResult(requestCode, resultCode, data);
     }
 
-    private void addBitcoinAccount(String qrString) {
-        if (BitcoinUtils.verifyAddress(qrString)) {
-            utils.addAddress(qrString);
-            refreshData();
+    private void addBarcode(Barcode barcode) {
+
+        Log.i(LOG_TAG, "Address: " + barcode.displayValue);
+
+        if (BitcoinUtils.verifyAddress(barcode.displayValue)) {
+            showBitcoinAddressDialog(barcode.displayValue);
         } else
             Toast.makeText(getBaseContext(), "That is not a bitcoin address!", Toast.LENGTH_SHORT).show();
+    }
+
+    private void addBitcoinAddress(String address) {
+        utils.addAddress(address);
+        refreshData();
     }
 
     private void prepareAccounts() {
@@ -225,5 +233,33 @@ public class MainActivity extends AppCompatActivity {
         editor.putString(getString(R.string.bitcoinaddresses),
                 BitcoinUtils.createAddressString(utils.getAddresses()));
         editor.apply();
+    }
+
+    private void showBitcoinAddressDialog(final String address) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+        builder.setTitle("New address added!");
+        builder.setMessage("Is this the correct address? \n\n" + address);
+
+        String positiveText = getString(android.R.string.ok);
+        builder.setPositiveButton(positiveText,
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        addBitcoinAddress(address);
+                    }
+                });
+
+        String negativeText = getString(android.R.string.cancel);
+        builder.setNegativeButton(negativeText,
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        // negative button logic
+                    }
+                });
+
+        AlertDialog dialog = builder.create();
+        // display dialog
+        dialog.show();
     }
 }
