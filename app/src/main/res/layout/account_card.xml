@@ -28,22 +28,35 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_toEndOf="@+id/thumbnail"
-            android:paddingTop="@dimen/album_title_padding"
-            android:textColor="@color/album_title"
+            android:paddingTop="@dimen/account_name_padding"
+            android:textColor="@color/accountName"
+            android:text="PLACEHOLDER NAME"
             android:textSize="@dimen/album_title" />
 
         <TextView
             android:id="@+id/accountAddress"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_toEndOf="@+id/thumbnail" />
+            android:layout_toEndOf="@+id/thumbnail"
+            android:layout_below="@+id/accountName"
+            android:text="PLACEHOLDER ADDRESS" />
 
         <TextView
             android:id="@+id/accountBalance"
+            android:layout_below="@+id/accountAddress"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/accountName"
-            android:layout_toEndOf="@+id/thumbnail" />
+            android:layout_toEndOf="@+id/thumbnail"
+            android:text="PLACEHOLDER BALANCE" />
+
+        <ImageView
+            android:id="@+id/overflow"
+            android:layout_width="@dimen/ic_album_overflow_width"
+            android:layout_height="@dimen/ic_album_overflow_height"
+            android:layout_alignParentEnd="true"
+            android:layout_marginTop="@dimen/ic_album_overflow_margin_top"
+            android:scaleType="centerCrop"
+            android:src="@drawable/ic_dots" />
 
     </RelativeLayout>
 

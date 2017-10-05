@@ -1,11 +1,16 @@
 package com.example.jangerhard.BitcoinWalletTracker;
 
 import android.content.Context;
+import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.List;
 
@@ -17,14 +22,16 @@ public class AccountAdapter extends RecyclerView.Adapter<AccountAdapter.MyViewHo
 
     private Context mContext;
     private List<BitcoinAccount> accountsList;
-
     public class MyViewHolder extends RecyclerView.ViewHolder {
+
         public TextView accName, accBalance;
+        private ImageView overflow, qrCode;
 
         public MyViewHolder(View view) {
             super(view);
             accName = (TextView) view.findViewById(R.id.accountName);
             accBalance = (TextView) view.findViewById(R.id.accountBalance);
+            overflow = (ImageView) view.findViewById(R.id.overflow);
         }
     }
 
@@ -49,6 +56,48 @@ public class AccountAdapter extends RecyclerView.Adapter<AccountAdapter.MyViewHo
                 BitcoinUtils.formatBitcoinBalanceToString(
                         account.getFinal_balance())
         );
+
+        holder.overflow.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showPopupMenu(holder.overflow);
+            }
+        });
+    }
+
+    /**
+     * Showing popup menu when tapping on 3 dots
+     */
+    private void showPopupMenu(View view) {
+        // inflate menu
+        PopupMenu popup = new PopupMenu(mContext, view);
+        MenuInflater inflater = popup.getMenuInflater();
+        inflater.inflate(R.menu.menu_account, popup.getMenu());
+        popup.setOnMenuItemClickListener(new MyMenuItemClickListener());
+        popup.show();
+    }
+
+    /**
+     * Click listener for popup menu items
+     */
+    class MyMenuItemClickListener implements PopupMenu.OnMenuItemClickListener {
+
+        public MyMenuItemClickListener() {
+        }
+
+        @Override
+        public boolean onMenuItemClick(MenuItem menuItem) {
+            switch (menuItem.getItemId()) {
+                case R.id.action_change_nickname:
+                    Toast.makeText(mContext, "Change nickname", Toast.LENGTH_SHORT).show();
+                    return true;
+                case R.id.action_remove_account:
+                    Toast.makeText(mContext, "Remove account", Toast.LENGTH_SHORT).show();
+                    return true;
+                default:
+            }
+            return false;
+        }
     }
 
     @Override
