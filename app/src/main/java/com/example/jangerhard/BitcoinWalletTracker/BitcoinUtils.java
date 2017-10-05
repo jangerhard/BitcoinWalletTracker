@@ -8,10 +8,10 @@ import java.util.List;
 
 class BitcoinUtils {
 
-    static String totalBalance(List<BitcoinAccount> accounts){
+    static String totalBalance(List<BitcoinAccount> accounts) {
         BigInteger total = new BigInteger("0");
 
-        for (BitcoinAccount acc: accounts) {
+        for (BitcoinAccount acc : accounts) {
             total = total.add(acc.getFinal_balance());
         }
         return formatBitcoinBalanceToString(total);
@@ -59,8 +59,18 @@ class BitcoinUtils {
         return list;
     }
 
-    public static boolean verifyAddress(String qrString) {
-        //TODO: Complete this
-        return true;
+    static boolean verifyAddress(String qrString) {
+        /*
+          A Bitcoin address is between 25 and 34 characters long;
+          the address always starts with a 1;
+          an address can contain all alphanumeric characters,
+          with the exceptions of 0, O, I, and l.
+
+         */
+
+        return (qrString.length() < 34 && qrString.length() > 25) &&
+                (qrString.startsWith("1")) &&
+                (!qrString.contains("0")) && (!qrString.contains("O")) &&
+                (!qrString.contains("I")) && (!qrString.contains("l"));
     }
 }

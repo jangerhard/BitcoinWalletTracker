@@ -113,7 +113,8 @@ public class MainActivity extends AppCompatActivity {
         if (BitcoinUtils.verifyAddress(qrString)) {
             addresses.add(qrString);
             refreshData();
-        }
+        } else
+            Toast.makeText(getBaseContext(), "That is not a bitcoin address!", Toast.LENGTH_SHORT).show();
     }
 
     private void prepareAccounts() {
