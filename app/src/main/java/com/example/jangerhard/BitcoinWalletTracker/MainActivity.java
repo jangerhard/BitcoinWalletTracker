@@ -2,6 +2,8 @@ package com.example.jangerhard.BitcoinWalletTracker;
 
 import android.Manifest;
 import android.app.Activity;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -64,6 +66,7 @@ public class MainActivity extends AppCompatActivity {
         recyclerView.setAdapter(adapter);
 
         prepareAccounts();
+        refreshData();
 
         Button bGetAccount = (Button) findViewById(R.id.bGetAccount);
         bGetAccount.setOnClickListener(new View.OnClickListener() {
@@ -80,13 +83,27 @@ public class MainActivity extends AppCompatActivity {
          * Add test accounts
          */
 
-        addresses.add("1FfmbHfnpaZjKFvyi1okTjJJusN455paPH");
-        addresses.add("1AJbsFZ64EpEfS5UAjAfcUG8pH8Jn3rn1F");
-        addresses.add("1A8JiWcwvpY7tAopUkSnGuEYHmzGYfZPiq");
+        SharedPreferences sharedPref = mActivity.getPreferences(Context.MODE_PRIVATE);
+        String defaultAddress = "";
+        addresses = BitcoinUtils.createAddressList(sharedPref.getString(getString(R.string.bitcoinaddresses), defaultAddress));
 
+        // Empty
+        if (addresses.get(0).length() < 2) {
+            tvTotalBalance.setText("No accounts.");
+            addresses.clear();
+        }
+
+//        addresses.add("1FfmbHfnpaZjKFvyi1okTjJJusN455paPH");
+//        addresses.add("1AJbsFZ64EpEfS5UAjAfcUG8pH8Jn3rn1F");
+//        addresses.add("1A8JiWcwvpY7tAopUkSnGuEYHmzGYfZPiq");
+//
+//        saveData();
     }
 
     private void refreshData() {
+
+        if (addresses.isEmpty())
+            return;
 
         if (!accountList.isEmpty())
             accountList.clear();
@@ -163,7 +180,8 @@ public class MainActivity extends AppCompatActivity {
         if(numRefreshed >= addresses.size()){
             adapter.notifyDataSetChanged();
             numRefreshed = 0;
-            tvTotalBalance.setText(BitcoinUtils.totalBalance(accountList));
+            tvTotalBalance.setText("Total balance: " +
+                    BitcoinUtils.totalBalance(accountList));
         }
 
 
@@ -175,5 +193,12 @@ public class MainActivity extends AppCompatActivity {
         }
 
         return mRequestQueue;
+    }
+
+    private void saveData() {
+        SharedPreferences sharedPref = mActivity.getPreferences(Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.putString(getString(R.string.bitcoinaddresses), BitcoinUtils.createAddressString(addresses));
+        editor.apply();
     }
 }

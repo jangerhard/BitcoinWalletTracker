@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Wallet Tracker</string>
+    <string name="bitcoinaddresses">BitcoinAddresses</string>
 </resources>

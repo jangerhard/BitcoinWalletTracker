@@ -2,6 +2,8 @@ package com.example.jangerhard.BitcoinWalletTracker;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 class BitcoinUtils {
@@ -33,6 +35,28 @@ class BitcoinUtils {
                 BigDecimal.ROUND_HALF_UP)
                 .toEngineeringString() + " " + endTag;
 
+    }
+
+    static String createAddressString(List<String> addresses) {
+        StringBuilder csvList = new StringBuilder();
+        for (String s : addresses) {
+            csvList.append(s);
+            csvList.append(",");
+        }
+        return csvList.toString();
+    }
+
+    static List<String> createAddressList(String addresses) {
+        String[] items = new String[1];
+
+        if (addresses.contains(","))
+            items = addresses.split(",");
+        else
+            items[0] = addresses;
+
+        List<String> list = new ArrayList<>();
+        Collections.addAll(list, items);
+        return list;
     }
 
 }
