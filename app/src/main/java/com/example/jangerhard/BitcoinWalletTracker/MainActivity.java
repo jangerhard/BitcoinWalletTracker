@@ -141,8 +141,6 @@ public class MainActivity extends AppCompatActivity {
         if (utils.noAddresses())
             return;
 
-        utils.clearAccounts();
-
         Dexter.withActivity(mActivity)
                 .withPermission(Manifest.permission.INTERNET)
                 .withListener(new PermissionListener() {
@@ -169,10 +167,13 @@ public class MainActivity extends AppCompatActivity {
 
     private void getWalletInfo(List<String> addresses) {
 
+        utils.clearAccounts();
+
         for (String address : addresses) {
 
             // Create blank account
             BitcoinAccount b = new BitcoinAccount();
+            b.setNickName("PENDING...");
             b.setFinal_balance(BigInteger.valueOf(0L));
             utils.addAccount(b);
 
@@ -207,7 +208,6 @@ public class MainActivity extends AppCompatActivity {
 
     private void handleRefreshedAccount(BitcoinAccount acc) {
 
-        acc.setNickName("TestAccount " + numRefreshed);
         utils.removeAccount(numRefreshed);
         utils.addAccount(numRefreshed, acc);
         numRefreshed++;

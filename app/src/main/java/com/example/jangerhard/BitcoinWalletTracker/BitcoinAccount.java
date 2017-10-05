@@ -1,6 +1,5 @@
 package com.example.jangerhard.BitcoinWalletTracker;
 
-import java.math.BigDecimal;
 import java.math.BigInteger;
 
 /**
@@ -17,7 +16,7 @@ public class BitcoinAccount {
     private BigInteger total_sent;
     private BigInteger final_balance;
 
-    private String nickName = "PENDING .. ";
+    private String nickName = "";
 
     public String getHash160() {
         return hash160;
@@ -81,6 +80,9 @@ public class BitcoinAccount {
     }
 
     public String getNickName() {
+        if (nickName.length() == 0)
+            return "Paper Wallet";
+
         return nickName;
     }
 

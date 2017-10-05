@@ -102,7 +102,7 @@ class BitcoinUtils {
         return csvList.toString();
     }
 
-    static List<String> createAddressList(String addresses) {
+    private static List<String> createAddressList(String addresses) {
         String[] items = new String[1];
 
         if (addresses.contains(","))
@@ -145,7 +145,7 @@ class BitcoinUtils {
 
     }
 
-    public boolean addAddressesFromPrefs(SharedPreferences sharedPref, String key) {
+    boolean addAddressesFromPrefs(SharedPreferences sharedPref, String key) {
         String defaultAddress = "";
         List<String> addresses = BitcoinUtils
                 .createAddressList(

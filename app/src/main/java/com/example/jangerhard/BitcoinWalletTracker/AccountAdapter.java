@@ -22,14 +22,17 @@ public class AccountAdapter extends RecyclerView.Adapter<AccountAdapter.MyViewHo
 
     private Context mContext;
     private List<BitcoinAccount> accountsList;
+    private int selectedAccountTag;
+
     public class MyViewHolder extends RecyclerView.ViewHolder {
 
-        public TextView accName, accBalance;
+        public TextView accName, accAddress, accBalance;
         private ImageView overflow, qrCode;
 
         public MyViewHolder(View view) {
             super(view);
             accName = (TextView) view.findViewById(R.id.accountName);
+            accAddress = (TextView) view.findViewById(R.id.accountAddress);
             accBalance = (TextView) view.findViewById(R.id.accountBalance);
             overflow = (ImageView) view.findViewById(R.id.overflow);
         }
@@ -49,18 +52,19 @@ public class AccountAdapter extends RecyclerView.Adapter<AccountAdapter.MyViewHo
     }
 
     @Override
-    public void onBindViewHolder(final MyViewHolder holder, int position) {
+    public void onBindViewHolder(final MyViewHolder holder, final int position) {
         BitcoinAccount account = accountsList.get(position);
         holder.accName.setText(account.getNickName());
         holder.accBalance.setText(
                 BitcoinUtils.formatBitcoinBalanceToString(
                         account.getFinal_balance())
         );
+        holder.accAddress.setText(account.getAddress());
 
         holder.overflow.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                showPopupMenu(holder.overflow);
+                showPopupMenu(holder.overflow, position);
             }
         });
     }
@@ -68,8 +72,9 @@ public class AccountAdapter extends RecyclerView.Adapter<AccountAdapter.MyViewHo
     /**
      * Showing popup menu when tapping on 3 dots
      */
-    private void showPopupMenu(View view) {
+    private void showPopupMenu(View view, int position) {
         // inflate menu
+        selectedAccountTag = position;
         PopupMenu popup = new PopupMenu(mContext, view);
         MenuInflater inflater = popup.getMenuInflater();
         inflater.inflate(R.menu.menu_account, popup.getMenu());
@@ -82,17 +87,22 @@ public class AccountAdapter extends RecyclerView.Adapter<AccountAdapter.MyViewHo
      */
     class MyMenuItemClickListener implements PopupMenu.OnMenuItemClickListener {
 
-        public MyMenuItemClickListener() {
+        MyMenuItemClickListener() {
         }
 
         @Override
         public boolean onMenuItemClick(MenuItem menuItem) {
             switch (menuItem.getItemId()) {
                 case R.id.action_change_nickname:
-                    Toast.makeText(mContext, "Change nickname", Toast.LENGTH_SHORT).show();
+                    accountsList.get(selectedAccountTag).setNickName("NewNickname");
+                    notifyDataSetChanged();
                     return true;
                 case R.id.action_remove_account:
-                    Toast.makeText(mContext, "Remove account", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(mContext,
+                            "Removed account " + accountsList.get(selectedAccountTag).getAddress(),
+                            Toast.LENGTH_SHORT).show();
+                    accountsList.remove(selectedAccountTag);
+                    notifyDataSetChanged();
                     return true;
                 default:
             }
