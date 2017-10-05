@@ -1,23 +1,15 @@
 package com.example.jangerhard.BitcoinWalletTracker;
 
 import android.Manifest;
-import android.accounts.Account;
 import android.app.Activity;
-import android.content.res.Resources;
-import android.graphics.Rect;
-import android.support.v4.widget.ListViewAutoScrollHelper;
-import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
-import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
-import android.util.TypedValue;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -50,6 +42,7 @@ public class MainActivity extends AppCompatActivity {
     private List<String> addresses;
     AccountAdapter adapter;
     int numRefreshed = 0;
+    TextView tvTotalBalance;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,6 +51,8 @@ public class MainActivity extends AppCompatActivity {
         mActivity = this;
 
         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
+
+        tvTotalBalance = (TextView) findViewById(R.id.totalBalance);
 
         accountList = new ArrayList<>();
         addresses = new ArrayList<>();
@@ -168,6 +163,7 @@ public class MainActivity extends AppCompatActivity {
         if(numRefreshed >= addresses.size()){
             adapter.notifyDataSetChanged();
             numRefreshed = 0;
+            tvTotalBalance.setText(BitcoinUtils.totalBalance(accountList));
         }
 
 
@@ -180,5 +176,4 @@ public class MainActivity extends AppCompatActivity {
 
         return mRequestQueue;
     }
-
 }

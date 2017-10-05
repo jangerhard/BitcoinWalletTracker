@@ -1,5 +1,6 @@
 package com.example.jangerhard.BitcoinWalletTracker;
 
+import java.math.BigDecimal;
 import java.math.BigInteger;
 
 /**
@@ -86,17 +87,5 @@ public class BitcoinAccount {
     @Override
     public String toString() {
         return getNickName() + " has a balance of " + getFinal_balance() + "btc.";
-    }
-
-    public String getFormatedBalance() {
-        String bal = getFinal_balance().toString();
-//        14226287 = 0.142
-//        if (bal.length() < 9)
-//            return "0." + bal.substring(0, 3) + " BTC";
-//        else
-//            return bal.substring(0, bal.length() - 8) +
-//                    "." +
-//                    bal.substring(bal.length() - 7, bal.length()) + " BTC";
-        return bal;
     }
 }

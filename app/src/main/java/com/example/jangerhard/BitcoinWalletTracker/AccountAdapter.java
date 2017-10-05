@@ -45,7 +45,10 @@ public class AccountAdapter extends RecyclerView.Adapter<AccountAdapter.MyViewHo
     public void onBindViewHolder(final MyViewHolder holder, int position) {
         BitcoinAccount account = accountsList.get(position);
         holder.accName.setText(account.getNickName());
-        holder.accBalance.setText(account.getFormatedBalance());
+        holder.accBalance.setText(
+                BitcoinUtils.formatBitcoinBalanceToString(
+                        account.getFinal_balance())
+        );
     }
 
     @Override
