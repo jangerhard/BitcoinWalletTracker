@@ -16,12 +16,7 @@ public class BitcoinAccount {
     private BigInteger total_sent;
     private BigInteger final_balance;
 
-    private String nickName = "NewAccount";
-
-    public BitcoinAccount(String address, String bal) {
-        this.address = address;
-        this.final_balance = BigInteger.valueOf(Long.valueOf(bal));
-    }
+    private String nickName = "PENDING .. ";
 
     public String getHash160() {
         return hash160;

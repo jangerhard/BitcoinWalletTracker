@@ -37,6 +37,7 @@ import com.karumi.dexter.listener.single.PermissionListener;
 
 import org.json.JSONObject;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -93,6 +94,9 @@ public class MainActivity extends AppCompatActivity {
 
     private void refreshData() {
 
+        if (!accountList.isEmpty())
+            accountList.clear();
+
         Dexter.withActivity(mActivity)
                 .withPermission(Manifest.permission.INTERNET)
                 .withListener(new PermissionListener() {
@@ -122,7 +126,9 @@ public class MainActivity extends AppCompatActivity {
         for (String address : addresses) {
 
             // Create blank account
-            accountList.add(new BitcoinAccount("PENDING...", "0"));
+            BitcoinAccount b = new BitcoinAccount();
+            b.setFinal_balance(BigInteger.valueOf(0L));
+            accountList.add(b);
 
             // Request a string response from the provided URL.
             JsonObjectRequest jsObjRequest = new JsonObjectRequest

@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!-- Default screen margins, per the Android Design guidelines. -->
-    <dimen name="activity_horizontal_margin">16dp</dimen>
-    <dimen name="activity_vertical_margin">16dp</dimen>
+    <dimen name="activity_horizontal_margin">64dp</dimen>
+    <dimen name="activity_vertical_margin">64dp</dimen>
     <dimen name="fab_margin">16dp</dimen>
     <dimen name="item_offset">10dp</dimen>
     <dimen name="detail_backdrop_height">250dp</dimen>
     <dimen name="backdrop_title">32dp</dimen>
     <dimen name="backdrop_subtitle">18dp</dimen>
-    <dimen name="card_margin">8dp</dimen>
+    <dimen name="card_margin">16dp</dimen>
     <dimen name="card_album_radius">0dp</dimen>
     <dimen name="album_cover_height">32dp</dimen>
     <dimen name="album_title_padding">8dp</dimen>
