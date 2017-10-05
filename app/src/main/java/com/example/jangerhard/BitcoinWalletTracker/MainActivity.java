@@ -37,7 +37,6 @@ import com.karumi.dexter.listener.single.PermissionListener;
 
 import org.json.JSONObject;
 
-import java.math.BigInteger;
 import java.util.List;
 
 
@@ -49,7 +48,6 @@ public class MainActivity extends AppCompatActivity {
     String url = "https://blockchain.info/";
     Activity mActivity;
     AccountAdapter adapter;
-    int numRefreshed = 0;
     TextView tvTotalBalance;
     BitcoinUtils utils;
 
@@ -62,10 +60,12 @@ public class MainActivity extends AppCompatActivity {
         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
 
         tvTotalBalance = (TextView) findViewById(R.id.totalBalance);
+        SharedPreferences sharedPref = mActivity.getPreferences(Context.MODE_PRIVATE);
 
         utils = new BitcoinUtils();
-        prepareAccounts();
-        adapter = new AccountAdapter(this, utils.getAccounts());
+        prepareAccounts(sharedPref);
+        adapter = new AccountAdapter(this, utils.getAccounts(), utils);
+        adapter.notifyDataSetChanged();
 
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(mLayoutManager);
@@ -81,7 +81,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        refreshData();
 
         Button bGetAccount = (Button) findViewById(R.id.bGetAccount);
         bGetAccount.setOnClickListener(new View.OnClickListener() {
@@ -91,29 +90,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == BARCODE_READER_REQUEST_CODE) {
-            if (resultCode == CommonStatusCodes.SUCCESS) {
-                if (data != null) {
-                    addBarcode((Barcode) data.getParcelableExtra(BarcodeCaptureActivity.BarcodeObject));
-                } else
-                    Toast.makeText(getBaseContext(), R.string.no_barcode_captured, Toast.LENGTH_SHORT).show();
-            } else Log.e(LOG_TAG, String.format(getString(R.string.barcode_error_format),
-                    CommonStatusCodes.getStatusCodeString(resultCode)));
-        } else super.onActivityResult(requestCode, resultCode, data);
-    }
-
-    private void addBarcode(Barcode barcode) {
-
-        Log.i(LOG_TAG, "Address: " + barcode.displayValue);
-
-        if (BitcoinUtils.verifyAddress(barcode.displayValue)) {
-            showBitcoinAddressDialog(barcode.displayValue);
-        } else
-            Toast.makeText(getBaseContext(), "That is not a bitcoin address!", Toast.LENGTH_SHORT).show();
+        refreshData();
     }
 
     private void addBitcoinAddress(String address) {
@@ -121,9 +98,7 @@ public class MainActivity extends AppCompatActivity {
         refreshData();
     }
 
-    private void prepareAccounts() {
-
-        SharedPreferences sharedPref = mActivity.getPreferences(Context.MODE_PRIVATE);
+    private void prepareAccounts(SharedPreferences sharedPref) {
 
         if (!utils.addAddressesFromPrefs(sharedPref, getString(R.string.bitcoinaddresses))) {
             tvTotalBalance.setText("No accounts.");
@@ -167,15 +142,9 @@ public class MainActivity extends AppCompatActivity {
 
     private void getWalletInfo(List<String> addresses) {
 
-        utils.clearAccounts();
-
         for (String address : addresses) {
 
-            // Create blank account
-            BitcoinAccount b = new BitcoinAccount();
-            b.setNickName("PENDING...");
-            b.setFinal_balance(BigInteger.valueOf(0L));
-            utils.addAccount(b);
+            utils.setPending(address);
 
             // Request a string response from the provided URL.
             JsonObjectRequest jsObjRequest = new JsonObjectRequest
@@ -208,15 +177,11 @@ public class MainActivity extends AppCompatActivity {
 
     private void handleRefreshedAccount(BitcoinAccount acc) {
 
-        utils.removeAccount(numRefreshed);
-        utils.addAccount(numRefreshed, acc);
-        numRefreshed++;
+        utils.updateAccount(acc);
 
-        if (numRefreshed >= utils.numAddresses()) {
-            adapter.notifyDataSetChanged();
-            numRefreshed = 0;
-            tvTotalBalance.setText(String.format("Total balance: %s", utils.totalBalance()));
-        }
+        adapter.notifyDataSetChanged();
+//        tvTotalBalance.setText(String.format("Total balance: %s", utils.totalBalance()));
+
     }
 
     public RequestQueue getVolleyRequestQueue() {
@@ -231,7 +196,7 @@ public class MainActivity extends AppCompatActivity {
         SharedPreferences sharedPref = mActivity.getPreferences(Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPref.edit();
         editor.putString(getString(R.string.bitcoinaddresses),
-                BitcoinUtils.createAddressString(utils.getAddresses()));
+                BitcoinUtils.createAddressStringToPrefs(utils.getAddresses()));
         editor.apply();
     }
 
@@ -261,5 +226,28 @@ public class MainActivity extends AppCompatActivity {
         AlertDialog dialog = builder.create();
         // display dialog
         dialog.show();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == BARCODE_READER_REQUEST_CODE) {
+            if (resultCode == CommonStatusCodes.SUCCESS) {
+                if (data != null) {
+                    addBarcode((Barcode) data.getParcelableExtra(BarcodeCaptureActivity.BarcodeObject));
+                } else
+                    Toast.makeText(getBaseContext(), R.string.no_barcode_captured, Toast.LENGTH_SHORT).show();
+            } else Log.e(LOG_TAG, String.format(getString(R.string.barcode_error_format),
+                    CommonStatusCodes.getStatusCodeString(resultCode)));
+        } else super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    private void addBarcode(Barcode barcode) {
+
+        Log.i(LOG_TAG, "Address: " + barcode.displayValue);
+
+        if (BitcoinUtils.verifyAddress(barcode.displayValue)) {
+            showBitcoinAddressDialog(barcode.displayValue);
+        } else
+            Toast.makeText(getBaseContext(), "That is not a bitcoin address!", Toast.LENGTH_SHORT).show();
     }
 }

@@ -14,6 +14,7 @@ class BitcoinUtils {
     private static final String LOG_TAG = "BitcoinUtil";
     private List<BitcoinAccount> accountList;
     private List<String> addresses;
+    private SharedPreferences sharedPref;
 
     public BitcoinUtils() {
         accountList = new ArrayList<>();
@@ -28,8 +29,25 @@ class BitcoinUtils {
         return addresses;
     }
 
+    void updateAccount(BitcoinAccount refreshedAccount) {
+        accountList.set(addresses.indexOf(refreshedAccount.getAddress()), refreshedAccount);
+    }
+
+    void setPending(String address) {
+        accountList.get(addresses.indexOf(address)).setNickName("Pending ...");
+    }
+
     void setAddresses(List<String> addresses) {
         this.addresses = addresses;
+    }
+
+    void setNewNickname(int selectedAccountTag, String name) {
+        accountList.get(selectedAccountTag).setNickName(name);
+        saveNickname(accountList.get(selectedAccountTag).getAddress(), name);
+    }
+
+    private void saveNickname(String address, String name) {
+        sharedPref.edit().putString(address, name).apply();
     }
 
     void addAddress(String address) {
@@ -74,6 +92,9 @@ class BitcoinUtils {
     }
 
     static String formatBitcoinBalanceToString(BigInteger bal) {
+        if (bal == null)
+            return "";
+
         BigDecimal a = new BigDecimal(bal);
         BigDecimal divider;
         String endTag;
@@ -93,26 +114,15 @@ class BitcoinUtils {
 
     }
 
-    static String createAddressString(List<String> addresses) {
-        StringBuilder csvList = new StringBuilder();
-        for (String s : addresses) {
-            csvList.append(s);
-            csvList.append(",");
+    private void createAccountsList(SharedPreferences sharedPref) {
+
+        for (String address : addresses) {
+            BitcoinAccount b = new BitcoinAccount();
+            b.setAddress(address);
+            b.setNickName(sharedPref.getString(address, "Paper Wallet"));
+            accountList.add(b);
         }
-        return csvList.toString();
-    }
 
-    private static List<String> createAddressList(String addresses) {
-        String[] items = new String[1];
-
-        if (addresses.contains(","))
-            items = addresses.split(",");
-        else
-            items[0] = addresses;
-
-        List<String> list = new ArrayList<>();
-        Collections.addAll(list, items);
-        return list;
     }
 
     static boolean verifyAddress(String qrString) {
@@ -146,9 +156,10 @@ class BitcoinUtils {
     }
 
     boolean addAddressesFromPrefs(SharedPreferences sharedPref, String key) {
+        this.sharedPref = sharedPref;
         String defaultAddress = "";
         List<String> addresses = BitcoinUtils
-                .createAddressList(
+                .createAddressListFromPrefs(
                         sharedPref.getString(
                                 key, defaultAddress));
 
@@ -159,6 +170,29 @@ class BitcoinUtils {
         }
 
         setAddresses(addresses);
+        createAccountsList(sharedPref);
         return true;
+    }
+
+    static String createAddressStringToPrefs(List<String> addresses) {
+        StringBuilder csvList = new StringBuilder();
+        for (String s : addresses) {
+            csvList.append(s);
+            csvList.append(",");
+        }
+        return csvList.toString();
+    }
+
+    private static List<String> createAddressListFromPrefs(String addresses) {
+        String[] items = new String[1];
+
+        if (addresses.contains(","))
+            items = addresses.split(",");
+        else
+            items[0] = addresses;
+
+        List<String> list = new ArrayList<>();
+        Collections.addAll(list, items);
+        return list;
     }
 }

@@ -23,6 +23,7 @@ public class AccountAdapter extends RecyclerView.Adapter<AccountAdapter.MyViewHo
     private Context mContext;
     private List<BitcoinAccount> accountsList;
     private int selectedAccountTag;
+    private BitcoinUtils utils;
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
 
@@ -38,9 +39,10 @@ public class AccountAdapter extends RecyclerView.Adapter<AccountAdapter.MyViewHo
         }
     }
 
-    public AccountAdapter(Context mContext, List<BitcoinAccount> albumList) {
+    public AccountAdapter(Context mContext, List<BitcoinAccount> accountList, BitcoinUtils utils) {
         this.mContext = mContext;
-        this.accountsList = albumList;
+        this.accountsList = accountList;
+        this.utils = utils;
     }
 
     @Override
@@ -94,14 +96,14 @@ public class AccountAdapter extends RecyclerView.Adapter<AccountAdapter.MyViewHo
         public boolean onMenuItemClick(MenuItem menuItem) {
             switch (menuItem.getItemId()) {
                 case R.id.action_change_nickname:
-                    accountsList.get(selectedAccountTag).setNickName("NewNickname");
+                    utils.setNewNickname(selectedAccountTag, "NewNickname");
                     notifyDataSetChanged();
                     return true;
                 case R.id.action_remove_account:
                     Toast.makeText(mContext,
                             "Removed account " + accountsList.get(selectedAccountTag).getAddress(),
                             Toast.LENGTH_SHORT).show();
-                    accountsList.remove(selectedAccountTag);
+                    utils.getAccounts().remove(selectedAccountTag);
                     notifyDataSetChanged();
                     return true;
                 default:
