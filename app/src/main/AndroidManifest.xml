@@ -21,6 +21,12 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name="com.example.jangerhard.BitcoinWalletTracker.qrStuff.barcode.BarcodeCaptureActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+            </intent-filter>
+        </activity>
     </application>
 
 </manifest>
