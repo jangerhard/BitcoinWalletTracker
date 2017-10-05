@@ -32,6 +32,12 @@
                 android:layout_height="wrap_content"
                 android:text="Get account" />
 
+            <Button
+                android:id="@+id/bAddAccount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Add by scanning" />
+
             <TextView
                 android:id="@+id/totalBalance"
                 android:layout_width="wrap_content"

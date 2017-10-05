@@ -59,4 +59,8 @@ class BitcoinUtils {
         return list;
     }
 
+    public static boolean verifyAddress(String qrString) {
+        //TODO: Complete this
+        return true;
+    }
 }

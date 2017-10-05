@@ -3,6 +3,7 @@ package com.example.jangerhard.BitcoinWalletTracker;
 import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -21,6 +22,9 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
+import com.example.jangerhard.BitcoinWalletTracker.qrStuff.barcode.BarcodeCaptureActivity;
+import com.google.android.gms.common.api.CommonStatusCodes;
+import com.google.android.gms.vision.barcode.Barcode;
 import com.google.gson.Gson;
 import com.karumi.dexter.Dexter;
 import com.karumi.dexter.PermissionToken;
@@ -35,8 +39,12 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.example.jangerhard.BitcoinWalletTracker.BitcoinUtils.totalBalance;
+
 public class MainActivity extends AppCompatActivity {
 
+    private static final int BARCODE_READER_REQUEST_CODE = 1337;
+    private static final String LOG_TAG = "MainActivity";
     private RequestQueue mRequestQueue;
     String url = "https://blockchain.info/";
     Activity mActivity;
@@ -65,6 +73,15 @@ public class MainActivity extends AppCompatActivity {
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(adapter);
 
+        Button bAddAccount = (Button) findViewById(R.id.bAddAccount);
+        bAddAccount.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getApplicationContext(), BarcodeCaptureActivity.class);
+                startActivityForResult(intent, BARCODE_READER_REQUEST_CODE);
+            }
+        });
+
         prepareAccounts();
         refreshData();
 
@@ -76,6 +93,27 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == BARCODE_READER_REQUEST_CODE) {
+            if (resultCode == CommonStatusCodes.SUCCESS) {
+                if (data != null) {
+                    Barcode barcode = data.getParcelableExtra(BarcodeCaptureActivity.BarcodeObject);
+                    addBitcoinAccount(barcode.displayValue);
+                } else
+                    Toast.makeText(getBaseContext(), R.string.no_barcode_captured, Toast.LENGTH_SHORT).show();
+            } else Log.e(LOG_TAG, String.format(getString(R.string.barcode_error_format),
+                    CommonStatusCodes.getStatusCodeString(resultCode)));
+        } else super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    private void addBitcoinAccount(String qrString) {
+        if (BitcoinUtils.verifyAddress(qrString)) {
+            addresses.add(qrString);
+            refreshData();
+        }
     }
 
     private void prepareAccounts() {
@@ -177,11 +215,10 @@ public class MainActivity extends AppCompatActivity {
         accountList.add(numRefreshed, acc);
         numRefreshed++;
 
-        if(numRefreshed >= addresses.size()){
+        if (numRefreshed >= addresses.size()) {
             adapter.notifyDataSetChanged();
             numRefreshed = 0;
-            tvTotalBalance.setText("Total balance: " +
-                    BitcoinUtils.totalBalance(accountList));
+            tvTotalBalance.setText(String.format("Total balance: %s", totalBalance(accountList)));
         }
 
 
