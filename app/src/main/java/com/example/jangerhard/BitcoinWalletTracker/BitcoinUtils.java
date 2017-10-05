@@ -1,6 +1,7 @@
 package com.example.jangerhard.BitcoinWalletTracker;
 
 import android.content.SharedPreferences;
+import android.util.Log;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -10,6 +11,7 @@ import java.util.List;
 
 class BitcoinUtils {
 
+    private static final String LOG_TAG = "BitcoinUtil";
     private List<BitcoinAccount> accountList;
     private List<String> addresses;
 
@@ -121,11 +123,26 @@ class BitcoinUtils {
           with the exceptions of 0, O, I, and l.
 
          */
+        Log.d(LOG_TAG, "Address: " + qrString);
+        if (!(qrString.length() <= 34 && qrString.length() >= 25))
+            Log.d(LOG_TAG, "Wrong length");
+        if (!(qrString.substring(0, 1).equals("1") || (qrString.substring(0, 1).equals("3"))))
+            Log.d(LOG_TAG, "Doesn't start with 1 or 3");
+        if (qrString.contains("0"))
+            Log.d(LOG_TAG, "Contains 0");
+        if (qrString.contains("O"))
+            Log.d(LOG_TAG, "Contains O");
+        if (qrString.contains("I"))
+            Log.d(LOG_TAG, "Contains I");
+        if (qrString.contains("l"))
+            Log.d(LOG_TAG, "Contains l");
 
-        return (qrString.length() < 34 && qrString.length() > 25) &&
-                (qrString.startsWith("1")) &&
+
+        return (qrString.length() <= 34 && qrString.length() >= 25) &&
+                (qrString.substring(0, 1).equals("1") || (qrString.substring(0, 1).equals("3"))) &&
                 (!qrString.contains("0")) && (!qrString.contains("O")) &&
                 (!qrString.contains("I")) && (!qrString.contains("l"));
+
     }
 
     public boolean addAddressesFromPrefs(SharedPreferences sharedPref, String key) {
