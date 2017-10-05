@@ -19,11 +19,21 @@
             android:layout_height="@dimen/album_cover_height"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:scaleType="fitXY"
+            android:layout_margin="16dp"
             android:foregroundGravity="center_vertical"
             android:src="@drawable/bitcoinlogo" />
 
         <TextView
             android:id="@+id/accountName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toEndOf="@+id/thumbnail"
+            android:paddingTop="@dimen/album_title_padding"
+            android:textColor="@color/album_title"
+            android:textSize="@dimen/album_title" />
+
+        <TextView
+            android:id="@+id/accountAddress"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_toEndOf="@+id/thumbnail" />
