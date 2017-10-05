@@ -36,10 +36,8 @@ import com.karumi.dexter.listener.single.PermissionListener;
 import org.json.JSONObject;
 
 import java.math.BigInteger;
-import java.util.ArrayList;
 import java.util.List;
 
-import static com.example.jangerhard.BitcoinWalletTracker.BitcoinUtils.totalBalance;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -48,11 +46,10 @@ public class MainActivity extends AppCompatActivity {
     private RequestQueue mRequestQueue;
     String url = "https://blockchain.info/";
     Activity mActivity;
-    private List<BitcoinAccount> accountList;
-    private List<String> addresses;
     AccountAdapter adapter;
     int numRefreshed = 0;
     TextView tvTotalBalance;
+    BitcoinUtils utils;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,9 +61,9 @@ public class MainActivity extends AppCompatActivity {
 
         tvTotalBalance = (TextView) findViewById(R.id.totalBalance);
 
-        accountList = new ArrayList<>();
-        addresses = new ArrayList<>();
-        adapter = new AccountAdapter(this, accountList);
+        utils = new BitcoinUtils();
+        prepareAccounts();
+        adapter = new AccountAdapter(this, utils.getAccounts());
 
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(mLayoutManager);
@@ -82,7 +79,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        prepareAccounts();
         refreshData();
 
         Button bGetAccount = (Button) findViewById(R.id.bGetAccount);
@@ -111,25 +107,18 @@ public class MainActivity extends AppCompatActivity {
 
     private void addBitcoinAccount(String qrString) {
         if (BitcoinUtils.verifyAddress(qrString)) {
-            addresses.add(qrString);
+            utils.addAddress(qrString);
             refreshData();
         } else
             Toast.makeText(getBaseContext(), "That is not a bitcoin address!", Toast.LENGTH_SHORT).show();
     }
 
     private void prepareAccounts() {
-        /**
-         * Add test accounts
-         */
 
         SharedPreferences sharedPref = mActivity.getPreferences(Context.MODE_PRIVATE);
-        String defaultAddress = "";
-        addresses = BitcoinUtils.createAddressList(sharedPref.getString(getString(R.string.bitcoinaddresses), defaultAddress));
 
-        // Empty
-        if (addresses.get(0).length() < 2) {
+        if (!utils.addAddressesFromPrefs(sharedPref, getString(R.string.bitcoinaddresses))) {
             tvTotalBalance.setText("No accounts.");
-            addresses.clear();
         }
 
 //        addresses.add("1FfmbHfnpaZjKFvyi1okTjJJusN455paPH");
@@ -141,18 +130,17 @@ public class MainActivity extends AppCompatActivity {
 
     private void refreshData() {
 
-        if (addresses.isEmpty())
+        if (utils.noAddresses())
             return;
 
-        if (!accountList.isEmpty())
-            accountList.clear();
+        utils.clearAccounts();
 
         Dexter.withActivity(mActivity)
                 .withPermission(Manifest.permission.INTERNET)
                 .withListener(new PermissionListener() {
                     @Override
                     public void onPermissionGranted(PermissionGrantedResponse response) {
-                        getWalletInfo(addresses);
+                        getWalletInfo(utils.getAddresses());
                     }
 
                     @Override
@@ -178,7 +166,7 @@ public class MainActivity extends AppCompatActivity {
             // Create blank account
             BitcoinAccount b = new BitcoinAccount();
             b.setFinal_balance(BigInteger.valueOf(0L));
-            accountList.add(b);
+            utils.addAccount(b);
 
             // Request a string response from the provided URL.
             JsonObjectRequest jsObjRequest = new JsonObjectRequest
@@ -212,17 +200,15 @@ public class MainActivity extends AppCompatActivity {
     private void handleRefreshedAccount(BitcoinAccount acc) {
 
         acc.setNickName("TestAccount " + numRefreshed);
-        accountList.remove(numRefreshed);
-        accountList.add(numRefreshed, acc);
+        utils.removeAccount(numRefreshed);
+        utils.addAccount(numRefreshed, acc);
         numRefreshed++;
 
-        if (numRefreshed >= addresses.size()) {
+        if (numRefreshed >= utils.numAddresses()) {
             adapter.notifyDataSetChanged();
             numRefreshed = 0;
-            tvTotalBalance.setText(String.format("Total balance: %s", totalBalance(accountList)));
+            tvTotalBalance.setText(String.format("Total balance: %s", utils.totalBalance()));
         }
-
-
     }
 
     public RequestQueue getVolleyRequestQueue() {
@@ -236,7 +222,8 @@ public class MainActivity extends AppCompatActivity {
     private void saveData() {
         SharedPreferences sharedPref = mActivity.getPreferences(Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPref.edit();
-        editor.putString(getString(R.string.bitcoinaddresses), BitcoinUtils.createAddressString(addresses));
+        editor.putString(getString(R.string.bitcoinaddresses),
+                BitcoinUtils.createAddressString(utils.getAddresses()));
         editor.apply();
     }
 }

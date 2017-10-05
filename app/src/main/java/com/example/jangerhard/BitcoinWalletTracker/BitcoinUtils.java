@@ -1,5 +1,7 @@
 package com.example.jangerhard.BitcoinWalletTracker;
 
+import android.content.SharedPreferences;
+
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
@@ -8,10 +10,62 @@ import java.util.List;
 
 class BitcoinUtils {
 
-    static String totalBalance(List<BitcoinAccount> accounts) {
+    private List<BitcoinAccount> accountList;
+    private List<String> addresses;
+
+    public BitcoinUtils() {
+        accountList = new ArrayList<>();
+        addresses = new ArrayList<>();
+    }
+
+    List<BitcoinAccount> getAccounts() {
+        return accountList;
+    }
+
+    List<String> getAddresses() {
+        return addresses;
+    }
+
+    void setAddresses(List<String> addresses) {
+        this.addresses = addresses;
+    }
+
+    void addAddress(String address) {
+        addresses.add(address);
+    }
+
+    void addAccount(BitcoinAccount account) {
+        accountList.add(account);
+    }
+
+    void addAccount(int location, BitcoinAccount account) {
+        accountList.add(location, account);
+    }
+
+    void removeAccount(int number) {
+        accountList.remove(number);
+    }
+
+    void removeAddress(String address) {
+        addresses.remove(address);
+    }
+
+    boolean noAddresses() {
+        return addresses.isEmpty();
+    }
+
+    void clearAccounts() {
+        accountList.clear();
+    }
+
+    int numAddresses() {
+        return addresses.size();
+    }
+
+    String totalBalance() {
         BigInteger total = new BigInteger("0");
 
-        for (BitcoinAccount acc : accounts) {
+        for (BitcoinAccount acc : this.getAccounts()) {
             total = total.add(acc.getFinal_balance());
         }
         return formatBitcoinBalanceToString(total);
@@ -72,5 +126,22 @@ class BitcoinUtils {
                 (qrString.startsWith("1")) &&
                 (!qrString.contains("0")) && (!qrString.contains("O")) &&
                 (!qrString.contains("I")) && (!qrString.contains("l"));
+    }
+
+    public boolean addAddressesFromPrefs(SharedPreferences sharedPref, String key) {
+        String defaultAddress = "";
+        List<String> addresses = BitcoinUtils
+                .createAddressList(
+                        sharedPref.getString(
+                                key, defaultAddress));
+
+        // Empty
+        if (addresses.get(0).length() < 2) {
+            addresses.clear();
+            return false;
+        }
+
+        setAddresses(addresses);
+        return true;
     }
 }
