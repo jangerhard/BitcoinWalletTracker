@@ -12,25 +12,18 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.util.List;
-
-/**
- * Created by jangerhard on 04-Oct-17.
- */
-
 public class AccountAdapter extends RecyclerView.Adapter<AccountAdapter.MyViewHolder> {
 
     private Context mContext;
-    private List<BitcoinAccount> accountsList;
     private int selectedAccountTag;
     private BitcoinUtils utils;
 
-    public class MyViewHolder extends RecyclerView.ViewHolder {
+    class MyViewHolder extends RecyclerView.ViewHolder {
 
-        public TextView accName, accAddress, accBalance;
+        TextView accName, accAddress, accBalance;
         private ImageView overflow, qrCode;
 
-        public MyViewHolder(View view) {
+        MyViewHolder(View view) {
             super(view);
             accName = (TextView) view.findViewById(R.id.accountName);
             accAddress = (TextView) view.findViewById(R.id.accountAddress);
@@ -39,9 +32,8 @@ public class AccountAdapter extends RecyclerView.Adapter<AccountAdapter.MyViewHo
         }
     }
 
-    public AccountAdapter(Context mContext, List<BitcoinAccount> accountList, BitcoinUtils utils) {
+    AccountAdapter(Context mContext, BitcoinUtils utils) {
         this.mContext = mContext;
-        this.accountsList = accountList;
         this.utils = utils;
     }
 
@@ -54,9 +46,9 @@ public class AccountAdapter extends RecyclerView.Adapter<AccountAdapter.MyViewHo
     }
 
     @Override
-    public void onBindViewHolder(final MyViewHolder holder, final int position) {
-        BitcoinAccount account = accountsList.get(position);
-        holder.accName.setText(account.getNickName());
+    public void onBindViewHolder(final MyViewHolder holder, int position) {
+        BitcoinAccount account = utils.getAccounts().get(position);
+        holder.accName.setText(utils.getNickname(account.getAddress()));
         holder.accBalance.setText(
                 BitcoinUtils.formatBitcoinBalanceToString(
                         account.getFinal_balance())
@@ -66,7 +58,7 @@ public class AccountAdapter extends RecyclerView.Adapter<AccountAdapter.MyViewHo
         holder.overflow.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                showPopupMenu(holder.overflow, position);
+                showPopupMenu(holder.overflow, holder.getAdapterPosition());
             }
         });
     }
@@ -96,14 +88,15 @@ public class AccountAdapter extends RecyclerView.Adapter<AccountAdapter.MyViewHo
         public boolean onMenuItemClick(MenuItem menuItem) {
             switch (menuItem.getItemId()) {
                 case R.id.action_change_nickname:
-                    utils.setNewNickname(selectedAccountTag, "NewNickname");
+                    utils.setNewNickname(selectedAccountTag, "Nick" + Math.random());
                     notifyDataSetChanged();
                     return true;
                 case R.id.action_remove_account:
                     Toast.makeText(mContext,
-                            "Removed account " + accountsList.get(selectedAccountTag).getAddress(),
+                            "Removed account " +
+                                    utils.getAccounts().get(selectedAccountTag).getNickname(),
                             Toast.LENGTH_SHORT).show();
-                    utils.getAccounts().remove(selectedAccountTag);
+                    utils.removeAccount(selectedAccountTag);
                     notifyDataSetChanged();
                     return true;
                 default:
@@ -114,6 +107,6 @@ public class AccountAdapter extends RecyclerView.Adapter<AccountAdapter.MyViewHo
 
     @Override
     public int getItemCount() {
-        return accountsList.size();
+        return utils.getNumberOfAccounts();
     }
 }

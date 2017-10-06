@@ -15,10 +15,14 @@ class BitcoinUtils {
     private List<BitcoinAccount> accountList;
     private List<String> addresses;
     private SharedPreferences sharedPref;
+    private String prefsAccountsKey;
 
-    public BitcoinUtils() {
+    BitcoinUtils(SharedPreferences sharedPref, String key) {
         accountList = new ArrayList<>();
         addresses = new ArrayList<>();
+        this.sharedPref = sharedPref;
+        prefsAccountsKey = key;
+        addAddressesFromPrefs();
     }
 
     List<BitcoinAccount> getAccounts() {
@@ -29,60 +33,55 @@ class BitcoinUtils {
         return addresses;
     }
 
+    String getNickname(String address) {
+        return sharedPref.getString(address, "Wallet");
+    }
+
+    void setNewNickname(int selectedAccount, String newNickname) {
+
+        accountList.get(selectedAccount).setNickname(newNickname);
+        saveNicknameToPrefs(accountList.get(
+                selectedAccount).getAddress(), newNickname);
+
+    }
+
     void updateAccount(BitcoinAccount refreshedAccount) {
-        accountList.set(addresses.indexOf(refreshedAccount.getAddress()), refreshedAccount);
+
+        if (accountAlreadyExists(refreshedAccount))
+            accountList.set(addresses.indexOf(refreshedAccount.getAddress()), refreshedAccount);
+        else
+            accountList.add(refreshedAccount);
     }
 
-    void setPending(String address) {
-        accountList.get(addresses.indexOf(address)).setNickName("Pending ...");
-    }
-
-    void setAddresses(List<String> addresses) {
-        this.addresses = addresses;
-    }
-
-    void setNewNickname(int selectedAccountTag, String name) {
-        accountList.get(selectedAccountTag).setNickName(name);
-        saveNickname(accountList.get(selectedAccountTag).getAddress(), name);
-    }
-
-    private void saveNickname(String address, String name) {
-        sharedPref.edit().putString(address, name).apply();
+    void removeAccount(int selectedAccountTag) {
+        deleteNicknameFromPrefs(accountList.get(selectedAccountTag).getAddress());
+        accountList.remove(selectedAccountTag);
+        addresses.remove(selectedAccountTag);
     }
 
     void addAddress(String address) {
         addresses.add(address);
+        saveAddressesToPrefs();
     }
 
-    void addAccount(BitcoinAccount account) {
-        accountList.add(account);
+    int getNumberOfAccounts() {
+        return accountList.size();
     }
 
-    void addAccount(int location, BitcoinAccount account) {
-        accountList.add(location, account);
-    }
+    private boolean accountAlreadyExists(BitcoinAccount refreshedAccount) {
 
-    void removeAccount(int number) {
-        accountList.remove(number);
-    }
+        for (BitcoinAccount acc : accountList)
+            if (acc.getAddress().equals(refreshedAccount.getAddress()))
+                return true;
 
-    void removeAddress(String address) {
-        addresses.remove(address);
-    }
-
-    boolean noAddresses() {
-        return addresses.isEmpty();
-    }
-
-    void clearAccounts() {
-        accountList.clear();
-    }
-
-    int numAddresses() {
-        return addresses.size();
+        return false;
     }
 
     String totalBalance() {
+
+        if (accountList.isEmpty())
+            return "0 mBTC";
+
         BigInteger total = new BigInteger("0");
 
         for (BitcoinAccount acc : this.getAccounts()) {
@@ -111,17 +110,6 @@ class BitcoinUtils {
                 3,
                 BigDecimal.ROUND_HALF_UP)
                 .toEngineeringString() + " " + endTag;
-
-    }
-
-    private void createAccountsList(SharedPreferences sharedPref) {
-
-        for (String address : addresses) {
-            BitcoinAccount b = new BitcoinAccount();
-            b.setAddress(address);
-            b.setNickName(sharedPref.getString(address, "Paper Wallet"));
-            accountList.add(b);
-        }
 
     }
 
@@ -155,44 +143,37 @@ class BitcoinUtils {
 
     }
 
-    boolean addAddressesFromPrefs(SharedPreferences sharedPref, String key) {
-        this.sharedPref = sharedPref;
-        String defaultAddress = "";
-        List<String> addresses = BitcoinUtils
-                .createAddressListFromPrefs(
-                        sharedPref.getString(
-                                key, defaultAddress));
-
-        // Empty
-        if (addresses.get(0).length() < 2) {
-            addresses.clear();
-            return false;
-        }
-
-        setAddresses(addresses);
-        createAccountsList(sharedPref);
-        return true;
+    private void deleteNicknameFromPrefs(String address) {
+        sharedPref.edit().remove(address).apply();
     }
 
-    static String createAddressStringToPrefs(List<String> addresses) {
-        StringBuilder csvList = new StringBuilder();
+    private void saveNicknameToPrefs(String address, String name) {
+        sharedPref.edit().putString(address, name).apply();
+    }
+
+    private void addAddressesFromPrefs() {
+
+        String savedString = sharedPref.getString(prefsAccountsKey, "");
+
+        if (savedString.length() != 0) {
+            String[] items = new String[1];
+
+            if (savedString.contains(","))
+                items = savedString.split(",");
+            else
+                items[0] = savedString;
+
+            Collections.addAll(addresses, items);
+        }
+
+    }
+
+    private void saveAddressesToPrefs() {
+        StringBuilder addressString = new StringBuilder();
         for (String s : addresses) {
-            csvList.append(s);
-            csvList.append(",");
+            addressString.append(s);
+            addressString.append(",");
         }
-        return csvList.toString();
-    }
-
-    private static List<String> createAddressListFromPrefs(String addresses) {
-        String[] items = new String[1];
-
-        if (addresses.contains(","))
-            items = addresses.split(",");
-        else
-            items[0] = addresses;
-
-        List<String> list = new ArrayList<>();
-        Collections.addAll(list, items);
-        return list;
+        sharedPref.edit().putString(prefsAccountsKey, addressString.toString()).apply();
     }
 }

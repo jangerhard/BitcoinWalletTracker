@@ -2,11 +2,7 @@ package com.example.jangerhard.BitcoinWalletTracker;
 
 import java.math.BigInteger;
 
-/**
- * Created by jangerhard on 03-Oct-17.
- */
-
-public class BitcoinAccount {
+class BitcoinAccount {
 
     private String hash160;
     private String address;
@@ -16,78 +12,74 @@ public class BitcoinAccount {
     private BigInteger total_sent;
     private BigInteger final_balance;
 
-    private String nickName = "";
+    private String nickname = "Wallet";
 
-    public String getHash160() {
+    String getNickname() {
+        return nickname;
+    }
+
+    void setNickname(String nickname) {
+        this.nickname = nickname;
+    }
+
+    String getHash160() {
         return hash160;
     }
 
-    public void setHash160(String hash160) {
+    void setHash160(String hash160) {
         this.hash160 = hash160;
     }
 
-    public String getAddress() {
+    String getAddress() {
         return address;
     }
 
-    public void setAddress(String address) {
+    void setAddress(String address) {
         this.address = address;
-        setNickName(address);
     }
 
-    public BigInteger getN_tx() {
+    BigInteger getN_tx() {
         return n_tx;
     }
 
-    public void setN_tx(BigInteger n_tx) {
+    void setN_tx(BigInteger n_tx) {
         this.n_tx = n_tx;
     }
 
-    public BigInteger getN_unredeemed() {
+    BigInteger getN_unredeemed() {
         return n_unredeemed;
     }
 
-    public void setN_unredeemed(BigInteger n_unredeemed) {
+    void setN_unredeemed(BigInteger n_unredeemed) {
         this.n_unredeemed = n_unredeemed;
     }
 
-    public BigInteger getTotal_received() {
+    BigInteger getTotal_received() {
         return total_received;
     }
 
-    public void setTotal_received(BigInteger total_received) {
+    void setTotal_received(BigInteger total_received) {
         this.total_received = total_received;
     }
 
-    public BigInteger getTotal_sent() {
+    BigInteger getTotal_sent() {
         return total_sent;
     }
 
-    public void setTotal_sent(BigInteger total_sent) {
+    void setTotal_sent(BigInteger total_sent) {
         this.total_sent = total_sent;
     }
 
-    public BigInteger getFinal_balance() {
+    BigInteger getFinal_balance() {
         return final_balance;
     }
 
-    public void setFinal_balance(BigInteger final_balance) {
+    void setFinal_balance(BigInteger final_balance) {
         this.final_balance = final_balance;
-    }
-
-    public void setNickName(String name) {
-        nickName = name;
-    }
-
-    public String getNickName() {
-        if (nickName.length() == 0)
-            return "Paper Wallet";
-
-        return nickName;
     }
 
     @Override
     public String toString() {
-        return getNickName() + " has a balance of " + getFinal_balance() + "btc.";
+        return nickname + " has a balance of " + getFinal_balance() + "btc.";
     }
 }

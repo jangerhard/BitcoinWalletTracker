@@ -62,9 +62,9 @@ public class MainActivity extends AppCompatActivity {
         tvTotalBalance = (TextView) findViewById(R.id.totalBalance);
         SharedPreferences sharedPref = mActivity.getPreferences(Context.MODE_PRIVATE);
 
-        utils = new BitcoinUtils();
-        prepareAccounts(sharedPref);
-        adapter = new AccountAdapter(this, utils.getAccounts(), utils);
+        utils = new BitcoinUtils(sharedPref, getString(R.string.bitcoinaddresses));
+
+        adapter = new AccountAdapter(this, utils);
         adapter.notifyDataSetChanged();
 
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(this);
@@ -93,28 +93,7 @@ public class MainActivity extends AppCompatActivity {
         refreshData();
     }
 
-    private void addBitcoinAddress(String address) {
-        utils.addAddress(address);
-        refreshData();
-    }
-
-    private void prepareAccounts(SharedPreferences sharedPref) {
-
-        if (!utils.addAddressesFromPrefs(sharedPref, getString(R.string.bitcoinaddresses))) {
-            tvTotalBalance.setText("No accounts.");
-        }
-
-//        addresses.add("1FfmbHfnpaZjKFvyi1okTjJJusN455paPH");
-//        addresses.add("1AJbsFZ64EpEfS5UAjAfcUG8pH8Jn3rn1F");
-//        addresses.add("1A8JiWcwvpY7tAopUkSnGuEYHmzGYfZPiq");
-//
-//        saveData();
-    }
-
     private void refreshData() {
-
-        if (utils.noAddresses())
-            return;
 
         Dexter.withActivity(mActivity)
                 .withPermission(Manifest.permission.INTERNET)
@@ -142,9 +121,9 @@ public class MainActivity extends AppCompatActivity {
 
     private void getWalletInfo(List<String> addresses) {
 
-        for (String address : addresses) {
+        adapter.setPending();
 
-            utils.setPending(address);
+        for (String address : addresses) {
 
             // Request a string response from the provided URL.
             JsonObjectRequest jsObjRequest = new JsonObjectRequest
@@ -178,31 +157,24 @@ public class MainActivity extends AppCompatActivity {
     private void handleRefreshedAccount(BitcoinAccount acc) {
 
         utils.updateAccount(acc);
-
         adapter.notifyDataSetChanged();
-//        tvTotalBalance.setText(String.format("Total balance: %s", utils.totalBalance()));
+        tvTotalBalance.setText(String.format("Total balance: %s", utils.totalBalance()));
 
     }
 
-    public RequestQueue getVolleyRequestQueue() {
-        if (mRequestQueue == null) {
-            mRequestQueue = Volley.newRequestQueue(this);
-        }
+    private void addBarcode(Barcode barcode) {
 
-        return mRequestQueue;
-    }
+        Log.i(LOG_TAG, "Address: " + barcode.displayValue);
 
-    private void saveData() {
-        SharedPreferences sharedPref = mActivity.getPreferences(Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedPref.edit();
-        editor.putString(getString(R.string.bitcoinaddresses),
-                BitcoinUtils.createAddressStringToPrefs(utils.getAddresses()));
-        editor.apply();
+        if (BitcoinUtils.verifyAddress(barcode.displayValue)) {
+            showBitcoinAddressDialog(barcode.displayValue);
+        } else
+            Toast.makeText(getBaseContext(), "That is not a bitcoin address!", Toast.LENGTH_SHORT).show();
     }
 
     private void showBitcoinAddressDialog(final String address) {
         AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-        builder.setTitle("New address added!");
+        builder.setTitle("New address scanned!");
         builder.setMessage("Is this the correct address? \n\n" + address);
 
         String positiveText = getString(android.R.string.ok);
@@ -210,7 +182,8 @@ public class MainActivity extends AppCompatActivity {
                 new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        addBitcoinAddress(address);
+                        utils.addAddress(address);
+                        refreshData();
                     }
                 });
 
@@ -241,13 +214,11 @@ public class MainActivity extends AppCompatActivity {
         } else super.onActivityResult(requestCode, resultCode, data);
     }
 
-    private void addBarcode(Barcode barcode) {
+    public RequestQueue getVolleyRequestQueue() {
+        if (mRequestQueue == null) {
+            mRequestQueue = Volley.newRequestQueue(this);
+        }
 
-        Log.i(LOG_TAG, "Address: " + barcode.displayValue);
-
-        if (BitcoinUtils.verifyAddress(barcode.displayValue)) {
-            showBitcoinAddressDialog(barcode.displayValue);
-        } else
-            Toast.makeText(getBaseContext(), "That is not a bitcoin address!", Toast.LENGTH_SHORT).show();
+        return mRequestQueue;
     }
 }
