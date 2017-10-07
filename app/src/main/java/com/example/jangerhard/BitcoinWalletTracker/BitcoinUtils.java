@@ -57,6 +57,7 @@ class BitcoinUtils {
     void removeAccount(String selectedAccountTag) {
 
         deleteNicknameFromPrefs(selectedAccountTag);
+        saveAddressesToPrefs();
         accountList.remove(getAccountIndex(selectedAccountTag));
         addresses.remove(selectedAccountTag);
     }
