@@ -15,7 +15,7 @@ import android.widget.Toast;
 public class AccountAdapter extends RecyclerView.Adapter<AccountAdapter.MyViewHolder> {
 
     private Context mContext;
-    private int selectedAccountTag;
+    private String selectedAccountAddress;
     private BitcoinUtils utils;
 
     class MyViewHolder extends RecyclerView.ViewHolder {
@@ -58,7 +58,7 @@ public class AccountAdapter extends RecyclerView.Adapter<AccountAdapter.MyViewHo
         holder.overflow.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                showPopupMenu(holder.overflow, holder.getAdapterPosition());
+                showPopupMenu(holder.overflow, String.valueOf(holder.accAddress.getText()));
             }
         });
     }
@@ -66,9 +66,9 @@ public class AccountAdapter extends RecyclerView.Adapter<AccountAdapter.MyViewHo
     /**
      * Showing popup menu when tapping on 3 dots
      */
-    private void showPopupMenu(View view, int position) {
+    private void showPopupMenu(View view, String address) {
         // inflate menu
-        selectedAccountTag = position;
+        selectedAccountAddress = address;
         PopupMenu popup = new PopupMenu(mContext, view);
         MenuInflater inflater = popup.getMenuInflater();
         inflater.inflate(R.menu.menu_account, popup.getMenu());
@@ -88,15 +88,14 @@ public class AccountAdapter extends RecyclerView.Adapter<AccountAdapter.MyViewHo
         public boolean onMenuItemClick(MenuItem menuItem) {
             switch (menuItem.getItemId()) {
                 case R.id.action_change_nickname:
-                    utils.setNewNickname(selectedAccountTag, "Nick" + Math.random());
+                    utils.setNewNickname(selectedAccountAddress, "Nick" + Math.random());
                     notifyDataSetChanged();
                     return true;
                 case R.id.action_remove_account:
                     Toast.makeText(mContext,
-                            "Removed account " +
-                                    utils.getAccounts().get(selectedAccountTag).getNickname(),
+                            "Removed account " + selectedAccountAddress,
                             Toast.LENGTH_SHORT).show();
-                    utils.removeAccount(selectedAccountTag);
+                    utils.removeAccount(selectedAccountAddress);
                     notifyDataSetChanged();
                     return true;
                 default:

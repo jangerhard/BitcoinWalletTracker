@@ -37,17 +37,16 @@ class BitcoinUtils {
         return sharedPref.getString(address, "Wallet");
     }
 
-    void setNewNickname(int selectedAccount, String newNickname) {
+    void setNewNickname(String selectedAccount, String newNickname) {
 
-        accountList.get(selectedAccount).setNickname(newNickname);
-        saveNicknameToPrefs(accountList.get(
-                selectedAccount).getAddress(), newNickname);
+        accountList.get(getAccountIndex(selectedAccount)).setNickname(newNickname);
+        saveNicknameToPrefs(selectedAccount, newNickname);
 
     }
 
     void updateAccount(BitcoinAccount refreshedAccount) {
 
-        int index = accountAlreadyExists(refreshedAccount);
+        int index = getAccountIndex(refreshedAccount.getAddress());
 
         if (index != -1)
             accountList.set(index, refreshedAccount);
@@ -55,9 +54,10 @@ class BitcoinUtils {
             accountList.add(refreshedAccount);
     }
 
-    void removeAccount(int selectedAccountTag) {
-        deleteNicknameFromPrefs(accountList.get(selectedAccountTag).getAddress());
-        accountList.remove(selectedAccountTag);
+    void removeAccount(String selectedAccountTag) {
+
+        deleteNicknameFromPrefs(selectedAccountTag);
+        accountList.remove(getAccountIndex(selectedAccountTag));
         addresses.remove(selectedAccountTag);
     }
 
@@ -73,13 +73,13 @@ class BitcoinUtils {
     }
 
     /**
-     * @param refreshedAccount
-     * @returns -1 if account does not exist, or index of account if it exists.
+     * @param accAddress Address of the account which index is needed.
+     * @return -1 if account does not exist, or index of account if it exists.
      */
-    private int accountAlreadyExists(BitcoinAccount refreshedAccount) {
+    private int getAccountIndex(String accAddress) {
 
         for (BitcoinAccount acc : accountList)
-            if (acc.getAddress().equals(refreshedAccount.getAddress()))
+            if (acc.getAddress().equals(accAddress))
                 return accountList.indexOf(acc);
 
         return -1;
