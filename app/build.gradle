@@ -32,7 +32,6 @@ dependencies {
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
 
     compile 'com.android.volley:volley:1.0.0' // Used for HTTP requests
-    compile 'com.karumi:dexter:4.1.0' // Used for permissions handling
     compile 'com.google.code.gson:gson:2.8.2' // Used to serialize JSON
     compile 'com.google.android.gms:play-services-vision:11.4.2' // Used for QR scanning
 

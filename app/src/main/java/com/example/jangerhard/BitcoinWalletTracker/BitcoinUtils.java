@@ -47,7 +47,7 @@ class BitcoinUtils {
 
     void updateAccount(BitcoinAccount refreshedAccount) {
 
-        if (accountAlreadyExists(refreshedAccount))
+        if (accountAlreadyExists(refreshedAccount) && accountList.size() == addresses.size())
             accountList.set(addresses.indexOf(refreshedAccount.getAddress()), refreshedAccount);
         else
             accountList.add(refreshedAccount);
@@ -60,8 +60,10 @@ class BitcoinUtils {
     }
 
     void addAddress(String address) {
-        addresses.add(address);
-        saveAddressesToPrefs();
+        if (!addresses.contains(address)) {
+            addresses.add(address);
+            saveAddressesToPrefs();
+        }
     }
 
     int getNumberOfAccounts() {

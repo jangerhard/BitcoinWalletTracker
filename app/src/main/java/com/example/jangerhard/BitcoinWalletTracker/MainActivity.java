@@ -1,6 +1,5 @@
 package com.example.jangerhard.BitcoinWalletTracker;
 
-import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -28,17 +27,10 @@ import com.example.jangerhard.BitcoinWalletTracker.qrStuff.barcode.BarcodeCaptur
 import com.google.android.gms.common.api.CommonStatusCodes;
 import com.google.android.gms.vision.barcode.Barcode;
 import com.google.gson.Gson;
-import com.karumi.dexter.Dexter;
-import com.karumi.dexter.PermissionToken;
-import com.karumi.dexter.listener.PermissionDeniedResponse;
-import com.karumi.dexter.listener.PermissionGrantedResponse;
-import com.karumi.dexter.listener.PermissionRequest;
-import com.karumi.dexter.listener.single.PermissionListener;
 
 import org.json.JSONObject;
 
 import java.util.List;
-
 
 public class MainActivity extends AppCompatActivity {
 
@@ -60,6 +52,7 @@ public class MainActivity extends AppCompatActivity {
         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
 
         tvTotalBalance = (TextView) findViewById(R.id.totalBalance);
+
         SharedPreferences sharedPref = mActivity.getPreferences(Context.MODE_PRIVATE);
 
         utils = new BitcoinUtils(sharedPref, getString(R.string.bitcoinaddresses));
@@ -93,35 +86,23 @@ public class MainActivity extends AppCompatActivity {
         refreshData();
     }
 
+    private void updateUI() {
+        tvTotalBalance.setText(String.format("Total balance: %s", utils.totalBalance()));
+    }
+
     private void refreshData() {
 
-        Dexter.withActivity(mActivity)
-                .withPermission(Manifest.permission.INTERNET)
-                .withListener(new PermissionListener() {
-                    @Override
-                    public void onPermissionGranted(PermissionGrantedResponse response) {
-                        getWalletInfo(utils.getAddresses());
-                    }
+        if (utils.getAddresses().isEmpty()) {
+            Toast.makeText(getBaseContext(), "No accounts yet!", Toast.LENGTH_SHORT).show();
+            return;
+        }
 
-                    @Override
-                    public void onPermissionDenied(PermissionDeniedResponse response) {
-                        Toast.makeText(
-                                getBaseContext(),
-                                "You need to activate Internet permission!",
-                                Toast.LENGTH_SHORT).show();
-                    }
-
-                    @Override
-                    public void onPermissionRationaleShouldBeShown(PermissionRequest permission, PermissionToken token) {
-                        token.continuePermissionRequest();
-                    }
-                }).check();
-
+        getWalletInfo(utils.getAddresses());
     }
 
     private void getWalletInfo(List<String> addresses) {
 
-        adapter.setPending();
+//        adapter.setPending();
 
         for (String address : addresses) {
 
@@ -158,8 +139,7 @@ public class MainActivity extends AppCompatActivity {
 
         utils.updateAccount(acc);
         adapter.notifyDataSetChanged();
-        tvTotalBalance.setText(String.format("Total balance: %s", utils.totalBalance()));
-
+        updateUI();
     }
 
     private void addBarcode(Barcode barcode) {
