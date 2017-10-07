@@ -69,6 +69,10 @@ class BitcoinUtils {
         }
     }
 
+    boolean hasAddress(String displayValue) {
+        return addresses.contains(displayValue);
+    }
+
     int getNumberOfAccounts() {
         return accountList.size();
     }

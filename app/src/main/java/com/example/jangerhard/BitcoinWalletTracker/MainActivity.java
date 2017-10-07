@@ -168,7 +168,9 @@ public class MainActivity extends AppCompatActivity {
 
         Log.i(LOG_TAG, "Address: " + barcode.displayValue);
 
-        if (BitcoinUtils.verifyAddress(barcode.displayValue)) {
+        if (utils.hasAddress(barcode.displayValue)) {
+            Toast.makeText(getBaseContext(), "That address is already added!", Toast.LENGTH_SHORT).show();
+        } else if (BitcoinUtils.verifyAddress(barcode.displayValue)) {
             showBitcoinAddressDialog(barcode.displayValue);
         } else
             Toast.makeText(getBaseContext(), "That is not a bitcoin address!", Toast.LENGTH_SHORT).show();
