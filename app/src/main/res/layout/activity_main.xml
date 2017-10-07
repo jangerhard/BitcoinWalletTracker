@@ -50,7 +50,8 @@
     <com.baoyz.widget.PullRefreshLayout
         android:id="@+id/allAccountsView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        app:refreshColor="@color/colorPrimary">
 
 
         <android.support.v7.widget.RecyclerView
