@@ -23,6 +23,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
+import com.baoyz.widget.PullRefreshLayout;
 import com.example.jangerhard.BitcoinWalletTracker.qrStuff.barcode.BarcodeCaptureActivity;
 import com.google.android.gms.common.api.CommonStatusCodes;
 import com.google.android.gms.vision.barcode.Barcode;
@@ -42,6 +43,9 @@ public class MainActivity extends AppCompatActivity {
     AccountAdapter adapter;
     TextView tvTotalBalance;
     BitcoinUtils utils;
+    PullRefreshLayout allAccountsView;
+
+    private int numRefreshed;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,9 +53,20 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         mActivity = this;
 
-        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
+        final RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
 
         tvTotalBalance = (TextView) findViewById(R.id.totalBalance);
+
+        // listen refresh event
+        allAccountsView = (PullRefreshLayout) findViewById(R.id.allAccountsView);
+        allAccountsView.setRefreshStyle(PullRefreshLayout.STYLE_SMARTISAN);
+        allAccountsView.setOnRefreshListener(new PullRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                // start refresh
+                refreshData();
+            }
+        });
 
         SharedPreferences sharedPref = mActivity.getPreferences(Context.MODE_PRIVATE);
 
@@ -87,6 +102,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void updateUI() {
+
+        allAccountsView.setRefreshing(false);
         tvTotalBalance.setText(String.format("Total balance: %s", utils.totalBalance()));
     }
 
@@ -96,7 +113,7 @@ public class MainActivity extends AppCompatActivity {
             Toast.makeText(getBaseContext(), "No accounts yet!", Toast.LENGTH_SHORT).show();
             return;
         }
-
+        numRefreshed = 0;
         getWalletInfo(utils.getAddresses());
     }
 
@@ -137,9 +154,13 @@ public class MainActivity extends AppCompatActivity {
 
     private void handleRefreshedAccount(BitcoinAccount acc) {
 
+        numRefreshed++;
         utils.updateAccount(acc);
         adapter.notifyDataSetChanged();
-        updateUI();
+
+        if (numRefreshed == utils.getNumberOfAccounts())
+            updateUI();
+
     }
 
     private void addBarcode(Barcode barcode) {
