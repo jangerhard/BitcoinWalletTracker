@@ -47,8 +47,10 @@ class BitcoinUtils {
 
     void updateAccount(BitcoinAccount refreshedAccount) {
 
-        if (accountAlreadyExists(refreshedAccount) && accountList.size() == addresses.size())
-            accountList.set(addresses.indexOf(refreshedAccount.getAddress()), refreshedAccount);
+        int index = accountAlreadyExists(refreshedAccount);
+
+        if (index != -1)
+            accountList.set(index, refreshedAccount);
         else
             accountList.add(refreshedAccount);
     }
@@ -70,13 +72,17 @@ class BitcoinUtils {
         return accountList.size();
     }
 
-    private boolean accountAlreadyExists(BitcoinAccount refreshedAccount) {
+    /**
+     * @param refreshedAccount
+     * @returns -1 if account does not exist, or index of account if it exists.
+     */
+    private int accountAlreadyExists(BitcoinAccount refreshedAccount) {
 
         for (BitcoinAccount acc : accountList)
             if (acc.getAddress().equals(refreshedAccount.getAddress()))
-                return true;
+                return accountList.indexOf(acc);
 
-        return false;
+        return -1;
     }
 
     String totalBalance() {

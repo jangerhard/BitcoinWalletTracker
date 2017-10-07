@@ -110,6 +110,7 @@ public class MainActivity extends AppCompatActivity {
     private void refreshData() {
 
         if (utils.getAddresses().isEmpty()) {
+            allAccountsView.setRefreshing(false);
             Toast.makeText(getBaseContext(), "No accounts yet!", Toast.LENGTH_SHORT).show();
             return;
         }
