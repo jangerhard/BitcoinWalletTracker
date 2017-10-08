@@ -17,9 +17,14 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.NetworkError;
+import com.android.volley.NoConnectionError;
+import com.android.volley.ParseError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
+import com.android.volley.ServerError;
+import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
@@ -124,10 +129,10 @@ public class MainActivity extends AppCompatActivity {
 
         for (String address : addresses) {
 
-            // Request a string response from the provided URL.
+            // Request a response from the provided URL.
             JsonObjectRequest jsObjRequest = new JsonObjectRequest
                     (Request.Method.GET,
-                            url + "rawaddr/" + address,
+                            url + "rawaddr/" + address + "?limit=5",
                             null, new Response.Listener<JSONObject>() {
 
                         @Override
@@ -138,10 +143,24 @@ public class MainActivity extends AppCompatActivity {
 
                         @Override
                         public void onErrorResponse(VolleyError error) {
-                            Log.e("MainActivity", error.toString());
+
+                            String message = "Something went wrong!";
+
+                            if (error instanceof TimeoutError || error instanceof NoConnectionError) {
+                                message = "No internet connection.";
+                            } else if (error instanceof ServerError) {
+                                message = "Error on the server.";
+                            } else if (error instanceof NetworkError) {
+                                message = "There's a problem with the network.";
+                            } else if (error instanceof ParseError) {
+                                message = "There was an error handling the data.";
+                            }
+
+                            Log.e(LOG_TAG, message);
                             Toast.makeText(getBaseContext(),
-                                    "That didn't work!",
+                                    message,
                                     Toast.LENGTH_SHORT).show();
+                            allAccountsView.setRefreshing(false);
                         }
                     });
 
