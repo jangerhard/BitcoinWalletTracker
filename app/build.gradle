@@ -35,6 +35,7 @@ dependencies {
     compile 'com.google.code.gson:gson:2.8.2'                    // Used to serialize JSON
     compile 'com.google.android.gms:play-services-vision:11.4.2' // Used for QR scanning
     compile 'com.baoyz.pullrefreshlayout:library:1.2.0'          // Pull to refresh library
+    compile 'com.chauthai.overscroll:overscroll-bouncy:0.1.1'    // Scroll view bounce
 
     testCompile 'junit:junit:4.12'
 }

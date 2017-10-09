@@ -22,8 +22,8 @@
         <LinearLayout
             android:id="@+id/totalOverview"
             android:layout_width="match_parent"
-            android:layout_gravity="center_horizontal"
             android:layout_height="match_parent"
+            android:layout_gravity="center_horizontal"
             android:orientation="vertical">
 
             <Button
@@ -51,14 +51,17 @@
         android:id="@+id/allAccountsView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:refreshColor="@color/colorPrimary">
+        app:refreshColor="@color/colorPrimary"
+        android:layout_weight="1"
+        app:refreshType="smartisan">
 
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/recycler_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:clipToPadding="false"
+            android:clipToPadding="true"
+            android:fadeScrollbars="true"
             android:scrollbars="vertical" />
 
     </com.baoyz.widget.PullRefreshLayout>

@@ -64,7 +64,6 @@ public class MainActivity extends AppCompatActivity {
 
         // listen refresh event
         allAccountsView = (PullRefreshLayout) findViewById(R.id.allAccountsView);
-        allAccountsView.setRefreshStyle(PullRefreshLayout.STYLE_SMARTISAN);
         allAccountsView.setOnRefreshListener(new PullRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
@@ -80,7 +79,8 @@ public class MainActivity extends AppCompatActivity {
         adapter = new AccountAdapter(this, utils);
         adapter.notifyDataSetChanged();
 
-        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(this);
+        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(this,
+                LinearLayoutManager.VERTICAL, false);
         recyclerView.setLayoutManager(mLayoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(adapter);
