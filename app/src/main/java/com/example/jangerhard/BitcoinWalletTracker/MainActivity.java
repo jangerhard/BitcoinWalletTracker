@@ -8,7 +8,6 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -37,6 +36,8 @@ import com.google.gson.Gson;
 import org.json.JSONObject;
 
 import java.util.List;
+
+import jp.wasabeef.recyclerview.animators.LandingAnimator;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -82,7 +83,7 @@ public class MainActivity extends AppCompatActivity {
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(this,
                 LinearLayoutManager.VERTICAL, false);
         recyclerView.setLayoutManager(mLayoutManager);
-        recyclerView.setItemAnimator(new DefaultItemAnimator());
+        recyclerView.setItemAnimator(new LandingAnimator());
         recyclerView.setAdapter(adapter);
 
         Button bAddAccount = (Button) findViewById(R.id.bAddAccount);
@@ -167,16 +168,13 @@ public class MainActivity extends AppCompatActivity {
             // Add the request to the RequestQueue.
             getVolleyRequestQueue().add(jsObjRequest);
         }
-
-        adapter.notifyDataSetChanged();
-
     }
 
     private void handleRefreshedAccount(BitcoinAccount acc) {
 
         numRefreshed++;
-        utils.updateAccount(acc);
-        adapter.notifyDataSetChanged();
+        int index = utils.updateAccount(acc);
+        adapter.notifyItemChanged(index);
 
         if (numRefreshed == utils.getNumberOfAccounts())
             updateUI();

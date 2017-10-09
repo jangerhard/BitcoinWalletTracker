@@ -15,6 +15,7 @@ import android.widget.Toast;
 public class AccountAdapter extends RecyclerView.Adapter<AccountAdapter.MyViewHolder> {
 
     private Context mContext;
+    private int selectedAccountPosition;
     private String selectedAccountAddress;
     private BitcoinUtils utils;
 
@@ -58,7 +59,8 @@ public class AccountAdapter extends RecyclerView.Adapter<AccountAdapter.MyViewHo
         holder.overflow.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                showPopupMenu(holder.overflow, String.valueOf(holder.accAddress.getText()));
+                showPopupMenu(holder.overflow,
+                        String.valueOf(holder.accAddress.getText()), holder.getAdapterPosition());
             }
         });
     }
@@ -66,9 +68,10 @@ public class AccountAdapter extends RecyclerView.Adapter<AccountAdapter.MyViewHo
     /**
      * Showing popup menu when tapping on 3 dots
      */
-    private void showPopupMenu(View view, String address) {
+    private void showPopupMenu(View view, String address, int position) {
         // inflate menu
         selectedAccountAddress = address;
+        selectedAccountPosition = position;
         PopupMenu popup = new PopupMenu(mContext, view);
         MenuInflater inflater = popup.getMenuInflater();
         inflater.inflate(R.menu.menu_account, popup.getMenu());
@@ -89,14 +92,14 @@ public class AccountAdapter extends RecyclerView.Adapter<AccountAdapter.MyViewHo
             switch (menuItem.getItemId()) {
                 case R.id.action_change_nickname:
                     utils.setNewNickname(selectedAccountAddress, "Nick" + Math.random());
-                    notifyDataSetChanged();
+                    notifyItemChanged(selectedAccountPosition);
                     return true;
                 case R.id.action_remove_account:
                     Toast.makeText(mContext,
                             "Removed account " + selectedAccountAddress,
                             Toast.LENGTH_SHORT).show();
                     utils.removeAccount(selectedAccountAddress);
-                    notifyDataSetChanged();
+                    notifyItemRemoved(selectedAccountPosition);
                     return true;
                 default:
             }

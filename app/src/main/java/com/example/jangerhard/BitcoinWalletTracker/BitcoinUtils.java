@@ -44,14 +44,21 @@ class BitcoinUtils {
 
     }
 
-    void updateAccount(BitcoinAccount refreshedAccount) {
+    /**
+     * @param refreshedAccount A BitcoinAccount that is being refreshed
+     * @return Given an account to update returns the index where it is updated
+     */
+    int updateAccount(BitcoinAccount refreshedAccount) {
 
         int index = getAccountIndex(refreshedAccount.getAddress());
 
-        if (index != -1)
+        if (index != -1) {
             accountList.set(index, refreshedAccount);
-        else
-            accountList.add(refreshedAccount);
+        } else {
+            index = 0;
+            accountList.add(index, refreshedAccount);
+        }
+        return index;
     }
 
     void removeAccount(String selectedAccountTag) {
