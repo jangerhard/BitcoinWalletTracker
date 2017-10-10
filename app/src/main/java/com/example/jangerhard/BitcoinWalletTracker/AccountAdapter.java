@@ -1,8 +1,7 @@
 package com.example.jangerhard.BitcoinWalletTracker;
 
 import android.content.Context;
-import android.content.DialogInterface;
-import android.support.v7.app.AlertDialog;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -13,6 +12,9 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.afollestad.materialdialogs.DialogAction;
+import com.afollestad.materialdialogs.MaterialDialog;
 
 public class AccountAdapter extends RecyclerView.Adapter<AccountAdapter.MyViewHolder> {
 
@@ -121,31 +123,19 @@ public class AccountAdapter extends RecyclerView.Adapter<AccountAdapter.MyViewHo
     }
 
     private void showRemoveConfirmDialog() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
-        builder.setTitle("Stop tracking " + utils.getNickname(selectedAccountAddress));
-        builder.setMessage("Are you sure you want to stop tracking " + selectedAccountNickname + "?" +
-                "\nIt has a balance of " + utils.getBalanceOfAccount(selectedAccountAddress));
-
-        String positiveText = mContext.getString(android.R.string.yes);
-        builder.setPositiveButton(positiveText,
-                new DialogInterface.OnClickListener() {
+        new MaterialDialog.Builder(mContext)
+                .title("Stop tracking " + utils.getNickname(selectedAccountAddress))
+                .content("Are you sure you want to stop tracking " + selectedAccountNickname + "?" +
+                        "\nIt has a balance of " + utils.getBalanceOfAccount(selectedAccountAddress))
+                .positiveText(mContext.getString(android.R.string.yes))
+                .onPositive(new MaterialDialog.SingleButtonCallback() {
                     @Override
-                    public void onClick(DialogInterface dialog, int which) {
+                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
                         removeSelectedAccount();
                     }
-                });
-
-        String negativeText = mContext.getString(android.R.string.cancel);
-        builder.setNegativeButton(negativeText,
-                new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                    }
-                });
-
-        AlertDialog dialog = builder.create();
-        // display dialog
-        dialog.show();
+                })
+                .negativeText(mContext.getString(android.R.string.cancel))
+                .show();
     }
 
 

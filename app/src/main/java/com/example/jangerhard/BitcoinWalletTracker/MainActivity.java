@@ -2,11 +2,10 @@ package com.example.jangerhard.BitcoinWalletTracker;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.support.v7.app.AlertDialog;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -16,6 +15,8 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.afollestad.materialdialogs.DialogAction;
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.android.volley.NetworkError;
 import com.android.volley.NoConnectionError;
 import com.android.volley.ParseError;
@@ -194,32 +195,20 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void showBitcoinAddressDialog(final String address) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-        builder.setTitle("New address scanned!");
-        builder.setMessage("Is this the correct address? \n\n" + address);
 
-        String positiveText = getString(android.R.string.ok);
-        builder.setPositiveButton(positiveText,
-                new DialogInterface.OnClickListener() {
+        new MaterialDialog.Builder(mActivity)
+                .title("New address scanned!")
+                .content("Is this the correct address? \n\n" + address)
+                .positiveText(getString(android.R.string.yes))
+                .onPositive(new MaterialDialog.SingleButtonCallback() {
                     @Override
-                    public void onClick(DialogInterface dialog, int which) {
+                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
                         utils.addAddress(address);
                         refreshData();
                     }
-                });
-
-        String negativeText = getString(android.R.string.cancel);
-        builder.setNegativeButton(negativeText,
-                new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        // negative button logic
-                    }
-                });
-
-        AlertDialog dialog = builder.create();
-        // display dialog
-        dialog.show();
+                })
+                .negativeText(getString(android.R.string.cancel))
+                .show();
     }
 
     @Override
