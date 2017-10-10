@@ -23,6 +23,7 @@ class BitcoinUtils {
         this.sharedPref = sharedPref;
         prefsAccountsKey = key;
         addAddressesFromPrefs();
+        makeAccounts();
     }
 
     List<BitcoinAccount> getAccounts() {
@@ -39,6 +40,10 @@ class BitcoinUtils {
 
     void setNewNickname(String selectedAccount, String newNickname) {
         saveNicknameToPrefs(selectedAccount, newNickname);
+    }
+
+    void addNewAccount(BitcoinAccount newAcc) {
+        accountList.add(newAcc);
     }
 
     /**
@@ -182,6 +187,23 @@ class BitcoinUtils {
 
             Collections.addAll(addresses, items);
         }
+    }
+
+    private void makeAccounts() {
+        if (accountList.size() != 0)
+            return;
+
+        BitcoinAccount acc;
+        for (String address : addresses) {
+            acc = new BitcoinAccount();
+            acc.setAddress(address);
+            accountList.add(acc);
+        }
+    }
+
+    void sortAccounts() {
+
+        // TODO: Fix
 
     }
 
