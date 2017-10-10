@@ -51,6 +51,7 @@ public class MainActivity extends AppCompatActivity {
     TextView tvTotalBalance;
     BitcoinUtils utils;
     PullRefreshLayout allAccountsView;
+    RecyclerView recyclerView;
 
     private int numRefreshed;
 
@@ -60,12 +61,12 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         mActivity = this;
 
-        final RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
+        recyclerView = findViewById(R.id.recycler_view);
 
-        tvTotalBalance = (TextView) findViewById(R.id.totalBalance);
+        tvTotalBalance = findViewById(R.id.totalBalance);
 
         // listen refresh event
-        allAccountsView = (PullRefreshLayout) findViewById(R.id.allAccountsView);
+        allAccountsView = findViewById(R.id.allAccountsView);
         allAccountsView.setOnRefreshListener(new PullRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
@@ -81,13 +82,12 @@ public class MainActivity extends AppCompatActivity {
         adapter = new AccountAdapter(this, utils);
         adapter.notifyDataSetChanged();
 
-        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(this,
-                LinearLayoutManager.VERTICAL, false);
-        recyclerView.setLayoutManager(mLayoutManager);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this,
+                LinearLayoutManager.VERTICAL, false));
         recyclerView.setItemAnimator(new LandingAnimator());
         recyclerView.setAdapter(adapter);
 
-        Button bAddAccount = (Button) findViewById(R.id.bAddAccount);
+        Button bAddAccount = findViewById(R.id.bAddAccount);
         bAddAccount.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -97,7 +97,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
 
-        Button bGetAccount = (Button) findViewById(R.id.bGetAccount);
+        Button bGetAccount = findViewById(R.id.bGetAccount);
         bGetAccount.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -122,53 +122,67 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
         numRefreshed = 0;
-        getWalletInfo(utils.getAddresses());
+        getAllWalletsInfo(utils.getAddresses());
     }
 
-    private void getWalletInfo(List<String> addresses) {
+    private void getSingleWalletInfo(String address, final boolean firstTime) {
 
-//        adapter.setPending();
+        // Request a response from the provided URL.
+        JsonObjectRequest jsObjRequest = new JsonObjectRequest
+                (Request.Method.GET,
+                        url + "rawaddr/" + address + "?limit=5",
+                        null, new Response.Listener<JSONObject>() {
+
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        BitcoinAccount newAcc = new Gson().fromJson(response.toString(), BitcoinAccount.class);
+                        if (firstTime)
+                            handleAddedAccount(newAcc);
+                        else
+                            handleRefreshedAccount(newAcc);
+                    }
+                }, new Response.ErrorListener() {
+
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+
+                        String message = "Something went wrong!";
+
+                        if (error instanceof TimeoutError || error instanceof NoConnectionError) {
+                            message = "No internet connection.";
+                        } else if (error instanceof ServerError) {
+                            message = "Error on the server.";
+                        } else if (error instanceof NetworkError) {
+                            message = "There's a problem with the network.";
+                        } else if (error instanceof ParseError) {
+                            message = "There was an error handling the data.";
+                        }
+
+                        Log.e(LOG_TAG, message);
+                        Toast.makeText(getBaseContext(),
+                                message,
+                                Toast.LENGTH_SHORT).show();
+                        allAccountsView.setRefreshing(false);
+                    }
+                });
+
+        // Add the request to the RequestQueue.
+        getVolleyRequestQueue().add(jsObjRequest);
+
+    }
+
+    private void getAllWalletsInfo(List<String> addresses) {
 
         for (String address : addresses) {
-
-            // Request a response from the provided URL.
-            JsonObjectRequest jsObjRequest = new JsonObjectRequest
-                    (Request.Method.GET,
-                            url + "rawaddr/" + address + "?limit=5",
-                            null, new Response.Listener<JSONObject>() {
-
-                        @Override
-                        public void onResponse(JSONObject response) {
-                            handleRefreshedAccount(new Gson().fromJson(response.toString(), BitcoinAccount.class));
-                        }
-                    }, new Response.ErrorListener() {
-
-                        @Override
-                        public void onErrorResponse(VolleyError error) {
-
-                            String message = "Something went wrong!";
-
-                            if (error instanceof TimeoutError || error instanceof NoConnectionError) {
-                                message = "No internet connection.";
-                            } else if (error instanceof ServerError) {
-                                message = "Error on the server.";
-                            } else if (error instanceof NetworkError) {
-                                message = "There's a problem with the network.";
-                            } else if (error instanceof ParseError) {
-                                message = "There was an error handling the data.";
-                            }
-
-                            Log.e(LOG_TAG, message);
-                            Toast.makeText(getBaseContext(),
-                                    message,
-                                    Toast.LENGTH_SHORT).show();
-                            allAccountsView.setRefreshing(false);
-                        }
-                    });
-
-            // Add the request to the RequestQueue.
-            getVolleyRequestQueue().add(jsObjRequest);
+            getSingleWalletInfo(address, false);
         }
+    }
+
+    private void handleAddedAccount(BitcoinAccount newAcc) {
+        utils.addNewAccount(newAcc);
+
+        recyclerView.smoothScrollToPosition(adapter.getItemCount() + 1);
+        adapter.notifyItemInserted(adapter.getItemCount() - 1);
     }
 
     private void handleRefreshedAccount(BitcoinAccount acc) {
@@ -204,7 +218,7 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
                         utils.addAddress(address);
-                        refreshData();
+                        getSingleWalletInfo(address, true);
                     }
                 })
                 .negativeText(getString(android.R.string.cancel))

@@ -138,7 +138,6 @@ public class AccountAdapter extends RecyclerView.Adapter<AccountAdapter.MyViewHo
                 .show();
     }
 
-
     @Override
     public int getItemCount() {
         return utils.getNumberOfAccounts();
