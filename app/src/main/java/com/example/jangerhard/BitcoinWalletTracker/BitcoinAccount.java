@@ -12,16 +12,6 @@ class BitcoinAccount {
     private BigInteger total_sent;
     private BigInteger final_balance;
 
-    private String nickname = "Wallet";
-
-    String getNickname() {
-        return nickname;
-    }
-
-    void setNickname(String nickname) {
-        this.nickname = nickname;
-    }
-
     String getHash160() {
         return hash160;
     }
@@ -80,6 +70,6 @@ class BitcoinAccount {
 
     @Override
     public String toString() {
-        return nickname + " has a balance of " + getFinal_balance() + "btc.";
+        return address + " has a balance of " + getFinal_balance() + "btc.";
     }
 }

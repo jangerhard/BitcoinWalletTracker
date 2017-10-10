@@ -1,6 +1,8 @@
 package com.example.jangerhard.BitcoinWalletTracker;
 
 import android.content.Context;
+import android.content.DialogInterface;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -17,12 +19,14 @@ public class AccountAdapter extends RecyclerView.Adapter<AccountAdapter.MyViewHo
     private Context mContext;
     private int selectedAccountPosition;
     private String selectedAccountAddress;
+    private String selectedAccountNickname;
     private BitcoinUtils utils;
 
     class MyViewHolder extends RecyclerView.ViewHolder {
 
         TextView accName, accAddress, accBalance;
         private ImageView overflow, qrCode;
+        public int position;
 
         MyViewHolder(View view) {
             super(view);
@@ -55,12 +59,12 @@ public class AccountAdapter extends RecyclerView.Adapter<AccountAdapter.MyViewHo
                         account.getFinal_balance())
         );
         holder.accAddress.setText(account.getAddress());
+        holder.position = holder.getAdapterPosition();
 
         holder.overflow.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                showPopupMenu(holder.overflow,
-                        String.valueOf(holder.accAddress.getText()), holder.getAdapterPosition());
+                showPopupMenu(holder.overflow, holder.position);
             }
         });
     }
@@ -68,10 +72,11 @@ public class AccountAdapter extends RecyclerView.Adapter<AccountAdapter.MyViewHo
     /**
      * Showing popup menu when tapping on 3 dots
      */
-    private void showPopupMenu(View view, String address, int position) {
+    private void showPopupMenu(View view, int position) {
         // inflate menu
-        selectedAccountAddress = address;
         selectedAccountPosition = position;
+        selectedAccountAddress = utils.getAccounts().get(position).getAddress();
+        selectedAccountNickname = utils.getNickname(selectedAccountAddress);
         PopupMenu popup = new PopupMenu(mContext, view);
         MenuInflater inflater = popup.getMenuInflater();
         inflater.inflate(R.menu.menu_account, popup.getMenu());
@@ -91,21 +96,58 @@ public class AccountAdapter extends RecyclerView.Adapter<AccountAdapter.MyViewHo
         public boolean onMenuItemClick(MenuItem menuItem) {
             switch (menuItem.getItemId()) {
                 case R.id.action_change_nickname:
-                    utils.setNewNickname(selectedAccountAddress, "Nick" + Math.random());
-                    notifyItemChanged(selectedAccountPosition);
+                    changeNicknameOnSelected();
                     return true;
                 case R.id.action_remove_account:
-                    Toast.makeText(mContext,
-                            "Removed account " + selectedAccountAddress,
-                            Toast.LENGTH_SHORT).show();
-                    utils.removeAccount(selectedAccountAddress);
-                    notifyItemRemoved(selectedAccountPosition);
+                    showRemoveConfirmDialog();
                     return true;
                 default:
             }
             return false;
         }
     }
+
+    private void removeSelectedAccount() {
+        Toast.makeText(mContext,
+                "Removed account " + utils.getNickname(selectedAccountAddress),
+                Toast.LENGTH_SHORT).show();
+        utils.removeAccount(selectedAccountAddress);
+        notifyItemRemoved(selectedAccountPosition);
+    }
+
+    private void changeNicknameOnSelected() {
+        utils.setNewNickname(selectedAccountAddress, "Nick" + Math.random());
+        notifyItemChanged(selectedAccountPosition);
+    }
+
+    private void showRemoveConfirmDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
+        builder.setTitle("Stop tracking " + utils.getNickname(selectedAccountAddress));
+        builder.setMessage("Are you sure you want to stop tracking " + selectedAccountNickname + "?" +
+                "\nIt has a balance of " + utils.getBalanceOfAccount(selectedAccountAddress));
+
+        String positiveText = mContext.getString(android.R.string.yes);
+        builder.setPositiveButton(positiveText,
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        removeSelectedAccount();
+                    }
+                });
+
+        String negativeText = mContext.getString(android.R.string.cancel);
+        builder.setNegativeButton(negativeText,
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                    }
+                });
+
+        AlertDialog dialog = builder.create();
+        // display dialog
+        dialog.show();
+    }
+
 
     @Override
     public int getItemCount() {

@@ -38,10 +38,7 @@ class BitcoinUtils {
     }
 
     void setNewNickname(String selectedAccount, String newNickname) {
-
-        accountList.get(getAccountIndex(selectedAccount)).setNickname(newNickname);
         saveNicknameToPrefs(selectedAccount, newNickname);
-
     }
 
     /**
@@ -195,5 +192,16 @@ class BitcoinUtils {
             addressString.append(",");
         }
         sharedPref.edit().putString(prefsAccountsKey, addressString.toString()).apply();
+    }
+
+    String getBalanceOfAccount(String selectedAccountAddress) {
+
+        int index = getAccountIndex(selectedAccountAddress);
+
+        if (index != -1)
+            return formatBitcoinBalanceToString(accountList.get(index).getFinal_balance());
+        else
+            return "0 BTC";
+
     }
 }
