@@ -6,8 +6,8 @@
     android:layout_height="wrap_content"
     android:layout_gravity="center"
     android:layout_margin="@dimen/card_margin"
-    android:padding="@dimen/activity_horizontal_margin"
-    android:elevation="3dp">
+    android:elevation="3dp"
+    android:padding="@dimen/activity_horizontal_margin">
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -17,37 +17,41 @@
             android:id="@+id/thumbnail"
             android:layout_width="@dimen/album_cover_height"
             android:layout_height="@dimen/album_cover_height"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:scaleType="fitXY"
             android:layout_margin="16dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
             android:foregroundGravity="center_vertical"
+            android:scaleType="fitXY"
             android:src="@drawable/bitcoinlogo" />
 
         <TextView
             android:id="@+id/accountName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
             android:layout_toEndOf="@+id/thumbnail"
             android:paddingTop="@dimen/account_name_padding"
-            android:textColor="@color/accountName"
             android:text="PLACEHOLDER NAME"
+            android:textColor="@color/accountName"
             android:textSize="@dimen/album_title" />
 
         <TextView
-            android:id="@+id/accountAddress"
+            android:id="@+id/accountBalance"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_alignBottom="@+id/thumbnail"
             android:layout_toEndOf="@+id/thumbnail"
-            android:layout_below="@+id/accountName"
-            android:text="PLACEHOLDER ADDRESS" />
+            android:paddingBottom="@dimen/account_name_padding"
+            android:text="0.00 BTC" />
 
         <TextView
-            android:id="@+id/accountBalance"
-            android:layout_below="@+id/accountAddress"
+            android:id="@+id/accountRate"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_toEndOf="@+id/thumbnail"
-            android:text="PLACEHOLDER BALANCE" />
+            android:layout_alignBaseline="@+id/accountBalance"
+            android:layout_alignBottom="@+id/accountBalance"
+            android:layout_toStartOf="@+id/overflow"
+            android:paddingBottom="@dimen/account_name_padding"
+            android:text="1000kr" />
 
         <ImageView
             android:id="@+id/overflow"

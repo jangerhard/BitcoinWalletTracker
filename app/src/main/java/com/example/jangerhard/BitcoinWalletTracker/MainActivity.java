@@ -34,6 +34,7 @@ import com.google.android.gms.common.api.CommonStatusCodes;
 import com.google.android.gms.vision.barcode.Barcode;
 import com.google.gson.Gson;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.List;
@@ -45,7 +46,8 @@ public class MainActivity extends AppCompatActivity {
     private static final int BARCODE_READER_REQUEST_CODE = 1337;
     private static final String LOG_TAG = "MainActivity";
     private RequestQueue mRequestQueue;
-    String url = "https://blockchain.info/";
+    String url_blockchain = "https://blockchain.info/";
+    String url_exchange = "https://min-api.cryptocompare.com/data/";
     Activity mActivity;
     AccountAdapter adapter;
     TextView tvTotalBalance;
@@ -122,7 +124,7 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
         numRefreshed = 0;
-        getAllWalletsInfo(utils.getAddresses());
+        getCurrentPrice(utils.getCurrencyPair());
     }
 
     private void getSingleWalletInfo(String address, final boolean firstTime) {
@@ -130,7 +132,7 @@ public class MainActivity extends AppCompatActivity {
         // Request a response from the provided URL.
         JsonObjectRequest jsObjRequest = new JsonObjectRequest
                 (Request.Method.GET,
-                        url + "rawaddr/" + address + "?limit=5",
+                        url_blockchain + "rawaddr/" + address + "?limit=5",
                         null, new Response.Listener<JSONObject>() {
 
                     @Override
@@ -176,6 +178,63 @@ public class MainActivity extends AppCompatActivity {
         for (String address : addresses) {
             getSingleWalletInfo(address, false);
         }
+    }
+
+    private void getCurrentPrice(String currencyPair) {
+
+        // Request a response from the provided URL.
+        JsonObjectRequest jsObjRequest = new JsonObjectRequest
+                (Request.Method.GET,
+                        url_exchange + "price?fsym=BTC&tsyms=" + currencyPair,
+                        null, new Response.Listener<JSONObject>() {
+
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        handleRefreshedCurrency(response);
+                    }
+                }, new Response.ErrorListener() {
+
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+
+                        String message = "Something went wrong!";
+
+                        if (error instanceof TimeoutError || error instanceof NoConnectionError) {
+                            message = "No internet connection.";
+                        } else if (error instanceof ServerError) {
+                            message = "Error reaching server while getting exchange-rate.";
+                        } else if (error instanceof NetworkError) {
+                            message = "There's a problem with the network.";
+                        } else if (error instanceof ParseError) {
+                            message = "There was an error handling the data.";
+                        }
+
+                        Log.e(LOG_TAG, message);
+                        Toast.makeText(getBaseContext(),
+                                message,
+                                Toast.LENGTH_SHORT).show();
+                        allAccountsView.setRefreshing(false);
+                    }
+                });
+
+        getVolleyRequestQueue().add(jsObjRequest);
+    }
+
+    private void handleRefreshedCurrency(JSONObject response) {
+
+        Double price = 0.0;
+
+        try {
+            price = response.getDouble("NOK");
+        } catch (JSONException e) {
+            Log.e(LOG_TAG, "Error parsing price information");
+        }
+
+        Log.i(LOG_TAG, "Got price: " + price);
+        //Toast.makeText(mActivity, "Got price: " + price, Toast.LENGTH_SHORT).show();
+        getAllWalletsInfo(utils.getAddresses());
+        utils.updateCurrency(price);
+
     }
 
     private void handleAddedAccount(BitcoinAccount newAcc) {

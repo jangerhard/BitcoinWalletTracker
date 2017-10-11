@@ -26,16 +26,16 @@ public class AccountAdapter extends RecyclerView.Adapter<AccountAdapter.MyViewHo
 
     class MyViewHolder extends RecyclerView.ViewHolder {
 
-        TextView accName, accAddress, accBalance;
+        TextView accName, accAddress, accBalance, accRate;
         private ImageView overflow, qrCode;
         public int position;
 
         MyViewHolder(View view) {
             super(view);
-            accName = (TextView) view.findViewById(R.id.accountName);
-            accAddress = (TextView) view.findViewById(R.id.accountAddress);
-            accBalance = (TextView) view.findViewById(R.id.accountBalance);
-            overflow = (ImageView) view.findViewById(R.id.overflow);
+            accName = view.findViewById(R.id.accountName);
+            accBalance = view.findViewById(R.id.accountBalance);
+            overflow = view.findViewById(R.id.overflow);
+            accRate = view.findViewById(R.id.accountRate);
         }
     }
 
@@ -60,7 +60,9 @@ public class AccountAdapter extends RecyclerView.Adapter<AccountAdapter.MyViewHo
                 BitcoinUtils.formatBitcoinBalanceToString(
                         account.getFinal_balance())
         );
-        holder.accAddress.setText(account.getAddress());
+        holder.accRate.setText(
+                utils.formatPriceToString(
+                        account.getFinal_balance()));
         holder.position = holder.getAdapterPosition();
 
         holder.overflow.setOnClickListener(new View.OnClickListener() {

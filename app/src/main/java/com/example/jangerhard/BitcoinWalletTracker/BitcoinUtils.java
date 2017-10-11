@@ -16,6 +16,7 @@ class BitcoinUtils {
     private List<String> addresses;
     private SharedPreferences sharedPref;
     private String prefsAccountsKey;
+    private Double currentPrice;
 
     BitcoinUtils(SharedPreferences sharedPref, String key) {
         accountList = new ArrayList<>();
@@ -112,27 +113,38 @@ class BitcoinUtils {
         return formatBitcoinBalanceToString(total);
     }
 
+    String formatPriceToString(BigInteger bal) {
+        if (bal == null)
+            return "";
+        BigDecimal btc = new BigDecimal(formatBitcoin(bal));
+        BigDecimal result = btc.multiply(new BigDecimal("" + currentPrice));
+        return result.setScale(2, BigDecimal.ROUND_HALF_UP) + getCurrencyPair();
+    }
+
     static String formatBitcoinBalanceToString(BigInteger bal) {
         if (bal == null)
             return "";
 
-        BigDecimal a = new BigDecimal(bal);
-        BigDecimal divider;
-        String endTag;
+        String balance = formatBitcoin(bal);
 
-        if (bal.toString().length() < 7) {
-            divider = new BigDecimal("10000");
-            endTag = "mBTC";
-        } else {
-            divider = new BigDecimal("100000000");
-            endTag = "BTC";
-        }
+        if (balance.startsWith("0.0"))
+            return balance.substring(2, balance.length()) + " mBTC";
+        else
+            return balance + " BTC";
+    }
+
+    private static String formatBitcoin(BigInteger bal) {
+        if (bal == null)
+            return "";
+
+        BigDecimal a = new BigDecimal(bal);
+        BigDecimal divider = new BigDecimal("100000000");
+
         return a.divide(
                 divider,
-                3,
+                4,
                 BigDecimal.ROUND_HALF_UP)
-                .toEngineeringString() + " " + endTag;
-
+                .toEngineeringString();
     }
 
     static boolean verifyAddress(String qrString) {
@@ -171,6 +183,10 @@ class BitcoinUtils {
 
     private void saveNicknameToPrefs(String address, String name) {
         sharedPref.edit().putString(address, name).apply();
+    }
+
+    void updateCurrency(Double price) {
+        currentPrice = price;
     }
 
     private void addAddressesFromPrefs() {
@@ -225,5 +241,10 @@ class BitcoinUtils {
         else
             return "0 BTC";
 
+    }
+
+    String getCurrencyPair() {
+        //TODO: fix
+        return "NOK";
     }
 }
