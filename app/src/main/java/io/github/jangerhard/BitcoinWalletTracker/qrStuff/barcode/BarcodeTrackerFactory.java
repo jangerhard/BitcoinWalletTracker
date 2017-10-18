@@ -13,28 +13,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.example.jangerhard.BitcoinWalletTracker.qrStuff.barcode;
+package io.github.jangerhard.BitcoinWalletTracker.qrStuff.barcode;
 
 import android.content.Context;
 
+import com.google.android.gms.vision.MultiProcessor;
 import com.google.android.gms.vision.Tracker;
 import com.google.android.gms.vision.barcode.Barcode;
 
-class BarcodeTracker extends Tracker<Barcode> {
-    private BarcodeGraphicTrackerCallback mListener;
+/**
+ * Factory for creating a tracker and associated graphic to be associated with a new barcode.  The
+ * multi-processor uses this factory to create barcode trackers as needed -- one for each barcode.
+ */
+class BarcodeTrackerFactory implements MultiProcessor.Factory<Barcode> {
+    private Context mContext;
 
-    public interface BarcodeGraphicTrackerCallback {
-        void onDetectedQrCode(Barcode barcode);
-    }
-
-    BarcodeTracker(Context listener) {
-        mListener = (BarcodeGraphicTrackerCallback) listener;
+    BarcodeTrackerFactory(Context context) {
+        mContext = context;
     }
 
     @Override
-    public void onNewItem(int id, Barcode item) {
-        if (item.displayValue != null) {
-            mListener.onDetectedQrCode(item);
-        }
+    public Tracker<Barcode> create(Barcode barcode) {
+        return new BarcodeTracker(mContext);
     }
 }

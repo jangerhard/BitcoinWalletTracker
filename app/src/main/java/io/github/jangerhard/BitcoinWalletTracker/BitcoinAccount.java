@@ -1,4 +1,4 @@
-package com.example.jangerhard.BitcoinWalletTracker;
+package io.github.jangerhard.BitcoinWalletTracker;
 
 import java.math.BigInteger;
 

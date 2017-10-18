@@ -121,12 +121,14 @@
     <orderEntry type="library" name="com.android.support:support-media-compat-26.0.1" level="project" />
     <orderEntry type="library" name="com.android.support:recyclerview-v7-26.0.1" level="project" />
     <orderEntry type="library" scope="TEST" name="junit:junit:4.12@jar" level="project" />
+    <orderEntry type="library" name="com.google.zxing:core:3.2.1@jar" level="project" />
     <orderEntry type="library" name="com.google.android.gms:play-services-base-license-11.4.2" level="project" />
     <orderEntry type="library" name="com.android.support:support-fragment-26.0.1" level="project" />
     <orderEntry type="library" scope="TEST" name="javax.inject:javax.inject:1@jar" level="project" />
     <orderEntry type="library" name="com.android.support:support-annotations:26.0.1@jar" level="project" />
     <orderEntry type="library" name="com.google.android.gms:play-services-vision-common-license-11.4.2" level="project" />
     <orderEntry type="library" scope="TEST" name="com.squareup:javawriter:2.1.1@jar" level="project" />
+    <orderEntry type="library" name="com.journeyapps:zxing-android-embedded-3.2.0" level="project" />
     <orderEntry type="library" name="com.android.support:support-vector-drawable-26.0.1" level="project" />
     <orderEntry type="library" name="com.android.support:appcompat-v7-26.0.1" level="project" />
     <orderEntry type="library" name="jp.wasabeef:recyclerview-animators-2.2.7" level="project" />
@@ -138,6 +140,7 @@
     <orderEntry type="library" name="com.android.support.constraint:constraint-layout-1.0.2" level="project" />
     <orderEntry type="library" name="com.android.support:support-core-ui-26.0.1" level="project" />
     <orderEntry type="library" name="me.zhanghai.android.materialprogressbar:library-1.4.1" level="project" />
+    <orderEntry type="library" name="com.github.javiersantos:MaterialStyledDialogs-2.1" level="project" />
     <orderEntry type="library" name="com.google.code.gson:gson:2.8.2@jar" level="project" />
     <orderEntry type="library" name="com.afollestad.material-dialogs:core-0.9.4.7" level="project" />
     <orderEntry type="library" scope="TEST" name="com.google.code.findbugs:jsr305:2.0.1@jar" level="project" />

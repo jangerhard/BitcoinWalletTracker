@@ -34,9 +34,12 @@ dependencies {
     compile 'com.android.volley:volley:1.0.0'                    // Used for HTTP requests
     compile 'com.google.code.gson:gson:2.8.2'                    // Used to serialize JSON
     compile 'com.google.android.gms:play-services-vision:11.4.2' // Used for QR scanning
+    compile 'com.google.zxing:core:3.2.1'                        // QR generation
+    compile 'com.journeyapps:zxing-android-embedded:3.2.0@aar'   // QR generation
     compile 'com.baoyz.pullrefreshlayout:library:1.2.0'          // Pull to refresh library
     compile 'jp.wasabeef:recyclerview-animators:2.2.7'           // Scroll animations
     compile "com.afollestad.material-dialogs:core:0.9.4.7"       // Material Dialogs
+    compile 'com.github.javiersantos:MaterialStyledDialogs:2.1'
 
     testCompile 'junit:junit:4.12'
 }

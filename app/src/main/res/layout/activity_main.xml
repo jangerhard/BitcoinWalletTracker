@@ -8,7 +8,7 @@
     android:orientation="vertical"
     android:padding="16dp"
     android:weightSum="3"
-    tools:context="com.example.jangerhard.BitcoinWalletTracker.MainActivity">
+    tools:context=".MainActivity">
 
 
     <android.support.v7.widget.CardView

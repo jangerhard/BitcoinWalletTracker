@@ -1,7 +1,14 @@
-package com.example.jangerhard.BitcoinWalletTracker;
+package io.github.jangerhard.BitcoinWalletTracker;
 
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
 import android.util.Log;
+
+import com.google.zxing.BarcodeFormat;
+import com.google.zxing.MultiFormatWriter;
+import com.google.zxing.WriterException;
+import com.google.zxing.common.BitMatrix;
+import com.journeyapps.barcodescanner.BarcodeEncoder;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -17,14 +24,22 @@ class BitcoinUtils {
     private SharedPreferences sharedPref;
     private String prefsAccountsKey;
     private Double currentPrice;
+    private List<Bitmap> bitmapMap;
 
     BitcoinUtils(SharedPreferences sharedPref, String key) {
         accountList = new ArrayList<>();
         addresses = new ArrayList<>();
+        bitmapMap = new ArrayList<>();
         this.sharedPref = sharedPref;
         prefsAccountsKey = key;
         addAddressesFromPrefs();
         makeAccounts();
+        createBitmaps();
+    }
+
+    private void createBitmaps() {
+        for (String address : addresses)
+            bitmapMap.add(createQRThumbnail(address));
     }
 
     List<BitcoinAccount> getAccounts() {
@@ -241,6 +256,36 @@ class BitcoinUtils {
         else
             return "0 BTC";
 
+    }
+
+    private Bitmap createQRThumbnail(String address) {
+        Bitmap bitmap = null;
+        MultiFormatWriter multiFormatWriter = new MultiFormatWriter();
+        try {
+            BitMatrix bitMatrix = multiFormatWriter.encode(address, BarcodeFormat.QR_CODE, 128, 128);
+            BarcodeEncoder barcodeEncoder = new BarcodeEncoder();
+            bitmap = barcodeEncoder.createBitmap(bitMatrix);
+        } catch (WriterException e) {
+            e.printStackTrace();
+        }
+        return bitmap;
+    }
+
+    private Bitmap createQRBig(String address) {
+        Bitmap bitmap = null;
+        MultiFormatWriter multiFormatWriter = new MultiFormatWriter();
+        try {
+            BitMatrix bitMatrix = multiFormatWriter.encode(address, BarcodeFormat.QR_CODE, 800, 800);
+            BarcodeEncoder barcodeEncoder = new BarcodeEncoder();
+            bitmap = barcodeEncoder.createBitmap(bitMatrix);
+        } catch (WriterException e) {
+            e.printStackTrace();
+        }
+        return bitmap;
+    }
+
+    Bitmap getQRThumbnail(String address) {
+        return bitmapMap.get(addresses.indexOf(address));
     }
 
     String getCurrencyPair() {

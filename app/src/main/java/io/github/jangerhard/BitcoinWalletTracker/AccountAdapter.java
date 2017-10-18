@@ -1,6 +1,8 @@
-package com.example.jangerhard.BitcoinWalletTracker;
+package io.github.jangerhard.BitcoinWalletTracker;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
@@ -15,6 +17,8 @@ import android.widget.Toast;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
+import com.github.javiersantos.materialstyleddialogs.MaterialStyledDialog;
+import com.github.javiersantos.materialstyleddialogs.enums.Style;
 
 public class AccountAdapter extends RecyclerView.Adapter<AccountAdapter.MyViewHolder> {
 
@@ -26,7 +30,7 @@ public class AccountAdapter extends RecyclerView.Adapter<AccountAdapter.MyViewHo
 
     class MyViewHolder extends RecyclerView.ViewHolder {
 
-        TextView accName, accAddress, accBalance, accRate;
+        TextView accName, accBalance, accRate;
         private ImageView overflow, qrCode;
         public int position;
 
@@ -36,6 +40,7 @@ public class AccountAdapter extends RecyclerView.Adapter<AccountAdapter.MyViewHo
             accBalance = view.findViewById(R.id.accountBalance);
             overflow = view.findViewById(R.id.overflow);
             accRate = view.findViewById(R.id.accountRate);
+            qrCode = view.findViewById(R.id.thumbnail);
         }
     }
 
@@ -54,7 +59,7 @@ public class AccountAdapter extends RecyclerView.Adapter<AccountAdapter.MyViewHo
 
     @Override
     public void onBindViewHolder(final MyViewHolder holder, int position) {
-        BitcoinAccount account = utils.getAccounts().get(position);
+        final BitcoinAccount account = utils.getAccounts().get(position);
         holder.accName.setText(utils.getNickname(account.getAddress()));
         holder.accBalance.setText(
                 BitcoinUtils.formatBitcoinBalanceToString(
@@ -64,6 +69,15 @@ public class AccountAdapter extends RecyclerView.Adapter<AccountAdapter.MyViewHo
                 utils.formatPriceToString(
                         account.getFinal_balance()));
         holder.position = holder.getAdapterPosition();
+        holder.qrCode.setImageBitmap(
+                utils.getQRThumbnail(account.getAddress()));
+
+        holder.qrCode.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showPopupQRCode(account.getAddress());
+            }
+        });
 
         holder.overflow.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -71,6 +85,29 @@ public class AccountAdapter extends RecyclerView.Adapter<AccountAdapter.MyViewHo
                 showPopupMenu(holder.overflow, holder.position);
             }
         });
+    }
+
+    private void showPopupQRCode(String address) {
+
+        new MaterialStyledDialog.Builder(mContext)
+                .setTitle(address)
+//                .setDescription(address)
+                .setStyle(Style.HEADER_WITH_ICON)
+                .setIcon(new BitmapDrawable(mContext.getResources(),
+                        Bitmap.createScaledBitmap(utils.getQRThumbnail(address),
+                                150, 150, true)))
+//                .setCustomView()
+                .withDialogAnimation(true)
+                .setPositiveText("Share")
+                .onPositive(new MaterialDialog.SingleButtonCallback() {
+                    @Override
+                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+
+                    }
+                })
+//                .setHeaderDrawable()
+                //.setHeaderDrawable(ContextCompat.getDrawable(this, R.drawable.heaer))
+                .show();
     }
 
     /**

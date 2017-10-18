@@ -1,4 +1,4 @@
-package com.example.jangerhard.BitcoinWalletTracker;
+package io.github.jangerhard.BitcoinWalletTracker;
 
 import android.app.Activity;
 import android.content.Context;
@@ -29,7 +29,6 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.baoyz.widget.PullRefreshLayout;
-import com.example.jangerhard.BitcoinWalletTracker.qrStuff.barcode.BarcodeCaptureActivity;
 import com.google.android.gms.common.api.CommonStatusCodes;
 import com.google.android.gms.vision.barcode.Barcode;
 import com.google.gson.Gson;
@@ -39,6 +38,7 @@ import org.json.JSONObject;
 
 import java.util.List;
 
+import io.github.jangerhard.BitcoinWalletTracker.qrStuff.barcode.BarcodeCaptureActivity;
 import jp.wasabeef.recyclerview.animators.LandingAnimator;
 
 public class MainActivity extends AppCompatActivity {
