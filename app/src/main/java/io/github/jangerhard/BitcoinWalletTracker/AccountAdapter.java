@@ -162,18 +162,20 @@ public class AccountAdapter extends RecyclerView.Adapter<AccountAdapter.MyViewHo
     }
 
     private void showRemoveConfirmDialog() {
-        new MaterialDialog.Builder(mContext)
-                .title("Stop tracking " + utils.getNickname(selectedAccountAddress))
-                .content("Are you sure you want to stop tracking " + selectedAccountNickname + "?" +
-                        "\nIt has a balance of " + utils.getBalanceOfAccount(selectedAccountAddress))
-                .positiveText(mContext.getString(android.R.string.yes))
+        new MaterialStyledDialog.Builder(mContext)
+                .withDialogAnimation(true)
+                .setIcon(R.drawable.ic_warning_white_24dp)
+                .setTitle("Stop tracking " + selectedAccountNickname + "?")
+                .setDescription("It has a balance of " +
+                        utils.getBalanceOfAccount(selectedAccountAddress))
+                .setPositiveText(mContext.getString(android.R.string.yes))
                 .onPositive(new MaterialDialog.SingleButtonCallback() {
                     @Override
                     public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
                         removeSelectedAccount();
                     }
                 })
-                .negativeText(mContext.getString(android.R.string.cancel))
+                .setNegativeText(mContext.getString(android.R.string.cancel))
                 .show();
     }
 
