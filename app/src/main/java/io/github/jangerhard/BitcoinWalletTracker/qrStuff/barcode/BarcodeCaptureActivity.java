@@ -37,7 +37,6 @@ import android.util.DisplayMetrics;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.example.jangerhard.BitcoinWalletTracker.R;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.common.api.CommonStatusCodes;
@@ -47,6 +46,7 @@ import com.google.android.gms.vision.barcode.BarcodeDetector;
 
 import java.io.IOException;
 
+import io.github.jangerhard.BitcoinWalletTracker.R;
 import io.github.jangerhard.BitcoinWalletTracker.qrStuff.camera.CameraSource;
 import io.github.jangerhard.BitcoinWalletTracker.qrStuff.camera.CameraSourcePreview;
 

@@ -24,12 +24,12 @@ class BitcoinUtils {
     private SharedPreferences sharedPref;
     private String prefsAccountsKey;
     private Double currentPrice;
-    private List<Bitmap> bitmapMap;
+    private List<Bitmap> bitmapList;
 
     BitcoinUtils(SharedPreferences sharedPref, String key) {
         accountList = new ArrayList<>();
         addresses = new ArrayList<>();
-        bitmapMap = new ArrayList<>();
+        bitmapList = new ArrayList<>();
         this.sharedPref = sharedPref;
         prefsAccountsKey = key;
         addAddressesFromPrefs();
@@ -39,7 +39,7 @@ class BitcoinUtils {
 
     private void createBitmaps() {
         for (String address : addresses)
-            bitmapMap.add(createQRThumbnail(address));
+            bitmapList.add(createQRThumbnail(address));
     }
 
     List<BitcoinAccount> getAccounts() {
@@ -82,6 +82,7 @@ class BitcoinUtils {
     void removeAccount(String selectedAccountTag) {
 
         deleteNicknameFromPrefs(selectedAccountTag);
+        bitmapList.remove(getAccountIndex(selectedAccountTag));
         accountList.remove(getAccountIndex(selectedAccountTag));
         addresses.remove(selectedAccountTag);
         saveAddressesToPrefs();
@@ -90,6 +91,7 @@ class BitcoinUtils {
     void addAddress(String address) {
         if (!addresses.contains(address)) {
             addresses.add(address);
+            bitmapList.add(createQRThumbnail(address));
             saveAddressesToPrefs();
         }
     }
@@ -129,8 +131,8 @@ class BitcoinUtils {
     }
 
     String formatPriceToString(BigInteger bal) {
-        if (bal == null)
-            return "";
+        if (bal == null || bal.intValue() == 0)
+            return "0.000" + getCurrencyPair();
         BigDecimal btc = new BigDecimal(formatBitcoin(bal));
         BigDecimal result = btc.multiply(new BigDecimal("" + currentPrice));
         return result.setScale(2, BigDecimal.ROUND_HALF_UP) + getCurrencyPair();
@@ -285,7 +287,7 @@ class BitcoinUtils {
     }
 
     Bitmap getQRThumbnail(String address) {
-        return bitmapMap.get(addresses.indexOf(address));
+        return bitmapList.get(addresses.indexOf(address));
     }
 
     String getCurrencyPair() {

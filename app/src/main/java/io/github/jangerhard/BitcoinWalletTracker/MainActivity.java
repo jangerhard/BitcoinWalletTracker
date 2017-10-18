@@ -29,6 +29,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.baoyz.widget.PullRefreshLayout;
+import com.github.javiersantos.materialstyleddialogs.MaterialStyledDialog;
 import com.google.android.gms.common.api.CommonStatusCodes;
 import com.google.android.gms.vision.barcode.Barcode;
 import com.google.gson.Gson;
@@ -240,7 +241,7 @@ public class MainActivity extends AppCompatActivity {
     private void handleAddedAccount(BitcoinAccount newAcc) {
         utils.addNewAccount(newAcc);
 
-        recyclerView.smoothScrollToPosition(adapter.getItemCount() + 1);
+        recyclerView.smoothScrollToPosition(adapter.getItemCount());
         adapter.notifyItemInserted(adapter.getItemCount() - 1);
     }
 
@@ -269,10 +270,12 @@ public class MainActivity extends AppCompatActivity {
 
     private void showBitcoinAddressDialog(final String address) {
 
-        new MaterialDialog.Builder(mActivity)
-                .title("New address scanned!")
-                .content("Is this the correct address? \n\n" + address)
-                .positiveText(getString(android.R.string.yes))
+        new MaterialStyledDialog.Builder(this)
+                .setTitle("New address scanned!")
+                .setIcon(R.drawable.bitcoinlogo)
+                .withDialogAnimation(true)
+                .setDescription("Is this the correct address? \n\n" + address)
+                .setPositiveText(getString(android.R.string.yes))
                 .onPositive(new MaterialDialog.SingleButtonCallback() {
                     @Override
                     public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
@@ -280,7 +283,7 @@ public class MainActivity extends AppCompatActivity {
                         getSingleWalletInfo(address, true);
                     }
                 })
-                .negativeText(getString(android.R.string.cancel))
+                .setNegativeText(getString(android.R.string.cancel))
                 .show();
     }
 
