@@ -21,6 +21,6 @@ public class ExampleInstrumentedTest {
         // Context of the app under test.
         Context appContext = InstrumentationRegistry.getTargetContext();
 
-        assertEquals("com.example.jangerhard.myapplication", appContext.getPackageName());
+        assertEquals("io.github.jangerhard.BitcoinWalletTracker", appContext.getPackageName());
     }
 }
