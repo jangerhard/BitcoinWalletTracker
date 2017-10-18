@@ -38,6 +38,7 @@ dependencies {
     compile 'com.journeyapps:zxing-android-embedded:3.2.0@aar'   // QR generation
     compile 'com.baoyz.pullrefreshlayout:library:1.2.0'          // Pull to refresh library
     compile 'jp.wasabeef:recyclerview-animators:2.2.7'           // Scroll animations
+    compile "com.afollestad.material-dialogs:core:0.9.4.7"       // Material Dialogs
     compile 'com.github.javiersantos:MaterialStyledDialogs:2.1'
 
     testCompile 'junit:junit:4.12'

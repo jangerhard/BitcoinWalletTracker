@@ -6,6 +6,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
+import android.text.InputType;
 import android.view.LayoutInflater;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -157,8 +158,17 @@ public class AccountAdapter extends RecyclerView.Adapter<AccountAdapter.MyViewHo
     }
 
     private void changeNicknameOnSelected() {
-        utils.setNewNickname(selectedAccountAddress, "Nick" + Math.random());
-        notifyItemChanged(selectedAccountPosition);
+
+        new MaterialDialog.Builder(mContext)
+                .title("Edit nickname")
+                .inputType(InputType.TYPE_CLASS_TEXT)
+                .input("New nickname", "Savings", new MaterialDialog.InputCallback() {
+                    @Override
+                    public void onInput(MaterialDialog dialog, CharSequence input) {
+                        utils.setNewNickname(selectedAccountAddress, input.toString());
+                        notifyItemChanged(selectedAccountPosition);
+                    }
+                }).show();
     }
 
     private void showRemoveConfirmDialog() {
