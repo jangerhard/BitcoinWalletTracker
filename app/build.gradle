@@ -19,6 +19,9 @@ android {
     }
     productFlavors {
     }
+    testOptions {
+        unitTests.returnDefaultValues = true
+    }
 }
 
 dependencies {

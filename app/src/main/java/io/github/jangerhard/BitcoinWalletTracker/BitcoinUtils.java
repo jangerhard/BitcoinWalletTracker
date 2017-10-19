@@ -2,7 +2,7 @@ package io.github.jangerhard.BitcoinWalletTracker;
 
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
-import android.util.Log;
+import android.support.annotation.NonNull;
 
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.MultiFormatWriter;
@@ -19,6 +19,9 @@ import java.util.List;
 class BitcoinUtils {
 
     private static final String LOG_TAG = "BitcoinUtil";
+    private static final int BITCOIN_FACTOR = 100000000;
+    private static final int MICRO_BITCOIN_FACTOR = 100000;
+
     private List<BitcoinAccount> accountList;
     private List<String> addresses;
     private SharedPreferences sharedPref;
@@ -133,38 +136,43 @@ class BitcoinUtils {
     String formatPriceToString(BigInteger bal) {
         if (bal == null || bal.intValue() == 0)
             return "0.000" + getCurrencyPair();
-        BigDecimal btc = new BigDecimal(formatBitcoin(bal));
-        BigDecimal result = btc.multiply(new BigDecimal("" + currentPrice));
+        BigDecimal btc = new BigDecimal(formatBalance(bal.toString(), BITCOIN_FACTOR));
+        BigDecimal result = btc.multiply(new BigDecimal("" + getCurrentPrice()));
         return result.setScale(2, BigDecimal.ROUND_HALF_UP) + getCurrencyPair();
     }
 
+    @NonNull
     static String formatBitcoinBalanceToString(BigInteger bal) {
-        if (bal == null)
-            return "";
+        if (bal == null || bal.intValue() == 0)
+            return "0.0000 BTC";
 
-        String balance = formatBitcoin(bal);
+        String balance = bal.toString();
 
-        if (balance.startsWith("0.0"))
-            return balance.substring(2, balance.length()) + " mBTC";
+        if (balance.length() < 8)
+            return formatBalance(balance, MICRO_BITCOIN_FACTOR) + " mBTC";
         else
-            return balance + " BTC";
+            return formatBalance(balance, BITCOIN_FACTOR) + " BTC";
     }
 
-    private static String formatBitcoin(BigInteger bal) {
+    private static String formatBalance(String bal, int factor) {
         if (bal == null)
             return "";
 
         BigDecimal a = new BigDecimal(bal);
-        BigDecimal divider = new BigDecimal("100000000");
+        BigDecimal divider = new BigDecimal("" + factor);
 
         return a.divide(
                 divider,
                 4,
-                BigDecimal.ROUND_HALF_UP)
+                BigDecimal.ROUND_HALF_DOWN)
                 .toEngineeringString();
     }
 
     static boolean verifyAddress(String qrString) {
+
+        if (qrString == null)
+            return false;
+
         /*
           A Bitcoin address is between 25 and 34 characters long;
           the address always starts with a 1;
@@ -172,20 +180,6 @@ class BitcoinUtils {
           with the exceptions of 0, O, I, and l.
 
          */
-        Log.d(LOG_TAG, "Address: " + qrString);
-        if (!(qrString.length() <= 34 && qrString.length() >= 25))
-            Log.d(LOG_TAG, "Wrong length");
-        if (!(qrString.substring(0, 1).equals("1") || (qrString.substring(0, 1).equals("3"))))
-            Log.d(LOG_TAG, "Doesn't start with 1 or 3");
-        if (qrString.contains("0"))
-            Log.d(LOG_TAG, "Contains 0");
-        if (qrString.contains("O"))
-            Log.d(LOG_TAG, "Contains O");
-        if (qrString.contains("I"))
-            Log.d(LOG_TAG, "Contains I");
-        if (qrString.contains("l"))
-            Log.d(LOG_TAG, "Contains l");
-
 
         return (qrString.length() <= 34 && qrString.length() >= 25) &&
                 (qrString.substring(0, 1).equals("1") || (qrString.substring(0, 1).equals("3"))) &&
@@ -260,7 +254,7 @@ class BitcoinUtils {
 
     }
 
-    private Bitmap createQRThumbnail(String address) {
+    static Bitmap createQRThumbnail(String address) {
         Bitmap bitmap = null;
         MultiFormatWriter multiFormatWriter = new MultiFormatWriter();
         try {
@@ -290,8 +284,12 @@ class BitcoinUtils {
         return bitmapList.get(addresses.indexOf(address));
     }
 
-    String getCurrencyPair() {
+    static String getCurrencyPair() {
         //TODO: fix
         return "NOK";
+    }
+
+    Double getCurrentPrice() {
+        return currentPrice;
     }
 }
