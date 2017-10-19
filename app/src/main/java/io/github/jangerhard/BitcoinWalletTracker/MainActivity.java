@@ -81,6 +81,7 @@ public class MainActivity extends AppCompatActivity {
         SharedPreferences sharedPref = mActivity.getPreferences(Context.MODE_PRIVATE);
 
         utils = new BitcoinUtils(sharedPref, getString(R.string.bitcoinaddresses));
+        utils.setup();
 
         adapter = new AccountAdapter(this, utils);
         adapter.notifyDataSetChanged();

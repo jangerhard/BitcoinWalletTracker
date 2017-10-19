@@ -12,6 +12,7 @@ import com.journeyapps.barcodescanner.BarcodeEncoder;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.math.MathContext;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -35,6 +36,9 @@ class BitcoinUtils {
         bitmapList = new ArrayList<>();
         this.sharedPref = sharedPref;
         prefsAccountsKey = key;
+    }
+
+    public void setup() {
         addAddressesFromPrefs();
         makeAccounts();
         createBitmaps();
@@ -135,9 +139,11 @@ class BitcoinUtils {
 
     String formatPriceToString(BigInteger bal) {
         if (bal == null || bal.intValue() == 0)
-            return "0.000" + getCurrencyPair();
+            return "0.00" + getCurrencyPair();
+
         BigDecimal btc = new BigDecimal(formatBalance(bal.toString(), BITCOIN_FACTOR));
-        BigDecimal result = btc.multiply(new BigDecimal("" + getCurrentPrice()));
+        BigDecimal price = new BigDecimal(getCurrentPrice().toString());
+        BigDecimal result = btc.multiply(price, MathContext.DECIMAL32);
         return result.setScale(2, BigDecimal.ROUND_HALF_UP) + getCurrencyPair();
     }
 
@@ -147,11 +153,18 @@ class BitcoinUtils {
             return "0.0000 BTC";
 
         String balance = bal.toString();
+        BigDecimal newBalance;
+        String tag;
 
-        if (balance.length() < 8)
-            return formatBalance(balance, MICRO_BITCOIN_FACTOR) + " mBTC";
-        else
-            return formatBalance(balance, BITCOIN_FACTOR) + " BTC";
+        if (balance.length() < 8) {
+            newBalance = new BigDecimal(formatBalance(balance, MICRO_BITCOIN_FACTOR));
+            tag = " mBTC";
+        } else {
+            newBalance = new BigDecimal(formatBalance(balance, BITCOIN_FACTOR));
+            tag = " BTC";
+        }
+
+        return newBalance.setScale(4, BigDecimal.ROUND_HALF_UP) + tag;
     }
 
     private static String formatBalance(String bal, int factor) {
@@ -163,7 +176,7 @@ class BitcoinUtils {
 
         return a.divide(
                 divider,
-                4,
+                7,
                 BigDecimal.ROUND_HALF_DOWN)
                 .toEngineeringString();
     }

@@ -1,5 +1,8 @@
 package io.github.jangerhard.BitcoinWalletTracker;
 
+import android.content.Context;
+import android.content.SharedPreferences;
+
 import org.junit.Test;
 
 import java.math.BigInteger;
@@ -41,6 +44,39 @@ public class BitcoinUtilsTest {
         assertEquals(false, verified);
         verified = BitcoinUtils.verifyAddress(null);
         assertEquals(false, verified);
+
+    }
+
+    @Test
+    public void testCurrency() throws Exception {
+
+        MainActivity mActivity = new MainActivity();
+        SharedPreferences sharedPref = mActivity.getPreferences(Context.MODE_PRIVATE);
+
+        BitcoinUtils utils = new BitcoinUtils(sharedPref, mActivity.getString(R.string.bitcoinaddresses));
+
+        // 1 btc to NOK
+        utils.updateCurrency(44783.44d);
+        // 0.223 btc
+        BigInteger balance = new BigInteger("2195820");
+
+        Double price = 983.36d;
+
+        assertEquals(price.toString() + "NOK", utils.formatPriceToString(balance));
+
+        // 1 btc to NOK
+        utils.updateCurrency(45006.70d);
+        // 0.223 btc
+        balance = new BigInteger("23300000");
+
+        price = 10486.56d;
+
+        assertEquals(price.toString() + "NOK", utils.formatPriceToString(balance));
+
+        assertEquals("0.00NOK", utils.formatPriceToString(null));
+
+        assertEquals("0.00NOK", utils.formatPriceToString(new BigInteger("0")));
+
 
     }
 
