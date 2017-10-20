@@ -11,7 +11,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -66,7 +66,7 @@ public class MainActivity extends AppCompatActivity {
 
         recyclerView = findViewById(R.id.recycler_view);
 
-        tvTotalBalance = findViewById(R.id.totalBalance);
+        tvTotalBalance = findViewById(R.id.tvCalculatedBalance);
 
         // listen refresh event
         allAccountsView = findViewById(R.id.allAccountsView);
@@ -91,21 +91,12 @@ public class MainActivity extends AppCompatActivity {
         recyclerView.setItemAnimator(new LandingAnimator());
         recyclerView.setAdapter(adapter);
 
-        Button bAddAccount = findViewById(R.id.bAddAccount);
+        ImageButton bAddAccount = findViewById(R.id.bAddAccount);
         bAddAccount.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getApplicationContext(), BarcodeCaptureActivity.class);
                 startActivityForResult(intent, BARCODE_READER_REQUEST_CODE);
-            }
-        });
-
-
-        Button bGetAccount = findViewById(R.id.bGetAccount);
-        bGetAccount.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                refreshData();
             }
         });
 
@@ -115,7 +106,7 @@ public class MainActivity extends AppCompatActivity {
     private void updateUI() {
 
         allAccountsView.setRefreshing(false);
-        tvTotalBalance.setText(String.format("Total balance: %s", utils.totalBalance()));
+        tvTotalBalance.setText(utils.totalBalance());
     }
 
     private void refreshData() {
@@ -126,7 +117,7 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
         numRefreshed = 0;
-        getCurrentPrice(utils.getCurrencyPair());
+        getCurrentPrice(BitcoinUtils.getCurrencyPair());
     }
 
     private void getSingleWalletInfo(String address, final boolean firstTime) {
