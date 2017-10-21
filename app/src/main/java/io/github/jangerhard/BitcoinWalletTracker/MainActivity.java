@@ -48,7 +48,7 @@ public class MainActivity extends AppCompatActivity {
     private static final String LOG_TAG = "MainActivity";
     private RequestQueue mRequestQueue;
     String url_blockchain = "https://blockchain.info/";
-    String url_exchange = "https://min-api.cryptocompare.com/data/";
+    String url_exchange = "https://api.coinbase.com/v2/prices/";
     Activity mActivity;
     AccountAdapter adapter;
     TextView tvTotalBalance;
@@ -178,7 +178,7 @@ public class MainActivity extends AppCompatActivity {
         // Request a response from the provided URL.
         JsonObjectRequest jsObjRequest = new JsonObjectRequest
                 (Request.Method.GET,
-                        url_exchange + "price?fsym=BTC&tsyms=" + currencyPair,
+                        url_exchange + "BTC-" + currencyPair + "/spot",
                         null, new Response.Listener<JSONObject>() {
 
                     @Override
@@ -218,7 +218,8 @@ public class MainActivity extends AppCompatActivity {
         Double price = 0.0;
 
         try {
-            price = response.getDouble("NOK");
+            response = response.getJSONObject("data");
+            price = response.getDouble("amount");
         } catch (JSONException e) {
             Log.e(LOG_TAG, "Error parsing price information");
         }
