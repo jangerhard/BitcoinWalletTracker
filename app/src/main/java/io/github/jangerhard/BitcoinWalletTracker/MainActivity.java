@@ -235,6 +235,7 @@ public class MainActivity extends AppCompatActivity {
 
         recyclerView.smoothScrollToPosition(adapter.getItemCount());
         adapter.notifyItemInserted(adapter.getItemCount() - 1);
+        updateUI();
     }
 
     private void handleRefreshedAccount(BitcoinAccount acc) {
