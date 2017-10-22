@@ -47,7 +47,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
                 android:textStyle="italic"
-                android:text="Balance"
+                android:text="@string/balance"
                 android:textColor="@color/common_google_signin_btn_text_dark"
                 android:textSize="20sp" />
 

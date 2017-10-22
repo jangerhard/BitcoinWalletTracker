@@ -5,11 +5,25 @@
     <!-- Strings related to MainActivity-->
     <string name="no_barcode_captured">No barcode captured</string>
     <string name="barcode_error_format">"Error reading barcode: %1$s"</string>
+    <string name="no_accounts_initial">No accounts yet!</string>
+    <string name="error_generic">Something went wrong!</string>
+    <string name="error_no_internet">No internet connection.</string>
+    <string name="error_server">Error on the server.</string>
+    <string name="Error_network">There\'s a problem with the network.</string>
+    <string name="error_parsing">There was an error handling the data.</string>
+    <string name="account_already_added">That address is already added!</string>
+    <string name="invalid_address">That is not a bitcoin address!</string>
+    <string name="new_address">New address scanned!</string>
+    <string name="question_correct_address">Is this the correct address?</string>
 
     <!-- Strings related to barcode scanner -->
     <string name="ok">OK</string>
     <string name="permission_camera_rationale">Access to the camera is needed for detection</string>
     <string name="no_camera_permission">This application cannot run because it does not have the camera permission.  The application will now exit.</string>
     <string name="low_storage_error">Face detector dependencies cannot be downloaded due to low device storage</string>
+
+    <!-- Strings related to XMLs -->
+    <string name="balance">Balance</string>
+
 
 </resources>

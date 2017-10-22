@@ -113,7 +113,7 @@ public class MainActivity extends AppCompatActivity {
 
         if (utils.getAddresses().isEmpty()) {
             allAccountsView.setRefreshing(false);
-            Toast.makeText(getBaseContext(), "No accounts yet!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getBaseContext(), R.string.no_accounts_initial, Toast.LENGTH_SHORT).show();
             return;
         }
         numRefreshed = 0;
@@ -141,16 +141,16 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onErrorResponse(VolleyError error) {
 
-                        String message = "Something went wrong!";
+                        String message = getString(R.string.error_generic);
 
                         if (error instanceof TimeoutError || error instanceof NoConnectionError) {
-                            message = "No internet connection.";
+                            message = getString(R.string.error_no_internet);
                         } else if (error instanceof ServerError) {
-                            message = "Error on the server.";
+                            message = getString(R.string.error_server);
                         } else if (error instanceof NetworkError) {
-                            message = "There's a problem with the network.";
+                            message = getString(R.string.Error_network);
                         } else if (error instanceof ParseError) {
-                            message = "There was an error handling the data.";
+                            message = getString(R.string.error_parsing);
                         }
 
                         Log.e(LOG_TAG, message);
@@ -190,16 +190,16 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onErrorResponse(VolleyError error) {
 
-                        String message = "Something went wrong!";
+                        String message = getString(R.string.error_generic);
 
                         if (error instanceof TimeoutError || error instanceof NoConnectionError) {
-                            message = "No internet connection.";
+                            message = getString(R.string.error_no_internet);
                         } else if (error instanceof ServerError) {
-                            message = "Error reaching server while getting exchange-rate.";
+                            message = getString(R.string.error_server);
                         } else if (error instanceof NetworkError) {
-                            message = "There's a problem with the network.";
+                            message = getString(R.string.Error_network);
                         } else if (error instanceof ParseError) {
-                            message = "There was an error handling the data.";
+                            message = getString(R.string.error_parsing);
                         }
 
                         Log.e(LOG_TAG, message);
@@ -255,20 +255,20 @@ public class MainActivity extends AppCompatActivity {
         Log.i(LOG_TAG, "Address: " + barcode.displayValue);
 
         if (utils.hasAddress(barcode.displayValue)) {
-            Toast.makeText(getBaseContext(), "That address is already added!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getBaseContext(), R.string.account_already_added, Toast.LENGTH_SHORT).show();
         } else if (BitcoinUtils.verifyAddress(barcode.displayValue)) {
             showBitcoinAddressDialog(barcode.displayValue);
         } else
-            Toast.makeText(getBaseContext(), "That is not a bitcoin address!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getBaseContext(), R.string.invalid_address, Toast.LENGTH_SHORT).show();
     }
 
     private void showBitcoinAddressDialog(final String address) {
 
         new MaterialStyledDialog.Builder(this)
-                .setTitle("New address scanned!")
+                .setTitle(R.string.new_address)
                 .setIcon(R.drawable.bitcoinlogo)
                 .withDialogAnimation(true)
-                .setDescription("Is this the correct address? \n\n" + address)
+                .setDescription(getString(R.string.question_correct_address) + "\n\n" + address)
                 .setPositiveText(getString(android.R.string.yes))
                 .onPositive(new MaterialDialog.SingleButtonCallback() {
                     @Override
