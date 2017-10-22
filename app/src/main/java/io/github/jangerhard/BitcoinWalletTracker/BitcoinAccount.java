@@ -1,5 +1,7 @@
 package io.github.jangerhard.BitcoinWalletTracker;
 
+import android.view.View;
+
 import java.math.BigInteger;
 
 class BitcoinAccount {
@@ -11,6 +13,11 @@ class BitcoinAccount {
     private BigInteger total_received;
     private BigInteger total_sent;
     private BigInteger final_balance;
+
+    private View.OnClickListener removeAccountListener;
+
+    private View.OnClickListener shareAccountListener;
+    private View.OnClickListener foldAccountListener;
 
     String getHash160() {
         return hash160;
@@ -66,6 +73,46 @@ class BitcoinAccount {
 
     void setFinal_balance(BigInteger final_balance) {
         this.final_balance = final_balance;
+    }
+
+    public View.OnClickListener getRemoveAccountListener() {
+        return removeAccountListener;
+    }
+
+    public void setRemoveAccountListener(View.OnClickListener removeAccountListener) {
+        this.removeAccountListener = removeAccountListener;
+    }
+
+    public View.OnClickListener getShareAccountListener() {
+        return shareAccountListener;
+    }
+
+    public void setShareAccountListener(View.OnClickListener shareAccountListener) {
+        this.shareAccountListener = shareAccountListener;
+    }
+
+    public View.OnClickListener getFoldAccountListener() {
+        return foldAccountListener;
+    }
+
+    public void setFoldAccountListener(View.OnClickListener foldAccountListener) {
+        this.foldAccountListener = foldAccountListener;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+
+        BitcoinAccount acc = (BitcoinAccount) obj;
+
+        return (address.equals(acc.getAddress()) &&
+                hash160.equals(acc.hash160) &&
+                n_tx.equals(acc.n_tx) &&
+                n_unredeemed.equals(acc.n_unredeemed) &&
+                total_received.equals(acc.total_received) &&
+                total_sent.equals(acc.total_sent) &&
+                final_balance.equals(acc.final_balance));
     }
 
     @Override

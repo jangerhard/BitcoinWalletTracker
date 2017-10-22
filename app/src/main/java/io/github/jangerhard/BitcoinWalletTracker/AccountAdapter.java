@@ -12,7 +12,9 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -20,8 +22,15 @@ import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.github.javiersantos.materialstyleddialogs.MaterialStyledDialog;
 import com.github.javiersantos.materialstyleddialogs.enums.Style;
+import com.ramotion.foldingcell.FoldingCell;
+
+import java.util.ArrayList;
+import java.util.HashSet;
 
 public class AccountAdapter extends RecyclerView.Adapter<AccountAdapter.MyViewHolder> {
+
+    private HashSet<Integer> unfoldedIndexes = new HashSet<>();
+    private View.OnClickListener defaultRequestBtnClickListener;
 
     private Context mContext;
     private int selectedAccountPosition;
@@ -31,17 +40,29 @@ public class AccountAdapter extends RecyclerView.Adapter<AccountAdapter.MyViewHo
 
     class MyViewHolder extends RecyclerView.ViewHolder {
 
-        TextView accName, accBalance, accRate;
+        // Folded
+        TextView accNickNameFolded, accBalance, accRate;
         private ImageView overflow, qrCode;
         public int position;
 
+        // Unfolded
+        TextView accAddress, accNickNameUnfolded;
+        ListView transactionList;
+
         MyViewHolder(View view) {
             super(view);
-            accName = view.findViewById(R.id.accountName);
+
+            // Folded
+            accNickNameFolded = view.findViewById(R.id.accountName);
             accBalance = view.findViewById(R.id.accountBalance);
             overflow = view.findViewById(R.id.overflow);
             accRate = view.findViewById(R.id.accountRate);
             qrCode = view.findViewById(R.id.thumbnail);
+
+            // Unfolded
+            accAddress = view.findViewById(R.id.tv_unfolded_address);
+            accNickNameUnfolded = view.findViewById(R.id.tv_unfolded_nickname);
+            transactionList = view.findViewById(R.id.transactionList);
         }
     }
 
@@ -52,16 +73,19 @@ public class AccountAdapter extends RecyclerView.Adapter<AccountAdapter.MyViewHo
 
     @Override
     public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View itemView = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.account_card, parent, false);
+        FoldingCell itemView = (FoldingCell) LayoutInflater.from(parent.getContext())
+                .inflate(R.layout.account_cell, parent, false);
 
         return new MyViewHolder(itemView);
     }
 
     @Override
     public void onBindViewHolder(final MyViewHolder holder, int position) {
+
         final BitcoinAccount account = utils.getAccounts().get(position);
-        holder.accName.setText(utils.getNickname(account.getAddress()));
+
+        String nickname = utils.getNickname(account.getAddress());
+        holder.accNickNameFolded.setText(nickname);
         holder.accBalance.setText(
                 BitcoinUtils.formatBitcoinBalanceToString(
                         account.getFinal_balance())
@@ -72,6 +96,17 @@ public class AccountAdapter extends RecyclerView.Adapter<AccountAdapter.MyViewHo
         holder.position = holder.getAdapterPosition();
         holder.qrCode.setImageBitmap(
                 utils.getQRThumbnail(account.getAddress()));
+
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                ((FoldingCell) view).toggle(false);
+                // register in adapter that state for selected cell is toggled
+                registerToggle(holder.position);
+
+            }
+        });
 
         holder.qrCode.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -86,6 +121,28 @@ public class AccountAdapter extends RecyclerView.Adapter<AccountAdapter.MyViewHo
                 showPopupMenu(holder.overflow, holder.position);
             }
         });
+
+        // Unfolded
+        holder.accAddress.setText(account.getAddress());
+        holder.accNickNameUnfolded.setText(nickname);
+
+        if (account.getN_tx() != null && account.getN_tx().intValue() != 0) {
+
+            ArrayList<String> testArray = new ArrayList<>();
+
+            testArray.add("TEST1");
+            testArray.add("TEST2");
+            testArray.add("TEST3");
+            testArray.add("TEST4");
+
+            ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(
+                    mContext,
+                    android.R.layout.simple_list_item_1,
+                    testArray);
+
+            holder.transactionList.setAdapter(arrayAdapter);
+
+        }
     }
 
     private void showPopupQRCode(String address) {
@@ -192,5 +249,29 @@ public class AccountAdapter extends RecyclerView.Adapter<AccountAdapter.MyViewHo
     @Override
     public int getItemCount() {
         return utils.getNumberOfAccounts();
+    }
+
+    // simple methods for register cell state changes
+    public void registerToggle(int position) {
+        if (unfoldedIndexes.contains(position))
+            registerFold(position);
+        else
+            registerUnfold(position);
+    }
+
+    public void registerFold(int position) {
+        unfoldedIndexes.remove(position);
+    }
+
+    public void registerUnfold(int position) {
+        unfoldedIndexes.add(position);
+    }
+
+    public View.OnClickListener getDefaultRequestBtnClickListener() {
+        return defaultRequestBtnClickListener;
+    }
+
+    public void setDefaultRequestBtnClickListener(View.OnClickListener defaultRequestBtnClickListener) {
+        this.defaultRequestBtnClickListener = defaultRequestBtnClickListener;
     }
 }
