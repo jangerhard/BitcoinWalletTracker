@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<font-family xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <!-- regular -->
+    <font
+        android:font="@font/pts_normal"
+        android:fontStyle="normal"
+        android:fontWeight="400"
+
+        app:font="@font/pts_normal"
+        app:fontStyle="normal"
+        app:fontWeight="400" />
+
+    <!-- italic -->
+    <font
+        android:font="@font/pts_italic"
+        android:fontStyle="italic"
+        android:fontWeight="400"
+
+        app:font="@font/pts_italic"
+        app:fontStyle="italic"
+        app:fontWeight="400" />
+
+    <!-- bold -->
+    <font
+        android:font="@font/pts_bold"
+        android:fontStyle="normal"
+        android:fontWeight="700"
+
+        app:font="@font/pts_bold"
+        app:fontStyle="normal"
+        app:fontWeight="700" />
+
+    <!-- caption -->
+    <font
+        android:font="@font/ptc_caption"
+        android:fontStyle="normal"
+        android:fontWeight="700"
+
+        app:font="@font/ptc_caption"
+        app:fontStyle="normal"
+        app:fontWeight="700" />
+
+</font-family>
