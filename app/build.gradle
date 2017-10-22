@@ -43,6 +43,7 @@ dependencies {
     compile 'jp.wasabeef:recyclerview-animators:2.2.7'           // Scroll animations
     compile "com.afollestad.material-dialogs:core:0.9.4.7"       // Material Dialogs
     compile 'com.github.javiersantos:MaterialStyledDialogs:2.1'
+    compile 'com.ramotion.foldingcell:folding-cell:1.2.1'        // Foldable
 
     testCompile 'junit:junit:4.12'
 }
