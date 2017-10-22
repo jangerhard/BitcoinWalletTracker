@@ -14,10 +14,13 @@ import com.journeyapps.barcodescanner.BarcodeEncoder;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.MathContext;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Currency;
 import java.util.EnumMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 class BitcoinUtils {
@@ -140,23 +143,27 @@ class BitcoinUtils {
     }
 
     String getTotalBalance() {
+        return formatBitcoinBalanceToString(calculateTotalBalance(accountList));
+    }
 
-        BigInteger total = calculateTotalBalance(accountList);
-
-        if (total.intValue() == 0)
-            return "0.0000 mBTC";
-        else
-            return formatBitcoinBalanceToString(total);
+    String getTotalValue() {
+        return formatPriceToString(calculateTotalBalance(accountList));
     }
 
     String formatPriceToString(BigInteger bal) {
-        if (bal == null || bal.intValue() == 0)
-            return "0.00" + getCurrencyPair();
+
+        NumberFormat format = NumberFormat.getCurrencyInstance(getCurrentLocale());
+        format.setCurrency(Currency.getInstance(getCurrencyPair()));
+
+        if (bal == null || bal.intValue() == 0) {
+            return format.format(0.0);
+        }
 
         BigDecimal btc = new BigDecimal(formatBalance(bal.toString(), BITCOIN_FACTOR));
         BigDecimal price = new BigDecimal(getCurrentPrice().toString());
         BigDecimal result = btc.multiply(price, MathContext.DECIMAL32);
-        return result.setScale(2, BigDecimal.ROUND_HALF_UP) + getCurrencyPair();
+        result = result.setScale(2, BigDecimal.ROUND_HALF_UP);
+        return format.format(result.doubleValue());
     }
 
     @NonNull
@@ -315,6 +322,10 @@ class BitcoinUtils {
     static String getCurrencyPair() {
         //TODO: fix
         return "NOK";
+    }
+
+    static Locale getCurrentLocale() {
+        return new Locale("no", "NO");
     }
 
     Double getCurrentPrice() {

@@ -51,7 +51,7 @@ public class MainActivity extends AppCompatActivity {
     String url_exchange = "https://api.coinbase.com/v2/prices/";
     Activity mActivity;
     AccountAdapter adapter;
-    TextView tvTotalBalance;
+    TextView tvTotalBalance, tvTotalValue;
     BitcoinUtils utils;
     PullRefreshLayout allAccountsView;
     RecyclerView recyclerView;
@@ -67,6 +67,7 @@ public class MainActivity extends AppCompatActivity {
         recyclerView = findViewById(R.id.recycler_view);
 
         tvTotalBalance = findViewById(R.id.tvCalculatedBalance);
+        tvTotalValue = findViewById(R.id.tvCalculatedValue);
 
         // listen refresh event
         allAccountsView = findViewById(R.id.allAccountsView);
@@ -107,12 +108,13 @@ public class MainActivity extends AppCompatActivity {
 
         allAccountsView.setRefreshing(false);
         tvTotalBalance.setText(utils.getTotalBalance());
+        tvTotalValue.setText(utils.getTotalValue());
     }
 
     private void refreshData() {
 
         if (utils.getAddresses().isEmpty()) {
-            allAccountsView.setRefreshing(false);
+            updateUI();
             Toast.makeText(getBaseContext(), R.string.no_accounts_initial, Toast.LENGTH_SHORT).show();
             return;
         }
@@ -157,7 +159,7 @@ public class MainActivity extends AppCompatActivity {
                         Toast.makeText(getBaseContext(),
                                 message,
                                 Toast.LENGTH_SHORT).show();
-                        allAccountsView.setRefreshing(false);
+                        updateUI();
                     }
                 });
 
@@ -206,7 +208,7 @@ public class MainActivity extends AppCompatActivity {
                         Toast.makeText(getBaseContext(),
                                 message,
                                 Toast.LENGTH_SHORT).show();
-                        allAccountsView.setRefreshing(false);
+                        updateUI();
                     }
                 });
 
