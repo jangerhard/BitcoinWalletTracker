@@ -127,17 +127,26 @@ class BitcoinUtils {
         return -1;
     }
 
-    String totalBalance() {
-
-        if (accountList.isEmpty())
-            return "0 mBTC";
+    static BigInteger calculateTotalBalance(List<BitcoinAccount> accounts) {
+        if (accounts.size() == 0)
+            return new BigInteger("0");
 
         BigInteger total = new BigInteger("0");
 
-        for (BitcoinAccount acc : this.getAccounts()) {
+        for (BitcoinAccount acc : accounts) {
             total = total.add(acc.getFinal_balance());
         }
-        return formatBitcoinBalanceToString(total);
+        return total;
+    }
+
+    String getTotalBalance() {
+
+        BigInteger total = calculateTotalBalance(accountList);
+
+        if (total.intValue() == 0)
+            return "0.0000 mBTC";
+        else
+            return formatBitcoinBalanceToString(total);
     }
 
     String formatPriceToString(BigInteger bal) {

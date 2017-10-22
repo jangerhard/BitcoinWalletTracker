@@ -106,7 +106,7 @@ public class MainActivity extends AppCompatActivity {
     private void updateUI() {
 
         allAccountsView.setRefreshing(false);
-        tvTotalBalance.setText(utils.totalBalance());
+        tvTotalBalance.setText(utils.getTotalBalance());
     }
 
     private void refreshData() {

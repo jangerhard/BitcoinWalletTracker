@@ -6,6 +6,8 @@ import android.content.SharedPreferences;
 import org.junit.Test;
 
 import java.math.BigInteger;
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 
@@ -27,6 +29,29 @@ public class BitcoinUtilsTest {
 
         bal = BitcoinUtils.formatBitcoinBalanceToString(new BigInteger("0"));
         assertEquals("0.0000 BTC", bal);
+    }
+
+
+    @Test
+    public void testCalculateTotalAmount() throws Exception {
+
+        BigInteger a = new BigInteger("12345678");
+        BitcoinAccount acc = new BitcoinAccount();
+        acc.setFinal_balance(a);
+        List<BitcoinAccount> accounts = new ArrayList<>();
+        accounts.add(acc);
+        accounts.add(acc);
+        accounts.add(acc);
+        accounts.add(acc);
+        accounts.add(acc);
+
+        BigInteger expectedTotal = new BigInteger("61728390");
+
+        assertEquals(expectedTotal, BitcoinUtils.calculateTotalBalance(accounts));
+
+        expectedTotal = new BigInteger("0");
+        assertEquals(expectedTotal, BitcoinUtils.calculateTotalBalance(new ArrayList<BitcoinAccount>()));
+
     }
 
     @Test
