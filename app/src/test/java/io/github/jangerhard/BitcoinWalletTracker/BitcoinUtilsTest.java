@@ -98,8 +98,40 @@ public class BitcoinUtilsTest {
 
         assertEquals("kr 0,00", utils.formatPriceToString(new BigInteger("0")));
 
-
     }
 
+    @Test
+    public void testGetTransactionValue() throws Exception {
+
+        String testAddress = "testAddr";
+
+        Transaction t = new Transaction();
+        TransactionInput i = new TransactionInput();
+        TransactionPrevOut prevOut = new TransactionPrevOut();
+        prevOut.setAddr("testAddr");
+        prevOut.setValue(new BigInteger("12345"));
+        i.setPrev_out(prevOut);
+        ArrayList<TransactionInput> tOList = new ArrayList<>();
+        tOList.add(i);
+        t.setInputs(tOList);
+
+        assertEquals(new BigInteger("-12345"), BitcoinUtils.getTransactionValue(t, testAddress));
+
+        t = new Transaction();
+        TransactionOut o = new TransactionOut();
+        o.setAddr(testAddress);
+        o.setValue(new BigInteger("12345"));
+        ArrayList<TransactionOut> tL = new ArrayList<>();
+        tL.add(o);
+        t.setOut(tL);
+        i = new TransactionInput();
+        prevOut = new TransactionPrevOut();
+        prevOut.setAddr("wrongAddr");
+        i.setPrev_out(prevOut);
+        tOList.clear();
+        tOList.add(i);
+        t.setInputs(tOList);
+        assertEquals(new BigInteger("12345"), BitcoinUtils.getTransactionValue(t, testAddress));
+    }
 
 }

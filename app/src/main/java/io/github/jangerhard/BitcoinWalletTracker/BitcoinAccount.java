@@ -3,6 +3,7 @@ package io.github.jangerhard.BitcoinWalletTracker;
 import android.view.View;
 
 import java.math.BigInteger;
+import java.util.ArrayList;
 
 class BitcoinAccount {
 
@@ -13,9 +14,9 @@ class BitcoinAccount {
     private BigInteger total_received;
     private BigInteger total_sent;
     private BigInteger final_balance;
+    private ArrayList<Transaction> txs;
 
     private View.OnClickListener removeAccountListener;
-
     private View.OnClickListener shareAccountListener;
     private View.OnClickListener foldAccountListener;
 
@@ -118,5 +119,13 @@ class BitcoinAccount {
     @Override
     public String toString() {
         return address + " has a balance of " + getFinal_balance() + "btc.";
+    }
+
+    public ArrayList<Transaction> getTxs() {
+        return txs;
+    }
+
+    public void setTxs(ArrayList<Transaction> txs) {
+        this.txs = txs;
     }
 }

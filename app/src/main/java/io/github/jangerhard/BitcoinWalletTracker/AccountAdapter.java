@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.support.annotation.NonNull;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
 import android.text.InputType;
@@ -12,9 +13,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -24,8 +23,9 @@ import com.github.javiersantos.materialstyleddialogs.MaterialStyledDialog;
 import com.github.javiersantos.materialstyleddialogs.enums.Style;
 import com.ramotion.foldingcell.FoldingCell;
 
-import java.util.ArrayList;
 import java.util.HashSet;
+
+import jp.wasabeef.recyclerview.animators.LandingAnimator;
 
 public class AccountAdapter extends RecyclerView.Adapter<AccountAdapter.MyViewHolder> {
 
@@ -47,7 +47,7 @@ public class AccountAdapter extends RecyclerView.Adapter<AccountAdapter.MyViewHo
 
         // Unfolded
         TextView accAddress, accNickNameUnfolded;
-        ListView transactionList;
+        RecyclerView transactionList;
 
         MyViewHolder(View view) {
             super(view);
@@ -128,19 +128,15 @@ public class AccountAdapter extends RecyclerView.Adapter<AccountAdapter.MyViewHo
 
         if (account.getN_tx() != null && account.getN_tx().intValue() != 0) {
 
-            ArrayList<String> testArray = new ArrayList<>();
+            holder.transactionList.setLayoutManager(
+                    new LinearLayoutManager(
+                            mContext, LinearLayoutManager.VERTICAL, false));
+            holder.transactionList.setItemAnimator(new LandingAnimator());
 
-            testArray.add("TEST1");
-            testArray.add("TEST2");
-            testArray.add("TEST3");
-            testArray.add("TEST4");
+            TransactionAdapter transactionAdapter =
+                    new TransactionAdapter(mContext, account.getTxs(), account.getAddress());
 
-            ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(
-                    mContext,
-                    android.R.layout.simple_list_item_1,
-                    testArray);
-
-            holder.transactionList.setAdapter(arrayAdapter);
+            holder.transactionList.setAdapter(transactionAdapter);
 
         }
     }

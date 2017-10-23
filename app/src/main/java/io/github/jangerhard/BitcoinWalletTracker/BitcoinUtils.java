@@ -331,4 +331,23 @@ class BitcoinUtils {
     Double getCurrentPrice() {
         return currentPrice;
     }
+
+    static BigInteger getTransactionValue(Transaction t, String address) {
+        if (t.getOut() == null || t.getInputs() == null)
+            return new BigInteger("0");
+
+        // Paid
+        for (TransactionInput i : t.getInputs()) {
+            TransactionPrevOut p = i.getPrev_out();
+            if (p != null && p.getAddr() != null && p.getAddr().equals(address))
+                return i.getPrev_out().getValue().negate();
+        }
+        // Received
+        for (TransactionOut o : t.getOut()) {
+            if (o.getAddr() != null && o.getAddr().equals(address))
+                return o.getValue();
+        }
+
+        return new BigInteger("0");
+    }
 }
