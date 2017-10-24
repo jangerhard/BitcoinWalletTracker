@@ -25,8 +25,6 @@ import com.ramotion.foldingcell.FoldingCell;
 
 import java.util.HashSet;
 
-import jp.wasabeef.recyclerview.animators.LandingAnimator;
-
 public class AccountAdapter extends RecyclerView.Adapter<AccountAdapter.MyViewHolder> {
 
     private HashSet<Integer> unfoldedIndexes = new HashSet<>();
@@ -126,19 +124,14 @@ public class AccountAdapter extends RecyclerView.Adapter<AccountAdapter.MyViewHo
         holder.accAddress.setText(account.getAddress());
         holder.accNickNameUnfolded.setText(nickname);
 
-        if (account.getN_tx() != null && account.getN_tx().intValue() != 0) {
+        holder.transactionList.setLayoutManager(
+                new LinearLayoutManager(
+                        mContext, LinearLayoutManager.VERTICAL, false));
 
-            holder.transactionList.setLayoutManager(
-                    new LinearLayoutManager(
-                            mContext, LinearLayoutManager.VERTICAL, false));
-            holder.transactionList.setItemAnimator(new LandingAnimator());
+        TransactionAdapter transactionAdapter =
+                new TransactionAdapter(mContext, account.getTxs(), account.getAddress());
 
-            TransactionAdapter transactionAdapter =
-                    new TransactionAdapter(mContext, account.getTxs(), account.getAddress());
-
-            holder.transactionList.setAdapter(transactionAdapter);
-
-        }
+        holder.transactionList.setAdapter(transactionAdapter);
     }
 
     private void showPopupQRCode(String address) {

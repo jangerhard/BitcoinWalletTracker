@@ -228,8 +228,8 @@ public class MainActivity extends AppCompatActivity {
 
         Log.i(LOG_TAG, "Got price: " + price);
         //Toast.makeText(mActivity, "Got price: " + price, Toast.LENGTH_SHORT).show();
-        getAllWalletsInfo(utils.getAddresses());
         utils.updateCurrency(price);
+        getAllWalletsInfo(utils.getAddresses());
 
     }
 
