@@ -4,9 +4,9 @@
     android:layout_height="250dp"
     android:layout_gravity="center"
     android:layout_margin="@dimen/card_margin"
-    android:paddingTop="@dimen/activity_horizontal_margin"
     android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin">
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_horizontal_margin">
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -30,13 +30,21 @@
             android:text="NICKNAME"
             android:textStyle="italic" />
 
+        <TextView
+            android:id="@+id/tv_unfolded_last_transactions"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/tv_unfolded_address"
+            android:layout_centerHorizontal="true"
+            android:paddingTop="8dp"
+            android:text="Last 5 transactions" />
+
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/transactionList"
-            android:paddingTop="8dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/tv_unfolded_address"
+            android:layout_below="@+id/tv_unfolded_last_transactions"
             android:layout_centerHorizontal="true" />
 
     </RelativeLayout>
