@@ -136,7 +136,8 @@ class BitcoinUtils {
         BigInteger total = new BigInteger("0");
 
         for (BitcoinAccount acc : accounts) {
-            total = total.add(acc.getFinal_balance());
+            if (acc.getFinal_balance() != null)
+                total = total.add(acc.getFinal_balance());
         }
         return total;
     }

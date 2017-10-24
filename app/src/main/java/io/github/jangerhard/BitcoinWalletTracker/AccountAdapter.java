@@ -24,6 +24,7 @@ import com.github.javiersantos.materialstyleddialogs.enums.Style;
 import com.ramotion.foldingcell.FoldingCell;
 
 import java.util.HashSet;
+import java.util.Locale;
 
 public class AccountAdapter extends RecyclerView.Adapter<AccountAdapter.MyViewHolder> {
 
@@ -44,7 +45,8 @@ public class AccountAdapter extends RecyclerView.Adapter<AccountAdapter.MyViewHo
         public int position;
 
         // Unfolded
-        TextView accAddress, accNickNameUnfolded;
+        TextView accAddress, accNickNameUnfolded, tvAccNumTxs, tvAccTotReceived, tvAccFinalBalance,
+                tvRecentTransaction;
         RecyclerView transactionList;
 
         MyViewHolder(View view) {
@@ -61,6 +63,10 @@ public class AccountAdapter extends RecyclerView.Adapter<AccountAdapter.MyViewHo
             accAddress = view.findViewById(R.id.tv_unfolded_address);
             accNickNameUnfolded = view.findViewById(R.id.tv_unfolded_nickname);
             transactionList = view.findViewById(R.id.transactionList);
+            tvAccNumTxs = view.findViewById(R.id.tv_account_number_transactions);
+            tvAccTotReceived = view.findViewById(R.id.tv_account_total_received);
+            tvAccFinalBalance = view.findViewById(R.id.tv_account_final_balance);
+            tvRecentTransaction = view.findViewById(R.id.tv_unfolded_last_transactions);
         }
     }
 
@@ -81,6 +87,9 @@ public class AccountAdapter extends RecyclerView.Adapter<AccountAdapter.MyViewHo
     public void onBindViewHolder(final MyViewHolder holder, int position) {
 
         final BitcoinAccount account = utils.getAccounts().get(position);
+
+        if (account.getN_tx() == null)
+            return;
 
         String nickname = utils.getNickname(account.getAddress());
         holder.accNickNameFolded.setText(nickname);
@@ -123,6 +132,18 @@ public class AccountAdapter extends RecyclerView.Adapter<AccountAdapter.MyViewHo
         // Unfolded
         holder.accAddress.setText(account.getAddress());
         holder.accNickNameUnfolded.setText(nickname);
+
+        holder.tvAccNumTxs.setText(
+                String.format(Locale.ENGLISH, "%d", account.getN_tx().intValue()));
+        holder.tvAccTotReceived.setText(
+                BitcoinUtils.formatBitcoinBalanceToString(account.getTotal_received()));
+        holder.tvAccFinalBalance.setText(
+                BitcoinUtils.formatBitcoinBalanceToString(account.getFinal_balance()));
+
+        if (account.getN_tx().intValue() == 0)
+            holder.tvRecentTransaction.setText(mContext.getResources().getString(R.string.no_activity_on_this_address));
+        else
+            holder.tvRecentTransaction.setText(mContext.getResources().getString(R.string.latest_transactions));
 
         holder.transactionList.setLayoutManager(
                 new LinearLayoutManager(

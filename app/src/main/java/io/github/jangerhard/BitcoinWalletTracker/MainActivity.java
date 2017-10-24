@@ -85,7 +85,7 @@ public class MainActivity extends AppCompatActivity {
         utils.setup();
 
         adapter = new AccountAdapter(this, utils);
-        adapter.notifyDataSetChanged();
+//        adapter.notifyDataSetChanged();
 
         recyclerView.setLayoutManager(new LinearLayoutManager(this,
                 LinearLayoutManager.VERTICAL, false));

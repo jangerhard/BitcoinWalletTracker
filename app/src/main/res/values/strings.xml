@@ -25,7 +25,7 @@
     <!-- Strings related to XMLs -->
     <string name="balance">Balance</string>
     <string name="no_activity_on_this_address">No activity on this address.</string>
-    <string name="last_5_transactions">Last 5 transactions</string>
+    <string name="latest_transactions">Latest transactions</string>
 
 
 </resources>
