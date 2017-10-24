@@ -25,7 +25,6 @@ import java.util.Map;
 
 class BitcoinUtils {
 
-    private static final String LOG_TAG = "BitcoinUtil";
     private static final int BITCOIN_FACTOR = 100000000;
     private static final int MICRO_BITCOIN_FACTOR = 100000;
 
@@ -44,7 +43,7 @@ class BitcoinUtils {
         prefsAccountsKey = key;
     }
 
-    public void setup() {
+    void setup() {
         addAddressesFromPrefs();
         makeAccounts();
         createBitmaps();
@@ -260,12 +259,6 @@ class BitcoinUtils {
         }
     }
 
-    void sortAccounts() {
-
-        // TODO: Fix
-
-    }
-
     private void saveAddressesToPrefs() {
         StringBuilder addressString = new StringBuilder();
         for (String s : addresses) {
@@ -286,27 +279,14 @@ class BitcoinUtils {
 
     }
 
-    static Bitmap createQRThumbnail(String address) {
+    private static Bitmap createQRThumbnail(String address) {
         Bitmap bitmap = null;
         MultiFormatWriter multiFormatWriter = new MultiFormatWriter();
-        Map<EncodeHintType, Object> hints = new EnumMap<EncodeHintType, Object>(EncodeHintType.class);
+        Map<EncodeHintType, Object> hints = new EnumMap<>(EncodeHintType.class);
         hints.put(EncodeHintType.CHARACTER_SET, "UTF-8");
         hints.put(EncodeHintType.MARGIN, 2); /* default = 4 */
         try {
             BitMatrix bitMatrix = multiFormatWriter.encode(address, BarcodeFormat.QR_CODE, 256, 256, hints);
-            BarcodeEncoder barcodeEncoder = new BarcodeEncoder();
-            bitmap = barcodeEncoder.createBitmap(bitMatrix);
-        } catch (WriterException e) {
-            e.printStackTrace();
-        }
-        return bitmap;
-    }
-
-    private Bitmap createQRBig(String address) {
-        Bitmap bitmap = null;
-        MultiFormatWriter multiFormatWriter = new MultiFormatWriter();
-        try {
-            BitMatrix bitMatrix = multiFormatWriter.encode(address, BarcodeFormat.QR_CODE, 800, 800);
             BarcodeEncoder barcodeEncoder = new BarcodeEncoder();
             bitmap = barcodeEncoder.createBitmap(bitMatrix);
         } catch (WriterException e) {
@@ -324,14 +304,23 @@ class BitcoinUtils {
         return "NOK";
     }
 
-    static Locale getCurrentLocale() {
+    private static Locale getCurrentLocale() {
         return new Locale("no", "NO");
     }
 
-    Double getCurrentPrice() {
+    private Double getCurrentPrice() {
         return currentPrice;
     }
 
+    /**
+     * Returns the value associated with the account address; Positive if received, and negative
+     * if paid.
+     *
+     * @param t       - Transaction related to an account
+     * @param address - The address of the account
+     * @return BigInteger value, positive if received, and negative
+     * if paid. If no transaction is associated, returns 0.
+     */
     static BigInteger getTransactionValue(Transaction t, String address) {
         if (t.getOut() == null || t.getInputs() == null)
             return new BigInteger("0");
