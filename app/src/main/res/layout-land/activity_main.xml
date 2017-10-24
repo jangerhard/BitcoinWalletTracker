@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<android.widget.LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal"
+    android:padding="16dp"
+    android:weightSum="3"
+    tools:context=".MainActivity">
+
+    <include layout="@layout/overview_card" />
+
+    <com.baoyz.widget.PullRefreshLayout
+        android:id="@+id/allAccountsView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:refreshColor="@color/colorPrimary"
+        android:layout_weight="1"
+        app:refreshType="smartisan">
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/recycler_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clipChildren="false"
+            android:clipToPadding="false"
+            android:fadeScrollbars="true"
+            android:scrollbars="vertical" />
+
+    </com.baoyz.widget.PullRefreshLayout>
+
+</android.widget.LinearLayout>
