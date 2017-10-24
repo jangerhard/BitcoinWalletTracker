@@ -51,11 +51,11 @@ public class AccountAdapter extends RecyclerView.Adapter<AccountAdapter.MyViewHo
             super(view);
 
             // Folded
-            accNickNameFolded = view.findViewById(R.id.accountName);
-            accBalance = view.findViewById(R.id.accountBalance);
-            overflow = view.findViewById(R.id.overflow);
-            accRate = view.findViewById(R.id.accountRate);
-            qrCode = view.findViewById(R.id.thumbnail);
+            accNickNameFolded = view.findViewById(R.id.tvAccountNameFolded);
+            accBalance = view.findViewById(R.id.tvAccountBalanceFolded);
+            accRate = view.findViewById(R.id.tvAccountRateFolded);
+            overflow = view.findViewById(R.id.im_OverflowFolded);
+            qrCode = view.findViewById(R.id.im_thumbnailFolded);
 
             // Unfolded
             accAddress = view.findViewById(R.id.tv_unfolded_address);
@@ -72,7 +72,7 @@ public class AccountAdapter extends RecyclerView.Adapter<AccountAdapter.MyViewHo
     @Override
     public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         FoldingCell itemView = (FoldingCell) LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.account_cell, parent, false);
+                .inflate(R.layout.account_layout, parent, false);
 
         return new MyViewHolder(itemView);
     }

@@ -13,7 +13,7 @@
         android:layout_height="match_parent">
 
         <ImageView
-            android:id="@+id/thumbnail"
+            android:id="@+id/im_thumbnailFolded"
             android:layout_width="@dimen/album_cover_height"
             android:layout_height="@dimen/album_cover_height"
             android:layout_margin="16dp"
@@ -25,37 +25,37 @@
             android:focusable="true" />
 
         <TextView
-            android:id="@+id/accountName"
+            android:id="@+id/tvAccountNameFolded"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
-            android:layout_toEndOf="@+id/thumbnail"
+            android:layout_toEndOf="@+id/im_thumbnailFolded"
             android:paddingTop="@dimen/account_name_padding"
             android:text="PLACEHOLDER NAME"
             android:textColor="@color/accountName"
             android:textSize="@dimen/album_title" />
 
         <TextView
-            android:id="@+id/accountBalance"
+            android:id="@+id/tvAccountBalanceFolded"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignBottom="@+id/thumbnail"
-            android:layout_toEndOf="@+id/thumbnail"
+            android:layout_alignBottom="@+id/im_thumbnailFolded"
+            android:layout_toEndOf="@+id/im_thumbnailFolded"
             android:paddingBottom="@dimen/account_name_padding"
             android:text="0.00 BTC" />
 
         <TextView
-            android:id="@+id/accountRate"
+            android:id="@+id/tvAccountRateFolded"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignBaseline="@+id/accountBalance"
-            android:layout_alignBottom="@+id/accountBalance"
-            android:layout_toStartOf="@+id/overflow"
+            android:layout_alignBaseline="@+id/tvAccountBalanceFolded"
+            android:layout_alignBottom="@+id/tvAccountBalanceFolded"
+            android:layout_toStartOf="@+id/im_OverflowFolded"
             android:paddingBottom="@dimen/account_name_padding"
             android:text="1000kr" />
 
         <ImageView
-            android:id="@+id/overflow"
+            android:id="@+id/im_OverflowFolded"
             android:layout_width="@dimen/ic_album_overflow_width"
             android:layout_height="@dimen/ic_album_overflow_height"
             android:layout_alignParentEnd="true"

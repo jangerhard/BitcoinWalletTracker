@@ -19,7 +19,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <include layout="@layout/account_card" />
+        <include layout="@layout/account_folded" />
     </FrameLayout>
 
 </com.ramotion.foldingcell.FoldingCell>
