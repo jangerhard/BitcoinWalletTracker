@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#009688</color>
-    <color name="colorPrimaryDark">#00796b</color>
-    <color name="colorAccent">#b2ff59</color>
+    <color name="colorPrimary">#3f51b5</color>
+    <color name="colorPrimaryDark">#303f9f</color>
+    <color name="colorAccent">#40c4ff</color>
     <color name="viewBg">#f1f5f8</color>
     <color name="accountName">#4c4c4c</color>
     <color name="transaction_received">#4CAF50</color>
