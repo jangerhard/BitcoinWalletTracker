@@ -5,4 +5,6 @@
     <color name="colorAccent">#b2ff59</color>
     <color name="viewBg">#f1f5f8</color>
     <color name="accountName">#4c4c4c</color>
+    <color name="transaction_received">#4CAF50</color>
+    <color name="transaction_paid">#f44336</color>
 </resources>
