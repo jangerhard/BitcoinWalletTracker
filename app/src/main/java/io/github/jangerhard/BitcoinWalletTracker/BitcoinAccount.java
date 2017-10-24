@@ -1,7 +1,5 @@
 package io.github.jangerhard.BitcoinWalletTracker;
 
-import android.view.View;
-
 import java.math.BigInteger;
 import java.util.ArrayList;
 
@@ -15,10 +13,6 @@ class BitcoinAccount {
     private BigInteger total_sent;
     private BigInteger final_balance;
     private ArrayList<Transaction> txs;
-
-    private View.OnClickListener removeAccountListener;
-    private View.OnClickListener shareAccountListener;
-    private View.OnClickListener foldAccountListener;
 
     String getHash160() {
         return hash160;
@@ -74,30 +68,6 @@ class BitcoinAccount {
 
     void setFinal_balance(BigInteger final_balance) {
         this.final_balance = final_balance;
-    }
-
-    public View.OnClickListener getRemoveAccountListener() {
-        return removeAccountListener;
-    }
-
-    public void setRemoveAccountListener(View.OnClickListener removeAccountListener) {
-        this.removeAccountListener = removeAccountListener;
-    }
-
-    public View.OnClickListener getShareAccountListener() {
-        return shareAccountListener;
-    }
-
-    public void setShareAccountListener(View.OnClickListener shareAccountListener) {
-        this.shareAccountListener = shareAccountListener;
-    }
-
-    public View.OnClickListener getFoldAccountListener() {
-        return foldAccountListener;
-    }
-
-    public void setFoldAccountListener(View.OnClickListener foldAccountListener) {
-        this.foldAccountListener = foldAccountListener;
     }
 
     @Override
