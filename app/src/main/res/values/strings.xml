@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Wallet Tracker</string>
+    <string name="app_name">Wallet Watcher</string>
     <string name="bitcoinaddresses">BitcoinAddresses</string>
 
     <!-- Strings related to MainActivity-->
@@ -11,10 +11,10 @@
     <string name="error_server">Error on the server.</string>
     <string name="Error_network">There\'s a problem with the network.</string>
     <string name="error_parsing">There was an error handling the data.</string>
-    <string name="account_already_added">That addr is already added!</string>
-    <string name="invalid_address">That is not a bitcoin addr!</string>
-    <string name="new_address">New addr scanned!</string>
-    <string name="question_correct_address">Is this the correct addr?</string>
+    <string name="account_already_added">That address is already added!</string>
+    <string name="invalid_address">That is not a bitcoin address!</string>
+    <string name="new_address">New address scanned!</string>
+    <string name="question_correct_address">Is this the correct address?</string>
 
     <!-- Strings related to barcode scanner -->
     <string name="ok">OK</string>
