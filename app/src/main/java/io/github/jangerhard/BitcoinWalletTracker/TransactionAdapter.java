@@ -19,11 +19,11 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
 
     class MyViewHolder extends RecyclerView.ViewHolder {
 
-        TextView tvFromAddress, tvResult;
+        TextView tvTimestamp, tvResult;
 
         MyViewHolder(View view) {
             super(view);
-            tvFromAddress = view.findViewById(R.id.transactionAddress);
+            tvTimestamp = view.findViewById(R.id.transactionTimestamp);
             tvResult = view.findViewById(R.id.transactionResult);
         }
     }
@@ -61,8 +61,10 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
         holder.tvResult.setText(
                 BitcoinUtils.formatBitcoinBalanceToString(transactionValue)
         );
+
+        holder.tvTimestamp.setText(BitcoinUtils.getConvertedTimeStamp(t.getTime().longValue()));
 //        holder.tvResult.setText("Test " + position);
-//        holder.tvFromAddress.setText("Test " + position);
+//        holder.tvTimestamp.setText("Test " + position);
     }
 
     @Override

@@ -14,8 +14,10 @@ import com.journeyapps.barcodescanner.BarcodeEncoder;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.MathContext;
+import java.text.DateFormat;
 import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Currency;
 import java.util.EnumMap;
@@ -339,5 +341,14 @@ class BitcoinUtils {
         }
 
         return new BigInteger("0");
+    }
+
+    static String getConvertedTimeStamp(Long time) {
+
+        DateFormat formatter = DateFormat.getDateTimeInstance();
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(time * 1000);
+
+        return formatter.format(calendar.getTime());
     }
 }
