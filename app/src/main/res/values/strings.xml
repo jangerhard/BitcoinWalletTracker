@@ -31,6 +31,7 @@
     <string name="balance_in_btc">Balance in BTC</string>
     <string name="account_nickname">Account nickname</string>
     <string name="qr_code_associated_with_account">QR Code associated with account</string>
+    <string name="qr_code_of_given_address">QR code of given address</string>
 
 
 </resources>

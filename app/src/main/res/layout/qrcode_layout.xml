@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/popup_qr_layout"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:padding="16dp"
+    android:layout_gravity="center">
+
+    <ImageView
+        android:id="@+id/popup_qr_code"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:contentDescription="@string/qr_code_of_given_address"
+        android:layout_centerHorizontal="true"
+        android:src="@drawable/ic_menu_black_48dp" />
+
+    <TextView
+        android:id="@+id/popup_qr_address"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/popup_qr_code"
+        android:layout_centerHorizontal="true"
+        android:text="Address"
+        android:textStyle="bold" />
+
+</RelativeLayout>
