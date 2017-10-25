@@ -17,12 +17,13 @@
             android:layout_width="@dimen/album_cover_height"
             android:layout_height="@dimen/album_cover_height"
             android:layout_margin="16dp"
-            android:clickable="true"
             android:background="?attr/selectableItemBackgroundBorderless"
+            android:clickable="true"
+            android:contentDescription="@string/qr_code_associated_with_account"
+            android:focusable="true"
             android:foregroundGravity="center_vertical"
             android:scaleType="fitXY"
-            android:src="@drawable/bitcoinlogo"
-            android:focusable="true" />
+            android:src="@drawable/bitcoinlogo" />
 
         <TextView
             android:id="@+id/tvAccountNameFolded"
@@ -30,8 +31,9 @@
             android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
             android:layout_toEndOf="@+id/im_thumbnailFolded"
+            android:contentDescription="@string/account_nickname"
             android:paddingTop="@dimen/account_name_padding"
-            android:text="PLACEHOLDER NAME"
+            android:text="@string/loading"
             android:textColor="@color/accountName"
             android:textSize="@dimen/album_title" />
 
@@ -41,8 +43,9 @@
             android:layout_height="wrap_content"
             android:layout_alignBottom="@+id/im_thumbnailFolded"
             android:layout_toEndOf="@+id/im_thumbnailFolded"
+            android:contentDescription="@string/balance_in_btc"
             android:paddingBottom="@dimen/account_name_padding"
-            android:text="0.00 BTC" />
+            android:text="@string/loading" />
 
         <TextView
             android:id="@+id/tvAccountRateFolded"
@@ -51,8 +54,9 @@
             android:layout_alignBaseline="@+id/tvAccountBalanceFolded"
             android:layout_alignBottom="@+id/tvAccountBalanceFolded"
             android:layout_toStartOf="@+id/im_OverflowFolded"
+            android:contentDescription="@string/current_converted_price"
             android:paddingBottom="@dimen/account_name_padding"
-            android:text="1000kr" />
+            android:text="@string/loading" />
 
         <ImageView
             android:id="@+id/im_OverflowFolded"

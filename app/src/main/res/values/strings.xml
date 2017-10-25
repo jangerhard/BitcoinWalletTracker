@@ -26,6 +26,11 @@
     <string name="balance">Balance</string>
     <string name="no_activity_on_this_address">No activity on this address.</string>
     <string name="latest_transactions">Latest transactions</string>
+    <string name="current_converted_price">Current converted price</string>
+    <string name="loading">..loading..</string>
+    <string name="balance_in_btc">Balance in BTC</string>
+    <string name="account_nickname">Account nickname</string>
+    <string name="qr_code_associated_with_account">QR Code associated with account</string>
 
 
 </resources>
