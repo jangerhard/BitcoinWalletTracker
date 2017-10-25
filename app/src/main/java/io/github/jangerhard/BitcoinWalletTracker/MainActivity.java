@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -15,8 +14,6 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.afollestad.materialdialogs.DialogAction;
-import com.afollestad.materialdialogs.MaterialDialog;
 import com.android.volley.NetworkError;
 import com.android.volley.NoConnectionError;
 import com.android.volley.ParseError;
@@ -29,10 +26,10 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.baoyz.widget.PullRefreshLayout;
-import com.github.javiersantos.materialstyleddialogs.MaterialStyledDialog;
 import com.google.android.gms.common.api.CommonStatusCodes;
 import com.google.android.gms.vision.barcode.Barcode;
 import com.google.gson.Gson;
+import com.yarolegovich.lovelydialog.LovelyStandardDialog;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -266,20 +263,19 @@ public class MainActivity extends AppCompatActivity {
 
     private void showBitcoinAddressDialog(final String address) {
 
-        new MaterialStyledDialog.Builder(this)
+        new LovelyStandardDialog(this)
+                .setTopColorRes(R.color.dialog_info)
                 .setTitle(R.string.new_address)
-                .setIcon(R.drawable.bitcoinlogo)
-                .withDialogAnimation(true)
-                .setDescription(getString(R.string.question_correct_address) + "\n\n" + address)
-                .setPositiveText(getString(android.R.string.yes))
-                .onPositive(new MaterialDialog.SingleButtonCallback() {
+                .setIcon(R.drawable.bitcoin_128)
+                .setMessage(getString(R.string.question_correct_address) + "\n\n" + address)
+                .setPositiveButton(android.R.string.yes, new View.OnClickListener() {
                     @Override
-                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                    public void onClick(View v) {
                         utils.addAddress(address);
                         getSingleWalletInfo(address, true);
                     }
                 })
-                .setNegativeText(getString(android.R.string.cancel))
+                .setNegativeButton(android.R.string.no, null)
                 .show();
     }
 

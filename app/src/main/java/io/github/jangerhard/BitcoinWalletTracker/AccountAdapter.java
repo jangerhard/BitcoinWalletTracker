@@ -1,13 +1,10 @@
 package io.github.jangerhard.BitcoinWalletTracker;
 
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.drawable.BitmapDrawable;
-import android.support.annotation.NonNull;
+import android.content.Intent;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
-import android.text.InputType;
 import android.view.LayoutInflater;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -17,11 +14,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.afollestad.materialdialogs.DialogAction;
-import com.afollestad.materialdialogs.MaterialDialog;
-import com.github.javiersantos.materialstyleddialogs.MaterialStyledDialog;
-import com.github.javiersantos.materialstyleddialogs.enums.Style;
 import com.ramotion.foldingcell.FoldingCell;
+import com.yarolegovich.lovelydialog.LovelyStandardDialog;
+import com.yarolegovich.lovelydialog.LovelyTextInputDialog;
 
 import java.util.HashSet;
 import java.util.Locale;
@@ -155,26 +150,18 @@ public class AccountAdapter extends RecyclerView.Adapter<AccountAdapter.MyViewHo
         holder.transactionList.setAdapter(transactionAdapter);
     }
 
-    private void showPopupQRCode(String address) {
+    private void showPopupQRCode(final String address) {
 
-        new MaterialStyledDialog.Builder(mContext)
+        new LovelyStandardDialog(mContext)
+                .setTopColorRes(R.color.dialog_qr)
+                .setIcon(utils.getBigQRThumbnail(address))
                 .setTitle(address)
-//                .setDescription(address)
-                .setStyle(Style.HEADER_WITH_ICON)
-                .setIcon(new BitmapDrawable(mContext.getResources(),
-                        Bitmap.createScaledBitmap(utils.getQRThumbnail(address),
-                                150, 150, true)))
-//                .setCustomView()
-                .withDialogAnimation(true)
-                .setPositiveText("Share")
-                .onPositive(new MaterialDialog.SingleButtonCallback() {
+                .setPositiveButton(R.string.share, new View.OnClickListener() {
                     @Override
-                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-
+                    public void onClick(View v) {
+                        shareAddress(address);
                     }
                 })
-//                .setHeaderDrawable()
-                //.setHeaderDrawable(ContextCompat.getDrawable(this, R.drawable.heaer))
                 .show();
     }
 
@@ -226,34 +213,52 @@ public class AccountAdapter extends RecyclerView.Adapter<AccountAdapter.MyViewHo
 
     private void changeNicknameOnSelected() {
 
-        new MaterialDialog.Builder(mContext)
-                .title("Edit nickname")
-                .inputType(InputType.TYPE_CLASS_TEXT)
-                .input("New nickname", "Savings", new MaterialDialog.InputCallback() {
+        new LovelyTextInputDialog(mContext)
+                .setTopColorRes(R.color.dialog_edit)
+                .setTitle(R.string.edit_nickname)
+                .setIcon(R.drawable.ic_mode_edit_white_48dp)
+                .setHint(R.string.savings)
+                .setInitialInput(utils.getNickname(utils.getAddresses().get(selectedAccountPosition)))
+                .setInputFilter(R.string.text_input_error_message, new LovelyTextInputDialog.TextFilter() {
                     @Override
-                    public void onInput(MaterialDialog dialog, CharSequence input) {
-                        utils.setNewNickname(selectedAccountAddress, input.toString());
+                    public boolean check(String text) {
+                        return text.matches("\\w+");
+                    }
+                })
+                .setConfirmButton(android.R.string.ok, new LovelyTextInputDialog.OnTextInputConfirmListener() {
+                    @Override
+                    public void onTextInputConfirmed(String text) {
+                        utils.setNewNickname(selectedAccountAddress, text);
                         notifyItemChanged(selectedAccountPosition);
                     }
-                }).show();
+                })
+                .show();
     }
 
     private void showRemoveConfirmDialog() {
-        new MaterialStyledDialog.Builder(mContext)
-                .withDialogAnimation(true)
-                .setIcon(R.drawable.ic_warning_white_24dp)
-                .setTitle("Stop tracking " + selectedAccountNickname + "?")
-                .setDescription("It has a balance of " +
+
+        new LovelyStandardDialog(mContext)
+                .setTopColorRes(R.color.dialog_warning)
+                .setIcon(R.drawable.ic_delete_forever_white_48dp)
+                .setTitle(mContext.getString(R.string.stop_tracking) + " " + selectedAccountNickname + "?")
+                .setMessage(mContext.getString(R.string.it_has_a_balance_of) + " " +
                         utils.getBalanceOfAccount(selectedAccountAddress))
-                .setPositiveText(mContext.getString(android.R.string.yes))
-                .onPositive(new MaterialDialog.SingleButtonCallback() {
+                .setPositiveButton(android.R.string.yes, new View.OnClickListener() {
                     @Override
-                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                    public void onClick(View v) {
                         removeSelectedAccount();
                     }
                 })
-                .setNegativeText(mContext.getString(android.R.string.cancel))
+                .setNegativeButton(android.R.string.cancel, null)
                 .show();
+    }
+
+    private void shareAddress(String address) {
+        Intent sendIntent = new Intent();
+        sendIntent.setAction(Intent.ACTION_SEND);
+        sendIntent.putExtra(Intent.EXTRA_TEXT, address);
+        sendIntent.setType("text/plain");
+        mContext.startActivity(sendIntent);
     }
 
     @Override
@@ -262,26 +267,19 @@ public class AccountAdapter extends RecyclerView.Adapter<AccountAdapter.MyViewHo
     }
 
     // simple methods for register cell state changes
-    public void registerToggle(int position) {
+    private void registerToggle(int position) {
         if (unfoldedIndexes.contains(position))
             registerFold(position);
         else
             registerUnfold(position);
     }
 
-    public void registerFold(int position) {
+    private void registerFold(int position) {
         unfoldedIndexes.remove(position);
     }
 
-    public void registerUnfold(int position) {
+    private void registerUnfold(int position) {
         unfoldedIndexes.add(position);
     }
 
-    public View.OnClickListener getDefaultRequestBtnClickListener() {
-        return defaultRequestBtnClickListener;
-    }
-
-    public void setDefaultRequestBtnClickListener(View.OnClickListener defaultRequestBtnClickListener) {
-        this.defaultRequestBtnClickListener = defaultRequestBtnClickListener;
-    }
 }

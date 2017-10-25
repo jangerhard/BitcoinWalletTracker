@@ -29,6 +29,8 @@ class BitcoinUtils {
 
     private static final int BITCOIN_FACTOR = 100000000;
     private static final int MICRO_BITCOIN_FACTOR = 100000;
+    private final int BIG_QR_SIZE = 512;
+    private final int REGULAR_QR_SIZE = 128;
 
     private List<BitcoinAccount> accountList;
     private List<String> addresses;
@@ -36,11 +38,13 @@ class BitcoinUtils {
     private String prefsAccountsKey;
     private Double currentPrice;
     private List<Bitmap> bitmapList;
+    private List<Bitmap> bigBitmapList;
 
     BitcoinUtils(SharedPreferences sharedPref, String key) {
         accountList = new ArrayList<>();
         addresses = new ArrayList<>();
         bitmapList = new ArrayList<>();
+        bigBitmapList = new ArrayList<>();
         this.sharedPref = sharedPref;
         prefsAccountsKey = key;
     }
@@ -52,8 +56,10 @@ class BitcoinUtils {
     }
 
     private void createBitmaps() {
-        for (String address : addresses)
-            bitmapList.add(createQRThumbnail(address));
+        for (String address : addresses) {
+            bitmapList.add(createQRThumbnail(address, REGULAR_QR_SIZE));
+            bigBitmapList.add(createQRThumbnail(address, BIG_QR_SIZE));
+        }
     }
 
     List<BitcoinAccount> getAccounts() {
@@ -105,7 +111,8 @@ class BitcoinUtils {
     void addAddress(String address) {
         if (!addresses.contains(address)) {
             addresses.add(address);
-            bitmapList.add(createQRThumbnail(address));
+            bitmapList.add(createQRThumbnail(address, REGULAR_QR_SIZE));
+            bitmapList.add(createQRThumbnail(address, BIG_QR_SIZE));
             saveAddressesToPrefs();
         }
     }
@@ -282,20 +289,24 @@ class BitcoinUtils {
 
     }
 
-    private static Bitmap createQRThumbnail(String address) {
+    private static Bitmap createQRThumbnail(String address, int size) {
         Bitmap bitmap = null;
         MultiFormatWriter multiFormatWriter = new MultiFormatWriter();
         Map<EncodeHintType, Object> hints = new EnumMap<>(EncodeHintType.class);
         hints.put(EncodeHintType.CHARACTER_SET, "UTF-8");
         hints.put(EncodeHintType.MARGIN, 2); /* default = 4 */
         try {
-            BitMatrix bitMatrix = multiFormatWriter.encode(address, BarcodeFormat.QR_CODE, 256, 256, hints);
+            BitMatrix bitMatrix = multiFormatWriter.encode(address, BarcodeFormat.QR_CODE, size, size, hints);
             BarcodeEncoder barcodeEncoder = new BarcodeEncoder();
             bitmap = barcodeEncoder.createBitmap(bitMatrix);
         } catch (WriterException e) {
             e.printStackTrace();
         }
         return bitmap;
+    }
+
+    Bitmap getBigQRThumbnail(String address) {
+        return bigBitmapList.get(addresses.indexOf(address));
     }
 
     Bitmap getQRThumbnail(String address) {
