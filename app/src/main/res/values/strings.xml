@@ -8,7 +8,7 @@
     <string name="no_accounts_initial">No accounts yet!</string>
     <string name="error_generic">Something went wrong!</string>
     <string name="error_no_internet">No internet connection.</string>
-    <string name="error_server">Error on the server.</string>
+    <string name="error_server">Error on the server. Too many requests.</string>
     <string name="Error_network">There\'s a problem with the network.</string>
     <string name="error_parsing">There was an error handling the data.</string>
     <string name="account_already_added">That address is already added!</string>
