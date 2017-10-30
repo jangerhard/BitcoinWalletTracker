@@ -114,7 +114,24 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        handleIncomingData();
         refreshData();
+    }
+
+    private void handleIncomingData() {
+        // Get intent, action and MIME type
+        Intent intent = getIntent();
+        String action = intent.getAction();
+        String type = intent.getType();
+
+        if (Intent.ACTION_SEND.equals(action) && type != null) {
+            if ("text/plain".equals(type)) {
+                String sharedText = intent.getStringExtra(Intent.EXTRA_TEXT);
+                if (sharedText != null) {
+                    addBarcode(sharedText);
+                }
+            }
+        }
     }
 
     private void updateUI() {
@@ -265,14 +282,14 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    private void addBarcode(Barcode barcode) {
+    private void addBarcode(String address) {
 
-        Log.i(LOG_TAG, "Address: " + barcode.displayValue);
+        Log.i(LOG_TAG, "Address: " + address);
 
-        if (utils.hasAddress(barcode.displayValue)) {
+        if (utils.hasAddress(address)) {
             Toast.makeText(getBaseContext(), R.string.account_already_added, Toast.LENGTH_SHORT).show();
-        } else if (BitcoinUtils.verifyAddress(barcode.displayValue)) {
-            showBitcoinAddressDialog(barcode.displayValue);
+        } else if (BitcoinUtils.verifyAddress(address)) {
+            showBitcoinAddressDialog(address);
         } else
             Toast.makeText(getBaseContext(), R.string.invalid_address, Toast.LENGTH_SHORT).show();
     }
@@ -300,7 +317,8 @@ public class MainActivity extends AppCompatActivity {
         if (requestCode == BARCODE_READER_REQUEST_CODE) {
             if (resultCode == CommonStatusCodes.SUCCESS) {
                 if (data != null) {
-                    addBarcode((Barcode) data.getParcelableExtra(BarcodeCaptureActivity.BarcodeObject));
+                    Barcode b = data.getParcelableExtra(BarcodeCaptureActivity.BarcodeObject);
+                    addBarcode(b.displayValue);
                 } else
                     Toast.makeText(getBaseContext(), R.string.no_barcode_captured, Toast.LENGTH_SHORT).show();
             } else Log.e(LOG_TAG, String.format(getString(R.string.barcode_error_format),
