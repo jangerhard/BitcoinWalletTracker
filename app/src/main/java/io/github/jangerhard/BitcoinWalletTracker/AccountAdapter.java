@@ -24,7 +24,6 @@ import java.util.Locale;
 public class AccountAdapter extends RecyclerView.Adapter<AccountAdapter.MyViewHolder> {
 
     private HashSet<Integer> unfoldedIndexes = new HashSet<>();
-    private View.OnClickListener defaultRequestBtnClickListener;
 
     private Context mContext;
     private int selectedAccountPosition;
@@ -37,7 +36,7 @@ public class AccountAdapter extends RecyclerView.Adapter<AccountAdapter.MyViewHo
         // Folded
         TextView accNickNameFolded, accBalance, accRate;
         private ImageView overflow, qrCode;
-        public int position;
+        int position;
 
         // Unfolded
         TextView accAddress, accNickNameUnfolded, tvAccNumTxs, tvAccTotReceived, tvAccFinalBalance,
