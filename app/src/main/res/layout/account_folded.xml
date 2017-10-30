@@ -23,7 +23,7 @@
             android:focusable="true"
             android:foregroundGravity="center_vertical"
             android:scaleType="fitXY"
-            android:src="@drawable/bitcoinlogo" />
+            android:src="@drawable/bitcoin_128" />
 
         <TextView
             android:id="@+id/tvAccountNameFolded"
