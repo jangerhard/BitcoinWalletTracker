@@ -11,6 +11,7 @@ import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -29,6 +30,7 @@ import com.baoyz.widget.PullRefreshLayout;
 import com.google.android.gms.common.api.CommonStatusCodes;
 import com.google.android.gms.vision.barcode.Barcode;
 import com.google.gson.Gson;
+import com.wajahatkarim3.easyflipview.EasyFlipView;
 import com.yarolegovich.lovelydialog.LovelyStandardDialog;
 
 import org.json.JSONException;
@@ -52,6 +54,7 @@ public class MainActivity extends AppCompatActivity {
     BitcoinUtils utils;
     PullRefreshLayout allAccountsView;
     RecyclerView recyclerView;
+    EasyFlipView mFlipView;
 
     private int numRefreshed;
 
@@ -77,6 +80,19 @@ public class MainActivity extends AppCompatActivity {
         });
 
         SharedPreferences sharedPref = mActivity.getPreferences(Context.MODE_PRIVATE);
+
+        mFlipView = findViewById(R.id.flipview_layout);
+
+        ImageButton bOpenSettings = findViewById(R.id.bSettings);
+        ImageView bCloseSettings = findViewById(R.id.bSettingsClose);
+        View.OnClickListener clFlip = new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mFlipView.flipTheView();
+            }
+        };
+        bOpenSettings.setOnClickListener(clFlip);
+        bCloseSettings.setOnClickListener(clFlip);
 
         utils = new BitcoinUtils(sharedPref, getString(R.string.bitcoinaddresses));
         utils.setup();

@@ -7,17 +7,29 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:padding="16dp"
-    android:weightSum="3"
     tools:context=".MainActivity">
 
-    <include layout="@layout/overview_card" />
+    <com.wajahatkarim3.easyflipview.EasyFlipView
+        android:id="@+id/flipview_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:flipOnTouch="false"
+        app:flipEnabled="true"
+        app:flipDuration="400">
+
+        <!-- Back Layout Goes Here -->
+        <include layout="@layout/overview_settings" />
+
+        <!-- Front Layout Goes Here -->
+        <include layout="@layout/overview_card" />
+
+    </com.wajahatkarim3.easyflipview.EasyFlipView>
 
     <com.baoyz.widget.PullRefreshLayout
         android:id="@+id/allAccountsView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:refreshColor="@color/colorPrimary"
-        android:layout_weight="1"
         app:refreshType="smartisan">
 
 
