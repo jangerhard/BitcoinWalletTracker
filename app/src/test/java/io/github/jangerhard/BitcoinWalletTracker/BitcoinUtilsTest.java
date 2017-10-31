@@ -85,18 +85,18 @@ public class BitcoinUtilsTest {
         // 0.223 btc
         BigInteger balance = new BigInteger("2195820");
 
-        assertEquals("kr 983,36", utils.formatPriceToString(balance));
+        assertEquals("kr 983,36", utils.formatCurrency(utils.convertBTCtoCurrency(balance)));
 
         // 1 btc to NOK
         utils.updateCurrency(45006.70d);
         // 0.223 btc
         balance = new BigInteger("23300000");
 
-        assertEquals("kr 10 486,56", utils.formatPriceToString(balance));
+        assertEquals("kr 10 486,56", utils.formatCurrency(utils.convertBTCtoCurrency(balance)));
 
-        assertEquals("kr 0,00", utils.formatPriceToString(null));
+        assertEquals("kr 0,00", utils.formatCurrency(utils.convertBTCtoCurrency(null)));
 
-        assertEquals("kr 0,00", utils.formatPriceToString(new BigInteger("0")));
+        assertEquals("kr 0,00", utils.formatCurrency(utils.convertBTCtoCurrency(new BigInteger("0"))));
 
     }
 

@@ -14,6 +14,7 @@ import com.journeyapps.barcodescanner.BarcodeEncoder;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.MathContext;
+import java.math.RoundingMode;
 import java.text.DateFormat;
 import java.text.NumberFormat;
 import java.util.ArrayList;
@@ -156,23 +157,58 @@ class BitcoinUtils {
     }
 
     String getTotalValue() {
-        return formatPriceToString(calculateTotalBalance(accountList));
+        return formatCurrency(convertBTCtoCurrency(calculateTotalBalance(accountList)));
     }
 
-    String formatPriceToString(BigInteger bal) {
+    String getTotalInvestmentPercentage() {
 
+        double investment = getTotalInvestment();
+
+        if (investment == 0)
+            return "";
+
+        double totalVal = convertBTCtoCurrency(calculateTotalBalance(accountList));
+
+        double result = (totalVal - investment) / investment * 100;
+
+        return "(" + BigDecimal.valueOf(result)
+                .setScale(3, RoundingMode.HALF_UP)
+                .toEngineeringString() + "%)";
+
+    }
+
+    long getTotalInvestment() {
+        return getInvestmentFromPrefs();
+    }
+
+    String getTotalInvestmentFormated() {
+
+        return formatCurrency(getTotalInvestment());
+
+    }
+
+    String formatBTCtoCurrency(BigInteger btc) {
+        return formatCurrency(convertBTCtoCurrency(btc));
+    }
+
+    String formatCurrency(double val) {
         NumberFormat format = NumberFormat.getCurrencyInstance(getCurrentLocale());
         format.setCurrency(Currency.getInstance(getCurrencyPair()));
+        return format.format(val);
+    }
+
+    double convertBTCtoCurrency(BigInteger bal) {
 
         if (bal == null || bal.intValue() == 0) {
-            return format.format(0.0);
+            return 0L;
         }
 
         BigDecimal btc = new BigDecimal(formatBalance(bal.toString(), BITCOIN_FACTOR));
         BigDecimal price = new BigDecimal(getCurrentPrice().toString());
         BigDecimal result = btc.multiply(price, MathContext.DECIMAL32);
         result = result.setScale(2, BigDecimal.ROUND_HALF_UP);
-        return format.format(result.doubleValue());
+
+        return result.doubleValue();
     }
 
     @NonNull
@@ -235,6 +271,18 @@ class BitcoinUtils {
 
     private void saveNicknameToPrefs(String address, String name) {
         sharedPref.edit().putString(address, name).apply();
+    }
+
+    private long getInvestmentFromPrefs() {
+        return sharedPref.getLong("totalInvestment", 0L);
+    }
+
+    private void saveInvestmentToPrefs(long investment) {
+        sharedPref.edit().putLong("totalInvestment", investment).apply();
+    }
+
+    void saveInvestment(long investment) {
+        saveInvestmentToPrefs(investment);
     }
 
     void updateCurrency(Double price) {
@@ -336,7 +384,7 @@ class BitcoinUtils {
      * if paid. If no transaction is associated, returns 0.
      */
     static BigInteger getTransactionValue(Transaction t, String address) {
-        if (t.getOut() == null || t.getInputs() == null)
+        if (t.getOut() == null && t.getInputs() == null)
             return new BigInteger("0");
 
         // Paid

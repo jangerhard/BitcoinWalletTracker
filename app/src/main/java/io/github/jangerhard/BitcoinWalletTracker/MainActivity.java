@@ -10,6 +10,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -32,6 +33,7 @@ import com.google.android.gms.vision.barcode.Barcode;
 import com.google.gson.Gson;
 import com.wajahatkarim3.easyflipview.EasyFlipView;
 import com.yarolegovich.lovelydialog.LovelyStandardDialog;
+import com.yarolegovich.lovelydialog.LovelyTextInputDialog;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -50,7 +52,7 @@ public class MainActivity extends AppCompatActivity {
     String url_exchange = "https://api.coinbase.com/v2/prices/";
     Activity mActivity;
     AccountAdapter adapter;
-    TextView tvTotalBalance, tvTotalValue;
+    TextView tvTotalBalance, tvTotalValue, tvTotalInvestment, tvTotalInvestmentSettings;
     BitcoinUtils utils;
     PullRefreshLayout allAccountsView;
     RecyclerView recyclerView;
@@ -64,22 +66,36 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         mActivity = this;
 
-        recyclerView = findViewById(R.id.recycler_view);
+        SharedPreferences sharedPref = mActivity.getPreferences(Context.MODE_PRIVATE);
+        utils = new BitcoinUtils(sharedPref, getString(R.string.bitcoinaddresses));
+        utils.setup();
 
+        // Overview
+        setupOverviewUI();
+
+        // Settings
+        setupSettingsUI();
+
+        // Accounts
+        setupAccountsUI();
+
+        handleIncomingData();
+        refreshData();
+    }
+
+    private void setupOverviewUI() {
         tvTotalBalance = findViewById(R.id.tvCalculatedBalance);
-        tvTotalValue = findViewById(R.id.tvCalculatedValue);
+        tvTotalValue = findViewById(R.id.tvInvestmentPercentage);
 
-        // listen refresh event
-        allAccountsView = findViewById(R.id.allAccountsView);
-        allAccountsView.setOnRefreshListener(new PullRefreshLayout.OnRefreshListener() {
+        ImageButton bAddAccount = findViewById(R.id.bAddAccount);
+        bAddAccount.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onRefresh() {
-                // start refresh
-                refreshData();
+            public void onClick(View v) {
+                Intent intent = new Intent(getApplicationContext(), BarcodeCaptureActivity.class);
+                startActivityForResult(intent, BARCODE_READER_REQUEST_CODE);
             }
         });
 
-        SharedPreferences sharedPref = mActivity.getPreferences(Context.MODE_PRIVATE);
 
         mFlipView = findViewById(R.id.flipview_layout);
 
@@ -93,9 +109,53 @@ public class MainActivity extends AppCompatActivity {
         };
         bOpenSettings.setOnClickListener(clFlip);
         bCloseSettings.setOnClickListener(clFlip);
+    }
 
-        utils = new BitcoinUtils(sharedPref, getString(R.string.bitcoinaddresses));
-        utils.setup();
+    private void setupSettingsUI() {
+        tvTotalInvestment = findViewById(R.id.tv_total_investment);
+        tvTotalInvestmentSettings = findViewById(R.id.tv_total_investment_settings);
+
+        Button bChangeInvestment = findViewById(R.id.bAddInvestment);
+        bChangeInvestment.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                new LovelyTextInputDialog(mActivity)
+                        .setTopColorRes(R.color.dialog_edit)
+                        .setTitle("Change total investment")
+                        .setIcon(R.drawable.ic_mode_edit_white_48dp)
+                        .setHint("Total amount invested")
+                        .setInitialInput("" + utils.getTotalInvestment())
+                        .setInputFilter("You have to enter a number!", new LovelyTextInputDialog.TextFilter() {
+                            @Override
+                            public boolean check(String text) {
+                                return text.matches("\\d+");
+                            }
+                        })
+                        .setConfirmButton(android.R.string.ok, new LovelyTextInputDialog.OnTextInputConfirmListener() {
+                            @Override
+                            public void onTextInputConfirmed(String text) {
+                                utils.saveInvestment(Long.parseLong(text));
+                                updateUI();
+                            }
+                        })
+                        .show();
+            }
+        });
+    }
+
+    private void setupAccountsUI() {
+
+        recyclerView = findViewById(R.id.recycler_view);
+
+        // listen refresh event
+        allAccountsView = findViewById(R.id.allAccountsView);
+        allAccountsView.setOnRefreshListener(new PullRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                // start refresh
+                refreshData();
+            }
+        });
 
         adapter = new AccountAdapter(this, utils);
 //        adapter.notifyDataSetChanged();
@@ -104,18 +164,6 @@ public class MainActivity extends AppCompatActivity {
                 LinearLayoutManager.VERTICAL, false));
         recyclerView.setItemAnimator(new LandingAnimator());
         recyclerView.setAdapter(adapter);
-
-        ImageButton bAddAccount = findViewById(R.id.bAddAccount);
-        bAddAccount.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getApplicationContext(), BarcodeCaptureActivity.class);
-                startActivityForResult(intent, BARCODE_READER_REQUEST_CODE);
-            }
-        });
-
-        handleIncomingData();
-        refreshData();
     }
 
     private void handleIncomingData() {
@@ -139,6 +187,8 @@ public class MainActivity extends AppCompatActivity {
         allAccountsView.setRefreshing(false);
         tvTotalBalance.setText(utils.getTotalBalance());
         tvTotalValue.setText(utils.getTotalValue());
+        tvTotalInvestment.setText(utils.getTotalInvestmentPercentage());
+        tvTotalInvestmentSettings.setText(utils.getTotalInvestmentFormated());
     }
 
     private void refreshData() {

@@ -92,8 +92,7 @@ public class AccountAdapter extends RecyclerView.Adapter<AccountAdapter.MyViewHo
                         account.getFinal_balance())
         );
         holder.accRate.setText(
-                utils.formatPriceToString(
-                        account.getFinal_balance()));
+                utils.formatBTCtoCurrency(account.getFinal_balance()));
         holder.position = holder.getAdapterPosition();
         holder.qrCode.setImageBitmap(
                 utils.getQRThumbnail(account.getAddress()));
