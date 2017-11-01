@@ -52,7 +52,8 @@ public class MainActivity extends AppCompatActivity {
     String url_exchange = "https://api.coinbase.com/v2/prices/";
     Activity mActivity;
     AccountAdapter adapter;
-    TextView tvTotalBalance, tvTotalValue, tvTotalInvestment, tvTotalInvestmentSettings;
+    TextView tvTotalBalance, tvTotalValue,
+            tvTotalInvestment, tvTotalInvestmentSettings, tvExchangeRate;
     BitcoinUtils utils;
     PullRefreshLayout allAccountsView;
     RecyclerView recyclerView;
@@ -114,6 +115,7 @@ public class MainActivity extends AppCompatActivity {
     private void setupSettingsUI() {
         tvTotalInvestment = findViewById(R.id.tv_total_investment);
         tvTotalInvestmentSettings = findViewById(R.id.tv_total_investment_settings);
+        tvExchangeRate = findViewById(R.id.tv_exchange_rate);
 
         Button bChangeInvestment = findViewById(R.id.bAddInvestment);
         bChangeInvestment.setOnClickListener(new View.OnClickListener() {
@@ -166,6 +168,16 @@ public class MainActivity extends AppCompatActivity {
         recyclerView.setAdapter(adapter);
     }
 
+    private void updateUI() {
+
+        allAccountsView.setRefreshing(false);
+        tvExchangeRate.setText(utils.getExchangeRate());
+        tvTotalBalance.setText(utils.getTotalBalance());
+        tvTotalValue.setText(utils.getTotalValue());
+        tvTotalInvestment.setText(utils.getTotalInvestmentPercentage());
+        tvTotalInvestmentSettings.setText(utils.getTotalInvestmentFormated());
+    }
+
     private void handleIncomingData() {
         // Get intent, action and MIME type
         Intent intent = getIntent();
@@ -180,15 +192,6 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         }
-    }
-
-    private void updateUI() {
-
-        allAccountsView.setRefreshing(false);
-        tvTotalBalance.setText(utils.getTotalBalance());
-        tvTotalValue.setText(utils.getTotalValue());
-        tvTotalInvestment.setText(utils.getTotalInvestmentPercentage());
-        tvTotalInvestmentSettings.setText(utils.getTotalInvestmentFormated());
     }
 
     private void refreshData() {

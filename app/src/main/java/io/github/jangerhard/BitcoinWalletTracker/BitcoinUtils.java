@@ -366,6 +366,10 @@ class BitcoinUtils {
         return "NOK";
     }
 
+    String getExchangeRate() {
+        return "1 BTC = " + formatCurrency(getCurrentPrice());
+    }
+
     private static Locale getCurrentLocale() {
         return new Locale("no", "NO");
     }
