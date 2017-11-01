@@ -32,6 +32,7 @@ import com.google.android.gms.common.api.CommonStatusCodes;
 import com.google.android.gms.vision.barcode.Barcode;
 import com.google.gson.Gson;
 import com.wajahatkarim3.easyflipview.EasyFlipView;
+import com.yarolegovich.lovelydialog.LovelyChoiceDialog;
 import com.yarolegovich.lovelydialog.LovelyStandardDialog;
 import com.yarolegovich.lovelydialog.LovelyTextInputDialog;
 
@@ -117,6 +118,27 @@ public class MainActivity extends AppCompatActivity {
         tvTotalInvestmentSettings = findViewById(R.id.tv_total_investment_settings);
         tvExchangeRate = findViewById(R.id.tv_exchange_rate);
 
+        Button bChangeCurrency = findViewById(R.id.bChangeCurrency);
+        bChangeCurrency.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String[] items = getResources().getStringArray(R.array.currencyNames);
+                new LovelyChoiceDialog(mActivity)
+                        .setTopColorRes(R.color.dialog_edit)
+                        .setTitle("Change currency")
+                        .setIcon(R.drawable.ic_language_white_48dp)
+                        .setItems(items, new LovelyChoiceDialog.OnItemSelectedListener<String>() {
+                            @Override
+                            public void onItemSelected(int position, String item) {
+                                String pair = getResources().getStringArray(R.array.currencies)[position];
+                                utils.setCurrencyPair(pair);
+                                refreshData();
+                            }
+                        })
+                        .show();
+            }
+        });
+
         Button bChangeInvestment = findViewById(R.id.bAddInvestment);
         bChangeInvestment.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -124,7 +146,7 @@ public class MainActivity extends AppCompatActivity {
                 new LovelyTextInputDialog(mActivity)
                         .setTopColorRes(R.color.dialog_edit)
                         .setTitle("Change total investment")
-                        .setIcon(R.drawable.ic_mode_edit_white_48dp)
+                        .setIcon(R.drawable.ic_attach_money_white_48dp)
                         .setHint("Total amount invested")
                         .setInitialInput("" + utils.getTotalInvestment())
                         .setInputFilter("You have to enter a number!", new LovelyTextInputDialog.TextFilter() {
@@ -202,7 +224,7 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
         numRefreshed = 0;
-        getCurrentPrice(BitcoinUtils.getCurrencyPair());
+        getCurrentPrice(utils.getCurrencyPair());
     }
 
     private void getSingleWalletInfo(String address, final boolean firstTime) {

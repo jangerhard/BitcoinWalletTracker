@@ -35,11 +35,15 @@ class BitcoinUtils {
 
     private List<BitcoinAccount> accountList;
     private List<String> addresses;
+    private List<Bitmap> bitmapList;
+    private List<Bitmap> bigBitmapList;
+
     private SharedPreferences sharedPref;
     private String prefsAccountsKey;
     private Double currentPrice;
-    private List<Bitmap> bitmapList;
-    private List<Bitmap> bigBitmapList;
+    private String currencyPair;
+    private double totalBTC;
+    private double totalValue;
 
     BitcoinUtils(SharedPreferences sharedPref, String key) {
         accountList = new ArrayList<>();
@@ -47,6 +51,7 @@ class BitcoinUtils {
         bitmapList = new ArrayList<>();
         bigBitmapList = new ArrayList<>();
         this.sharedPref = sharedPref;
+        currencyPair = sharedPref.getString("currencyPair", "USD");
         prefsAccountsKey = key;
     }
 
@@ -361,9 +366,13 @@ class BitcoinUtils {
         return bitmapList.get(addresses.indexOf(address));
     }
 
-    static String getCurrencyPair() {
-        //TODO: fix
-        return "NOK";
+    String getCurrencyPair() {
+        return currencyPair;
+    }
+
+    void setCurrencyPair(String pair) {
+        currencyPair = pair;
+        sharedPref.edit().putString("currencyPair", pair).apply();
     }
 
     String getExchangeRate() {
