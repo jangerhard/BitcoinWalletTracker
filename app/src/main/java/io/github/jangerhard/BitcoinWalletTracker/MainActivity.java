@@ -91,11 +91,11 @@ public class MainActivity extends AppCompatActivity {
         bAddAccount.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Toast.makeText(mActivity, "Launching camera", Toast.LENGTH_SHORT).show();
                 Intent intent = new Intent(getApplicationContext(), BarcodeCaptureActivity.class);
                 startActivityForResult(intent, BARCODE_READER_REQUEST_CODE);
             }
         });
-
 
         mFlipView = findViewById(R.id.flipview_layout);
 
