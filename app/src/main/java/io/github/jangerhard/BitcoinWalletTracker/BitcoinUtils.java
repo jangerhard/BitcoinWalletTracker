@@ -167,11 +167,11 @@ class BitcoinUtils {
     String getTotalInvestmentPercentage() {
 
         double investment = getTotalInvestment();
-
-        if (investment == 0)
-            return "";
-
         double totalVal = convertBTCtoCurrency(totalBalance);
+
+        if (investment == 0 || totalVal == 0) {
+            return "";
+        }
 
         double result = (totalVal - investment) / investment * 100;
 
