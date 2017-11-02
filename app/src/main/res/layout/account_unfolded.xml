@@ -1,12 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    style="@style/customCard"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_gravity="center"
-    android:layout_margin="@dimen/card_margin"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_horizontal_margin">
+    android:layout_gravity="center">
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -19,6 +16,7 @@
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
             android:text="NICKNAME"
+            android:textColor="@color/colorCardsText"
             android:textStyle="italic" />
 
         <TextView
@@ -28,6 +26,7 @@
             android:layout_below="@+id/tv_unfolded_nickname"
             android:layout_centerHorizontal="true"
             android:text="ACCOUNT ADDRESS"
+            android:textColor="@color/colorCardsText"
             android:textStyle="bold" />
 
         <RelativeLayout
@@ -47,17 +46,20 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="NO. Transactions" />
+                    android:text="NO. Transactions"
+                    android:textColor="@color/colorCardsText" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Total Received" />
+                    android:text="Total Received"
+                    android:textColor="@color/colorCardsText" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Final Balance" />
+                    android:text="Final Balance"
+                    android:textColor="@color/colorCardsText" />
 
             </LinearLayout>
 
@@ -71,19 +73,22 @@
                     android:id="@+id/tv_account_number_transactions"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="666" />
+                    android:text="666"
+                    android:textColor="@color/colorCardsText" />
 
                 <TextView
                     android:id="@+id/tv_account_total_received"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="100 000 000" />
+                    android:text="100 000 000"
+                    android:textColor="@color/colorCardsText" />
 
                 <TextView
                     android:id="@+id/tv_account_final_balance"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Final Balance" />
+                    android:text="Final Balance"
+                    android:textColor="@color/colorCardsText" />
 
             </LinearLayout>
 
@@ -96,7 +101,8 @@
             android:layout_below="@id/layout_account_stats"
             android:layout_centerHorizontal="true"
             android:paddingTop="8dp"
-            android:text="@string/latest_transactions" />
+            android:text="@string/latest_transactions"
+            android:textColor="@color/colorCardsText" />
 
 
         <android.support.v7.widget.RecyclerView
