@@ -38,5 +38,9 @@
     <string name="stop_tracking">Stop tracking</string>
     <string name="it_has_a_balance_of">It has a balance of </string>
     <string name="share">Share</string>
+    <string name="change_investment">Change total investment</string>
+    <string name="total_amount_invested">Total amount invested</string>
+    <string name="error_investment_input">You have to enter a number!</string>
+    <string name="change_currency_dialog_title">Change currency</string>
 
 </resources>

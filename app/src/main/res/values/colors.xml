@@ -11,5 +11,7 @@
     <color name="dialog_info">#607D8B</color>
     <color name="dialog_warning">#FF7043</color>
     <color name="dialog_edit">#B0BEC5</color>
+    <color name="dialog_currencies">#90CAF9</color>
+    <color name="dialog_investment">#29B6F6</color>
     <color name="dialog_qr">#607D8B</color>
 </resources>

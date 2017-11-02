@@ -124,8 +124,8 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View view) {
                 String[] items = getResources().getStringArray(R.array.currencyNames);
                 new LovelyChoiceDialog(mActivity)
-                        .setTopColorRes(R.color.dialog_edit)
-                        .setTitle("Change currency")
+                        .setTopColorRes(R.color.dialog_currencies)
+                        .setTitle(R.string.change_currency_dialog_title)
                         .setIcon(R.drawable.ic_language_white_48dp)
                         .setItems(items, new LovelyChoiceDialog.OnItemSelectedListener<String>() {
                             @Override
@@ -144,12 +144,12 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 new LovelyTextInputDialog(mActivity)
-                        .setTopColorRes(R.color.dialog_edit)
-                        .setTitle("Change total investment")
+                        .setTopColorRes(R.color.dialog_investment)
+                        .setTitle(R.string.change_investment)
                         .setIcon(R.drawable.ic_attach_money_white_48dp)
-                        .setHint("Total amount invested")
+                        .setHint(R.string.total_amount_invested)
                         .setInitialInput("" + utils.getTotalInvestment())
-                        .setInputFilter("You have to enter a number!", new LovelyTextInputDialog.TextFilter() {
+                        .setInputFilter(R.string.error_investment_input, new LovelyTextInputDialog.TextFilter() {
                             @Override
                             public boolean check(String text) {
                                 return text.matches("\\d+");
