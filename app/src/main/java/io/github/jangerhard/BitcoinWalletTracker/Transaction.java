@@ -1,20 +1,19 @@
 package io.github.jangerhard.BitcoinWalletTracker;
 
-import java.math.BigInteger;
 import java.util.ArrayList;
 
 class Transaction {
 
-    private BigInteger result;
+    private long result;
     private ArrayList<TransactionOut> out;
     private ArrayList<TransactionInput> inputs;
-    private BigInteger time;
+    private long time;
 
-    public BigInteger getResult() {
+    public long getResult() {
         return result;
     }
 
-    public void setResult(BigInteger result) {
+    public void setResult(long result) {
         this.result = result;
     }
 
@@ -34,11 +33,11 @@ class Transaction {
         this.inputs = inputs;
     }
 
-    public BigInteger getTime() {
+    public long getTime() {
         return time;
     }
 
-    public void setTime(BigInteger time) {
+    public void setTime(long time) {
         this.time = time;
     }
 }

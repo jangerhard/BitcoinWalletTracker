@@ -12,8 +12,6 @@ import com.google.zxing.common.BitMatrix;
 import com.journeyapps.barcodescanner.BarcodeEncoder;
 
 import java.math.BigDecimal;
-import java.math.BigInteger;
-import java.math.MathContext;
 import java.math.RoundingMode;
 import java.text.DateFormat;
 import java.text.NumberFormat;
@@ -42,8 +40,7 @@ class BitcoinUtils {
     private String prefsAccountsKey;
     private Double currentPrice;
     private String currencyPair;
-    private double totalBTC;
-    private double totalValue;
+    private double totalBalance;
 
     BitcoinUtils(SharedPreferences sharedPref, String key) {
         accountList = new ArrayList<>();
@@ -51,7 +48,6 @@ class BitcoinUtils {
         bitmapList = new ArrayList<>();
         bigBitmapList = new ArrayList<>();
         this.sharedPref = sharedPref;
-        currencyPair = sharedPref.getString("currencyPair", "USD");
         prefsAccountsKey = key;
     }
 
@@ -59,6 +55,8 @@ class BitcoinUtils {
         addAddressesFromPrefs();
         makeAccounts();
         createBitmaps();
+        currencyPair = sharedPref.getString("currencyPair", "USD");
+        totalBalance = calculateTotalBalance(accountList);
     }
 
     private void createBitmaps() {
@@ -85,6 +83,7 @@ class BitcoinUtils {
     }
 
     void addNewAccount(BitcoinAccount newAcc) {
+        totalBalance = calculateTotalBalance(accountList);
         accountList.add(newAcc);
     }
 
@@ -102,6 +101,7 @@ class BitcoinUtils {
             index = 0;
             accountList.add(index, refreshedAccount);
         }
+        totalBalance = calculateTotalBalance(accountList);
         return index;
     }
 
@@ -111,6 +111,7 @@ class BitcoinUtils {
         bitmapList.remove(getAccountIndex(selectedAccountTag));
         accountList.remove(getAccountIndex(selectedAccountTag));
         addresses.remove(selectedAccountTag);
+        totalBalance = calculateTotalBalance(accountList);
         saveAddressesToPrefs();
     }
 
@@ -144,25 +145,23 @@ class BitcoinUtils {
         return -1;
     }
 
-    static BigInteger calculateTotalBalance(List<BitcoinAccount> accounts) {
+    static long calculateTotalBalance(List<BitcoinAccount> accounts) {
         if (accounts.size() == 0)
-            return new BigInteger("0");
+            return 0;
 
-        BigInteger total = new BigInteger("0");
+        long total = 0;
 
-        for (BitcoinAccount acc : accounts) {
-            if (acc.getFinal_balance() != null)
-                total = total.add(acc.getFinal_balance());
-        }
+        for (BitcoinAccount acc : accounts) total += acc.getFinal_balance();
+
         return total;
     }
 
     String getTotalBalance() {
-        return formatBitcoinBalanceToString(calculateTotalBalance(accountList));
+        return formatBitcoinBalanceToString(totalBalance);
     }
 
     String getTotalValue() {
-        return formatCurrency(convertBTCtoCurrency(calculateTotalBalance(accountList)));
+        return formatCurrency(convertBTCtoCurrency(totalBalance));
     }
 
     String getTotalInvestmentPercentage() {
@@ -172,11 +171,16 @@ class BitcoinUtils {
         if (investment == 0)
             return "";
 
-        double totalVal = convertBTCtoCurrency(calculateTotalBalance(accountList));
+        double totalVal = convertBTCtoCurrency(totalBalance);
 
         double result = (totalVal - investment) / investment * 100;
 
-        return "(" + BigDecimal.valueOf(result)
+        String pre = "";
+
+        if (result > 0)
+            pre = "+";
+
+        return "(" + pre + BigDecimal.valueOf(result)
                 .setScale(3, RoundingMode.HALF_UP)
                 .toEngineeringString() + "%)";
 
@@ -192,7 +196,7 @@ class BitcoinUtils {
 
     }
 
-    String formatBTCtoCurrency(BigInteger btc) {
+    String formatBTCtoCurrency(long btc) {
         return formatCurrency(convertBTCtoCurrency(btc));
     }
 
@@ -202,43 +206,37 @@ class BitcoinUtils {
         return format.format(val);
     }
 
-    double convertBTCtoCurrency(BigInteger bal) {
+    double convertBTCtoCurrency(double bal) {
+        Double price = getCurrentPrice();
 
-        if (bal == null || bal.intValue() == 0) {
-            return 0L;
-        }
+        if (price == null)
+            return 0;
 
-        BigDecimal btc = new BigDecimal(formatBalance(bal.toString(), BITCOIN_FACTOR));
-        BigDecimal price = new BigDecimal(getCurrentPrice().toString());
-        BigDecimal result = btc.multiply(price, MathContext.DECIMAL32);
+        Double btc = formatBalance(bal, BITCOIN_FACTOR);
+        BigDecimal result = new BigDecimal(btc * price);
         result = result.setScale(2, BigDecimal.ROUND_HALF_UP);
 
         return result.doubleValue();
     }
 
     @NonNull
-    static String formatBitcoinBalanceToString(BigInteger bal) {
-        if (bal == null || bal.intValue() == 0)
-            return "0.0000 BTC";
+    static String formatBitcoinBalanceToString(double bal) {
 
-        String balance = bal.toString();
         BigDecimal newBalance;
-        String tag;
+        String endTag;
 
-        if (balance.length() < 8) {
-            newBalance = new BigDecimal(formatBalance(balance, MICRO_BITCOIN_FACTOR));
-            tag = " mBTC";
+        if (bal < 10000000) {
+            newBalance = new BigDecimal(formatBalance(bal, MICRO_BITCOIN_FACTOR));
+            endTag = " mBTC";
         } else {
-            newBalance = new BigDecimal(formatBalance(balance, BITCOIN_FACTOR));
-            tag = " BTC";
+            newBalance = new BigDecimal(formatBalance(bal, BITCOIN_FACTOR));
+            endTag = " BTC";
         }
 
-        return newBalance.setScale(4, BigDecimal.ROUND_HALF_UP) + tag;
+        return newBalance.setScale(4, BigDecimal.ROUND_HALF_UP) + endTag;
     }
 
-    private static String formatBalance(String bal, int factor) {
-        if (bal == null)
-            return "";
+    private static double formatBalance(double bal, int factor) {
 
         BigDecimal a = new BigDecimal(bal);
         BigDecimal divider = new BigDecimal("" + factor);
@@ -246,8 +244,7 @@ class BitcoinUtils {
         return a.divide(
                 divider,
                 7,
-                BigDecimal.ROUND_HALF_DOWN)
-                .toEngineeringString();
+                BigDecimal.ROUND_HALF_DOWN).doubleValue();
     }
 
     static boolean verifyAddress(String qrString) {
@@ -396,15 +393,16 @@ class BitcoinUtils {
      * @return BigInteger value, positive if received, and negative
      * if paid. If no transaction is associated, returns 0.
      */
-    static BigInteger getTransactionValue(Transaction t, String address) {
+    static long getTransactionValue(Transaction t, String address) {
         if (t.getOut() == null && t.getInputs() == null)
-            return new BigInteger("0");
+            return 0;
 
         // Paid
         for (TransactionInput i : t.getInputs()) {
             TransactionPrevOut p = i.getPrev_out();
-            if (p != null && p.getAddr() != null && p.getAddr().equals(address))
-                return i.getPrev_out().getValue().negate();
+            if (p != null && p.getAddr() != null && p.getAddr().equals(address)) {
+                return -i.getPrev_out().getValue();
+            }
         }
         // Received
         for (TransactionOut o : t.getOut()) {
@@ -412,7 +410,7 @@ class BitcoinUtils {
                 return o.getValue();
         }
 
-        return new BigInteger("0");
+        return 0;
     }
 
     static String getConvertedTimeStamp(Long time) {

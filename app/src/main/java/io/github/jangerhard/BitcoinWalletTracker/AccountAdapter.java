@@ -82,9 +82,6 @@ public class AccountAdapter extends RecyclerView.Adapter<AccountAdapter.MyViewHo
 
         final BitcoinAccount account = utils.getAccounts().get(position);
 
-        if (account.getN_tx() == null)
-            return;
-
         String nickname = utils.getNickname(account.getAddress());
         holder.accNickNameFolded.setText(nickname);
         holder.accBalance.setText(
@@ -127,13 +124,13 @@ public class AccountAdapter extends RecyclerView.Adapter<AccountAdapter.MyViewHo
         holder.accNickNameUnfolded.setText(nickname);
 
         holder.tvAccNumTxs.setText(
-                String.format(Locale.ENGLISH, "%d", account.getN_tx().intValue()));
+                String.format(Locale.ENGLISH, "%d", account.getN_tx()));
         holder.tvAccTotReceived.setText(
                 BitcoinUtils.formatBitcoinBalanceToString(account.getTotal_received()));
         holder.tvAccFinalBalance.setText(
                 BitcoinUtils.formatBitcoinBalanceToString(account.getFinal_balance()));
 
-        if (account.getN_tx().intValue() == 0)
+        if (account.getN_tx() == 0)
             holder.tvRecentTransaction.setText(mContext.getResources().getString(R.string.no_activity_on_this_address));
         else
             holder.tvRecentTransaction.setText(mContext.getResources().getString(R.string.latest_transactions));

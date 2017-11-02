@@ -1,11 +1,9 @@
 package io.github.jangerhard.BitcoinWalletTracker;
 
-import java.math.BigInteger;
-
 class TransactionOut {
 
     private boolean spent;
-    private BigInteger value;
+    private long value;
     private String addr;
 
     public boolean isSpent() {
@@ -16,11 +14,11 @@ class TransactionOut {
         this.spent = spent;
     }
 
-    public BigInteger getValue() {
+    public long getValue() {
         return value;
     }
 
-    public void setValue(BigInteger value) {
+    public void setValue(long value) {
         this.value = value;
     }
 

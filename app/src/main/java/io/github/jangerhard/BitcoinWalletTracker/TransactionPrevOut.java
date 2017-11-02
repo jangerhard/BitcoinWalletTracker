@@ -1,7 +1,5 @@
 package io.github.jangerhard.BitcoinWalletTracker;
 
-import java.math.BigInteger;
-
 /**
  * Created by jangerhard on 23-Oct-17.
  */
@@ -10,13 +8,13 @@ class TransactionPrevOut {
 
     private boolean spent;
     private String addr;
-    private BigInteger value;
+    private long value;
 
-    public BigInteger getValue() {
+    public long getValue() {
         return value;
     }
 
-    public void setValue(BigInteger value) {
+    public void setValue(long value) {
         this.value = value;
     }
 

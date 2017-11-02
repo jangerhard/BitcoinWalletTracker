@@ -8,7 +8,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import java.math.BigInteger;
 import java.util.List;
 
 public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.MyViewHolder> {
@@ -47,13 +46,13 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
 
         Transaction t = transactionList.get(position);
 
-        BigInteger transactionValue = BitcoinUtils.getTransactionValue(t, address);
+        long transactionValue = BitcoinUtils.getTransactionValue(t, address);
 
         // Received BTC
-        if (transactionValue.intValue() > 0)
+        if (transactionValue > 0)
             holder.tvResult.setTextColor(mContext.getResources().getColor(R.color.transaction_received));
             // Paid BTC
-        else if (transactionValue.intValue() < 0)
+        else if (transactionValue < 0)
             holder.tvResult.setTextColor(mContext.getResources().getColor(R.color.transaction_paid));
         else
             holder.tvResult.setTextColor(Color.BLUE);
@@ -62,7 +61,7 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
                 BitcoinUtils.formatBitcoinBalanceToString(transactionValue)
         );
 
-        holder.tvTimestamp.setText(BitcoinUtils.getConvertedTimeStamp(t.getTime().longValue()));
+        holder.tvTimestamp.setText(BitcoinUtils.getConvertedTimeStamp(t.getTime()));
 //        holder.tvResult.setText("Test " + position);
 //        holder.tvTimestamp.setText("Test " + position);
     }
