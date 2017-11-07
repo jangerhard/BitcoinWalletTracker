@@ -35,6 +35,7 @@ import com.google.android.gms.vision.barcode.Barcode;
 import com.google.gson.Gson;
 import com.wajahatkarim3.easyflipview.EasyFlipView;
 import com.yarolegovich.lovelydialog.LovelyChoiceDialog;
+import com.yarolegovich.lovelydialog.LovelyCustomDialog;
 import com.yarolegovich.lovelydialog.LovelyStandardDialog;
 import com.yarolegovich.lovelydialog.LovelyTextInputDialog;
 
@@ -45,6 +46,8 @@ import java.util.List;
 
 import io.github.jangerhard.BitcoinWalletTracker.qrStuff.barcode.BarcodeCaptureActivity;
 import jp.wasabeef.recyclerview.animators.LandingAnimator;
+import mehdi.sakout.aboutpage.AboutPage;
+import mehdi.sakout.aboutpage.Element;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -188,6 +191,54 @@ public class MainActivity extends AppCompatActivity {
                 Intent intent = new Intent(mActivity, mActivity.getClass());
                 startActivity(intent);
                 finish();
+            }
+        });
+
+        Button bAbout = findViewById(R.id.about_page);
+        bAbout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                Element donationElement = new Element();
+                donationElement.setIconDrawable(R.drawable.ic_monetization_on_black_18dp);
+                donationElement.setTitle("Donation");
+                donationElement.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        final String donationAddres = "1MArRnVPrMf6FR4FqtEThAa8piUbgfYDQ3";
+                        new LovelyStandardDialog(mActivity)
+                                .setTopColorRes(R.color.dialog_qr)
+                                .setIcon(utils.getBigQRThumbnail("1MArRnVPrMf6FR4FqtEThAa8piUbgfYDQ3"))
+                                .setTitle("1MArRnVPrMf6FR4FqtEThAa8piUbgfYDQ3")
+                                .setPositiveButton(R.string.share, new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+                                        Intent sendIntent = new Intent();
+                                        sendIntent.setAction(Intent.ACTION_SEND);
+                                        sendIntent.putExtra(Intent.EXTRA_TEXT, donationAddres);
+                                        sendIntent.setType("text/plain");
+                                        mActivity.startActivity(sendIntent);
+                                    }
+                                })
+                                .show();
+                    }
+                });
+
+                View aboutPage = new AboutPage(mActivity)
+                        .isRTL(false)
+                        .setImage(R.drawable.avatar_android)
+                        .setDescription("Thanks for downloading the app! " +
+                                "Feel free to email me about any weird bugs or any other feedback. " +
+                                "I'd love to hear from you!")
+                        .addEmail("jgschoepp@gmail.com", "Contact me")
+                        .addWebsite("http://jangerhard.github.io/", "Visit my website")
+                        .addGitHub("jangerhard", "Check out my github")
+                        .addItem(donationElement)
+                        .create();
+
+                new LovelyCustomDialog(mActivity)
+                        .setView(aboutPage)
+                        .show();
             }
         });
     }

@@ -44,6 +44,7 @@ dependencies {
     compile 'com.yarolegovich:lovely-dialog:1.0.7'               // Material Dialogs
     compile 'com.ramotion.foldingcell:folding-cell:1.2.1'        // Foldable
     compile 'com.wajahatkarim3.EasyFlipView:EasyFlipView:1.0.2'  // Flip views
+    compile 'com.github.medyo:android-about-page:1.2.1'          // About page
 
     testCompile 'junit:junit:4.12'
 }

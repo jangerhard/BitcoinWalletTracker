@@ -20,6 +20,7 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.Currency;
 import java.util.EnumMap;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -33,8 +34,8 @@ class BitcoinUtils {
 
     private List<BitcoinAccount> accountList;
     private List<String> addresses;
-    private List<Bitmap> bitmapList;
-    private List<Bitmap> bigBitmapList;
+    private Map<String, Bitmap> bitmapList;
+    private Map<String, Bitmap> bigBitmapList;
 
     private SharedPreferences sharedPref;
     private String prefsAccountsKey;
@@ -45,8 +46,8 @@ class BitcoinUtils {
     BitcoinUtils(SharedPreferences sharedPref, String key) {
         accountList = new ArrayList<>();
         addresses = new ArrayList<>();
-        bitmapList = new ArrayList<>();
-        bigBitmapList = new ArrayList<>();
+        bitmapList = new HashMap<>();
+        bigBitmapList = new HashMap<>();
         this.sharedPref = sharedPref;
         prefsAccountsKey = key;
     }
@@ -57,12 +58,13 @@ class BitcoinUtils {
         createBitmaps();
         currencyPair = sharedPref.getString("currencyPair", "USD");
         totalBalance = calculateTotalBalance(accountList);
+        bigBitmapList.put("1MArRnVPrMf6FR4FqtEThAa8piUbgfYDQ3", createQRThumbnail("1MArRnVPrMf6FR4FqtEThAa8piUbgfYDQ3", BIG_QR_SIZE));
     }
 
     private void createBitmaps() {
         for (String address : addresses) {
-            bitmapList.add(createQRThumbnail(address, REGULAR_QR_SIZE));
-            bigBitmapList.add(createQRThumbnail(address, BIG_QR_SIZE));
+            bitmapList.put(address, createQRThumbnail(address, REGULAR_QR_SIZE));
+            bigBitmapList.put(address, createQRThumbnail(address, BIG_QR_SIZE));
         }
     }
 
@@ -118,8 +120,8 @@ class BitcoinUtils {
     void addAddress(String address) {
         if (!addresses.contains(address)) {
             addresses.add(address);
-            bitmapList.add(createQRThumbnail(address, REGULAR_QR_SIZE));
-            bitmapList.add(createQRThumbnail(address, BIG_QR_SIZE));
+            bitmapList.put(address, createQRThumbnail(address, REGULAR_QR_SIZE));
+            bitmapList.put(address, createQRThumbnail(address, BIG_QR_SIZE));
             saveAddressesToPrefs();
         }
     }
@@ -356,11 +358,11 @@ class BitcoinUtils {
     }
 
     Bitmap getBigQRThumbnail(String address) {
-        return bigBitmapList.get(addresses.indexOf(address));
+        return bigBitmapList.get(address);
     }
 
     Bitmap getQRThumbnail(String address) {
-        return bitmapList.get(addresses.indexOf(address));
+        return bitmapList.get(address);
     }
 
     String getCurrencyPair() {
