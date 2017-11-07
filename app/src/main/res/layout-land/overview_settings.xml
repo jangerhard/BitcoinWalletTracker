@@ -76,6 +76,17 @@
                 android:checked="true"
                 android:text="Dark Theme"
                 android:textColor="@color/colorCardsText" />
+
+            <Button
+                android:id="@+id/about_page"
+                style="@style/Widget.AppCompat.Button.Borderless"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/checkbox_darktheme"
+                android:layout_centerHorizontal="true"
+                android:text="About"
+                android:textColor="@color/colorCardsText" />
+
         </RelativeLayout>
 
     </RelativeLayout>
