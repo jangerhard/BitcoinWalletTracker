@@ -3,12 +3,10 @@
     <item
         android:id="@+id/action_change_nickname"
         android:orderInCategory="100"
-        android:textColor="@color/colorCardsText"
         android:title="Change nickname" />
 
     <item
         android:id="@+id/action_remove_account"
         android:orderInCategory="101"
-        android:textColor="@color/colorCardsText"
         android:title="Remove" />
 </menu>

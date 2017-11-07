@@ -47,7 +47,7 @@
                 android:textStyle="italic"
                 android:text="@string/balance"
                 android:paddingBottom="8dp"
-                android:textColor="@color/common_google_signin_btn_text_dark"
+                android:textColor="@color/colorCardsText"
                 android:textSize="20sp" />
 
             <TextView
@@ -56,7 +56,7 @@
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/ptc_caption"
                 android:layout_gravity="center_horizontal"
-                android:textColor="@color/common_google_signin_btn_text_dark"
+                android:textColor="@color/colorCardsText"
                 android:textSize="28sp" />
 
             <LinearLayout
@@ -70,7 +70,7 @@
                     android:layout_height="wrap_content"
                     android:paddingEnd="8dp"
                     android:layout_gravity="center"
-                    android:textColor="@color/common_google_signin_btn_text_dark"
+                    android:textColor="@color/colorCardsText"
                     android:textSize="20sp" />
 
                 <TextView
@@ -78,7 +78,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
-                    android:textColor="@color/common_google_signin_btn_text_dark"
+                    android:textColor="@color/colorCardsText"
                     android:textSize="16sp" />
 
             </LinearLayout>

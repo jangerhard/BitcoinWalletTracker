@@ -6,21 +6,19 @@
 
     <TextView
         android:id="@+id/transactionTimestamp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
         android:layout_marginStart="8dp"
-        android:text="TIME"
-        android:textColor="@color/colorCardsText"
-        android:layout_width="wrap_content" />
+        android:text="TIME" />
 
     <TextView
         android:id="@+id/transactionResult"
-        android:layout_alignParentEnd="true"
-        android:textColor="@color/colorCardsText"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textStyle="italic"
+        android:layout_alignParentEnd="true"
         android:layout_marginEnd="8dp"
         android:text="RESULT"
-        android:layout_width="wrap_content" />
+        android:textStyle="italic" />
 
 </RelativeLayout>

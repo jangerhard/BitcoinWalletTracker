@@ -34,7 +34,6 @@
             android:contentDescription="@string/account_nickname"
             android:paddingTop="@dimen/account_name_padding"
             android:text="@string/loading"
-            android:textColor="@color/colorCardsText"
             android:textSize="@dimen/album_title" />
 
         <TextView
@@ -45,8 +44,7 @@
             android:layout_toEndOf="@+id/im_thumbnailFolded"
             android:contentDescription="@string/balance_in_btc"
             android:paddingBottom="@dimen/account_name_padding"
-            android:text="@string/loading"
-            android:textColor="@color/colorCardsText" />
+            android:text="@string/loading" />
 
         <TextView
             android:id="@+id/tvAccountRateFolded"
@@ -57,8 +55,7 @@
             android:layout_toStartOf="@+id/im_OverflowFolded"
             android:contentDescription="@string/current_converted_price"
             android:paddingBottom="@dimen/account_name_padding"
-            android:text="@string/loading"
-            android:textColor="@color/colorCardsText" />
+            android:text="@string/loading" />
 
         <ImageView
             android:id="@+id/im_OverflowFolded"

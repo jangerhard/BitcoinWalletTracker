@@ -11,6 +11,8 @@ import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -47,6 +49,8 @@ import jp.wasabeef.recyclerview.animators.LandingAnimator;
 public class MainActivity extends AppCompatActivity {
 
     private static final int BARCODE_READER_REQUEST_CODE = 1337;
+    private static final String DARK_THEME_SELECTED = "dark_theme_selected";
+
     private static final String LOG_TAG = "MainActivity";
     private RequestQueue mRequestQueue;
     String url_blockchain = "https://blockchain.info/";
@@ -59,16 +63,21 @@ public class MainActivity extends AppCompatActivity {
     PullRefreshLayout allAccountsView;
     RecyclerView recyclerView;
     EasyFlipView mFlipView;
+    SharedPreferences sharedPref;
+    Boolean selectedDarkTheme;
 
     private int numRefreshed;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        mActivity = this;
+        sharedPref = this.getPreferences(Context.MODE_PRIVATE);
+        selectedDarkTheme = sharedPref.getBoolean(DARK_THEME_SELECTED, true);
+        setTheme(selectedDarkTheme ? R.style.AppThemeDark : R.style.AppThemeLight);
 
-        SharedPreferences sharedPref = mActivity.getPreferences(Context.MODE_PRIVATE);
+        super.onCreate(savedInstanceState);
+        mActivity = this;
+        setContentView(R.layout.activity_main);
+
         utils = new BitcoinUtils(sharedPref, getString(R.string.bitcoinaddresses));
         utils.setup();
 
@@ -163,6 +172,22 @@ public class MainActivity extends AppCompatActivity {
                             }
                         })
                         .show();
+            }
+        });
+
+        CheckBox cbTheme = findViewById(R.id.checkbox_darktheme);
+        cbTheme.setChecked(selectedDarkTheme);
+        cbTheme.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+
+                Log.d("MainActivity", "Checked theme: " + b);
+
+                sharedPref.edit().putBoolean(DARK_THEME_SELECTED, b).apply();
+
+                Intent intent = new Intent(mActivity, mActivity.getClass());
+                startActivity(intent);
+                finish();
             }
         });
     }

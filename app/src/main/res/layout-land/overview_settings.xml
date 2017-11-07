@@ -37,7 +37,7 @@
                 android:layout_height="wrap_content"
                 android:layout_alignBaseline="@id/bChangeCurrency"
                 android:text="1 BTC = xxx"
-                android:textColor="@color/common_google_signin_btn_text_dark_default"
+                android:textColor="@color/colorCardsText"
                 android:textStyle="italic" />
 
             <Button
@@ -55,7 +55,7 @@
                 android:layout_below="@id/tv_exchange_rate"
                 android:layout_centerVertical="true"
                 android:text="xxx kr"
-                android:textColor="@color/common_google_signin_btn_text_dark_default"
+                android:textColor="@color/colorCardsText"
                 android:textStyle="italic" />
 
             <Button
@@ -64,8 +64,18 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
                 android:layout_below="@id/bChangeCurrency"
-                android:text="Add investment"
-                android:layout_centerVertical="true" />
+                android:layout_centerVertical="true"
+                android:text="Add investment" />
+
+            <CheckBox
+                android:id="@+id/checkbox_darktheme"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/bAddInvestment"
+                android:layout_centerHorizontal="true"
+                android:checked="true"
+                android:text="Dark Theme"
+                android:textColor="@color/colorCardsText" />
         </RelativeLayout>
 
     </RelativeLayout>
