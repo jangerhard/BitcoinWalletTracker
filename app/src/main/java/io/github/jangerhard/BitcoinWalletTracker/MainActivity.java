@@ -484,4 +484,23 @@ public class MainActivity extends AppCompatActivity {
 
         return mRequestQueue;
     }
+
+    @Override
+    public void onBackPressed() {
+
+        if (mFlipView.isBackSide())
+            mFlipView.flipTheView();
+        else {
+            new LovelyStandardDialog(this)
+                    .setPositiveButton("Quit", new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            finish();
+                        }
+                    })
+                    .setTitle("Quit the app?")
+                    .setTopColor(getResources().getColor(R.color.about_instagram_color))
+                    .show();
+        }
+    }
 }
