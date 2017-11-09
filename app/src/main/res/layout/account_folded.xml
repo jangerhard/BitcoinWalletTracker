@@ -29,10 +29,10 @@
             android:id="@+id/tvAccountNameFolded"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
             android:layout_toEndOf="@+id/im_thumbnailFolded"
+            android:layout_alignBaseline="@id/im_thumbnailFolded"
             android:contentDescription="@string/account_nickname"
-            android:paddingTop="@dimen/account_name_padding"
+            android:paddingTop="16dp"
             android:text="@string/loading"
             android:textSize="@dimen/album_title" />
 
@@ -43,7 +43,7 @@
             android:layout_alignBottom="@+id/im_thumbnailFolded"
             android:layout_toEndOf="@+id/im_thumbnailFolded"
             android:contentDescription="@string/balance_in_btc"
-            android:paddingBottom="@dimen/account_name_padding"
+            android:paddingBottom="8dp"
             android:text="@string/loading" />
 
         <TextView

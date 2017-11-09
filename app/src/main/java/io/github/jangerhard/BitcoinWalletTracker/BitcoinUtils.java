@@ -30,7 +30,7 @@ class BitcoinUtils {
     private static final int BITCOIN_FACTOR = 100000000;
     private static final int MICRO_BITCOIN_FACTOR = 100000;
     private final int BIG_QR_SIZE = 512;
-    private final int REGULAR_QR_SIZE = 128;
+    private final int REGULAR_QR_SIZE = 70;
 
     private List<BitcoinAccount> accountList;
     private List<String> addresses;
