@@ -52,19 +52,21 @@
             android:layout_height="wrap_content"
             android:layout_alignBaseline="@+id/tvAccountBalanceFolded"
             android:layout_alignBottom="@+id/tvAccountBalanceFolded"
-            android:layout_toStartOf="@+id/im_OverflowFolded"
+            android:layout_alignParentEnd="true"
             android:contentDescription="@string/current_converted_price"
             android:paddingBottom="@dimen/account_name_padding"
+            android:paddingEnd="@dimen/account_name_padding"
             android:text="@string/loading" />
 
         <ImageView
             android:id="@+id/im_OverflowFolded"
             android:layout_width="@dimen/ic_album_overflow_width"
-            android:layout_height="@dimen/ic_album_overflow_height"
+            android:layout_height="@dimen/ic_album_overflow_width"
             android:layout_alignParentEnd="true"
             android:layout_marginTop="@dimen/ic_album_overflow_margin_top"
+            android:layout_marginEnd="@dimen/ic_album_overflow_margin_end"
             android:scaleType="centerCrop"
-            android:src="@drawable/ic_dots" />
+            android:src="?attr/ic_account_settings" />
 
     </RelativeLayout>
 
