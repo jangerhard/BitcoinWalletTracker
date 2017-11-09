@@ -42,5 +42,6 @@
     <string name="total_amount_invested">Total amount invested</string>
     <string name="error_investment_input">You have to enter a number!</string>
     <string name="change_currency_dialog_title">Change currency</string>
+    <string name="toast_message_changing_theme">Changing theme</string>
 
 </resources>

@@ -53,8 +53,9 @@ public class MainActivity extends AppCompatActivity {
 
     private static final int BARCODE_READER_REQUEST_CODE = 1337;
     private static final String DARK_THEME_SELECTED = "dark_theme_selected";
-
+    private static final String REFRESHING_THEME = "refreshing_theme";
     private static final String LOG_TAG = "MainActivity";
+
     private RequestQueue mRequestQueue;
     String url_blockchain = "https://blockchain.info/";
     String url_exchange = "https://api.coinbase.com/v2/prices/";
@@ -112,6 +113,11 @@ public class MainActivity extends AppCompatActivity {
         });
 
         mFlipView = findViewById(R.id.flipview_layout);
+
+        if (sharedPref.getBoolean(REFRESHING_THEME, false)) {
+            mFlipView.flipTheView(false);
+            sharedPref.edit().putBoolean(REFRESHING_THEME, false).apply();
+        }
 
         ImageButton bOpenSettings = findViewById(R.id.bSettings);
         ImageView bCloseSettings = findViewById(R.id.bSettingsClose);
@@ -183,10 +189,10 @@ public class MainActivity extends AppCompatActivity {
         cbTheme.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-
-                Log.d("MainActivity", "Checked theme: " + b);
+                Toast.makeText(mActivity, R.string.toast_message_changing_theme, Toast.LENGTH_SHORT).show();
 
                 sharedPref.edit().putBoolean(DARK_THEME_SELECTED, b).apply();
+                sharedPref.edit().putBoolean(REFRESHING_THEME, true).apply();
 
                 Intent intent = new Intent(mActivity, mActivity.getClass());
                 startActivity(intent);
