@@ -20,6 +20,8 @@ import com.yarolegovich.lovelydialog.LovelyTextInputDialog;
 
 import java.util.HashSet;
 import java.util.Locale;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class AccountAdapter extends RecyclerView.Adapter<AccountAdapter.MyViewHolder> {
 
@@ -217,7 +219,11 @@ public class AccountAdapter extends RecyclerView.Adapter<AccountAdapter.MyViewHo
                 .setInputFilter(R.string.text_input_error_message, new LovelyTextInputDialog.TextFilter() {
                     @Override
                     public boolean check(String text) {
-                        return text.matches("\\w+");
+                        if (text.length() > 30)
+                            return false;
+                        Pattern p = Pattern.compile("\\w+");
+                        Matcher m = p.matcher(text);
+                        return m.find();
                     }
                 })
                 .setConfirmButton(android.R.string.ok, new LovelyTextInputDialog.OnTextInputConfirmListener() {

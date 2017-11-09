@@ -33,7 +33,7 @@
     <string name="qr_code_associated_with_account">QR Code associated with account</string>
     <string name="qr_code_of_given_address">QR code of given address</string>
     <string name="edit_nickname">Edit nickname</string>
-    <string name="text_input_error_message">The nickname must be a single word!</string>
+    <string name="text_input_error_message">The nickname cannot be empty or too long!</string>
     <string name="savings">Savings</string>
     <string name="stop_tracking">Stop tracking</string>
     <string name="it_has_a_balance_of">It has a balance of </string>
