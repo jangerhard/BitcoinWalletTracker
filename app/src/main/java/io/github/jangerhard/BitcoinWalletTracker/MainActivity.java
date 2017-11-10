@@ -172,13 +172,13 @@ public class MainActivity extends AppCompatActivity {
                         .setInputFilter(R.string.error_investment_input, new LovelyTextInputDialog.TextFilter() {
                             @Override
                             public boolean check(String text) {
-                                return text.matches("\\d+");
+                                return text.trim().matches("\\d+");
                             }
                         })
                         .setConfirmButton(android.R.string.ok, new LovelyTextInputDialog.OnTextInputConfirmListener() {
                             @Override
                             public void onTextInputConfirmed(String text) {
-                                utils.saveInvestment(Long.parseLong(text));
+                                utils.saveInvestment(Long.parseLong(text.trim()));
                                 updateUI();
                             }
                         })
