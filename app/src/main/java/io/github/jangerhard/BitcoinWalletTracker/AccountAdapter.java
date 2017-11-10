@@ -86,6 +86,9 @@ public class AccountAdapter extends RecyclerView.Adapter<AccountAdapter.MyViewHo
 
         final BitcoinAccount account = utils.getAccounts().get(position);
 
+        if (account.getN_tx() == BitcoinUtils.LOADING_ACCOUNT)
+            return;
+
         String nickname = utils.getNickname(account.getAddress());
         holder.accNickNameFolded.setText(nickname);
         holder.accBalance.setText(

@@ -6,7 +6,7 @@ class BitcoinAccount {
 
     private String hash160;
     private String address;
-    private long n_tx;
+    private long n_tx = BitcoinUtils.LOADING_ACCOUNT;
     private long n_unredeemed;
     private long total_received;
     private long total_sent;
