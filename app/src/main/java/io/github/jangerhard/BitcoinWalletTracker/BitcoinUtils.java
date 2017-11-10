@@ -375,6 +375,8 @@ class BitcoinUtils {
     }
 
     String getExchangeRate() {
+        if (getCurrentPrice() == null || getCurrentPrice() == 0) return "";
+
         return "1 BTC = " + formatCurrency(getCurrentPrice());
     }
 
