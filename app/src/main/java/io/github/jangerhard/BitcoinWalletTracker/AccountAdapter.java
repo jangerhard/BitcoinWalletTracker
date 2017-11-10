@@ -1,5 +1,7 @@
 package io.github.jangerhard.BitcoinWalletTracker;
 
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v7.widget.LinearLayoutManager;
@@ -153,6 +155,17 @@ public class AccountAdapter extends RecyclerView.Adapter<AccountAdapter.MyViewHo
                 .setTopColorRes(R.color.dialog_qr)
                 .setIcon(utils.getBigQRThumbnail(address))
                 .setTitle(address)
+                .setNegativeButton("Copy", new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        ClipboardManager clipboard = (ClipboardManager) mContext.getSystemService(Context.CLIPBOARD_SERVICE);
+                        ClipData clip = ClipData.newPlainText("qrCode", address);
+                        if (clipboard != null) {
+                            Toast.makeText(mContext, "Address copied to clipboard", Toast.LENGTH_SHORT).show();
+                            clipboard.setPrimaryClip(clip);
+                        }
+                    }
+                })
                 .setPositiveButton(R.string.share, new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {

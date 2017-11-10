@@ -1,6 +1,8 @@
 package io.github.jangerhard.BitcoinWalletTracker;
 
 import android.app.Activity;
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -211,17 +213,28 @@ public class MainActivity extends AppCompatActivity {
                 donationElement.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        final String donationAddres = "1MArRnVPrMf6FR4FqtEThAa8piUbgfYDQ3";
+                        final String donationAddress = "1MArRnVPrMf6FR4FqtEThAa8piUbgfYDQ3";
                         new LovelyStandardDialog(mActivity)
                                 .setTopColorRes(R.color.dialog_qr)
-                                .setIcon(utils.getBigQRThumbnail("1MArRnVPrMf6FR4FqtEThAa8piUbgfYDQ3"))
-                                .setTitle("1MArRnVPrMf6FR4FqtEThAa8piUbgfYDQ3")
+                                .setIcon(utils.getBigQRThumbnail(donationAddress))
+                                .setTitle(donationAddress)
+                                .setNegativeButton("Copy", new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View view) {
+                                        ClipboardManager clipboard = (ClipboardManager) mActivity.getSystemService(Context.CLIPBOARD_SERVICE);
+                                        ClipData clip = ClipData.newPlainText("qrCode", donationAddress);
+                                        if (clipboard != null) {
+                                            Toast.makeText(mActivity, "Address copied to clipboard", Toast.LENGTH_SHORT).show();
+                                            clipboard.setPrimaryClip(clip);
+                                        }
+                                    }
+                                })
                                 .setPositiveButton(R.string.share, new View.OnClickListener() {
                                     @Override
                                     public void onClick(View v) {
                                         Intent sendIntent = new Intent();
                                         sendIntent.setAction(Intent.ACTION_SEND);
-                                        sendIntent.putExtra(Intent.EXTRA_TEXT, donationAddres);
+                                        sendIntent.putExtra(Intent.EXTRA_TEXT, donationAddress);
                                         sendIntent.setType("text/plain");
                                         mActivity.startActivity(sendIntent);
                                     }
