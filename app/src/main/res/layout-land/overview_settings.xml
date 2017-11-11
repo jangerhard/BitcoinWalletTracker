@@ -17,14 +17,15 @@
 
         <ImageView
             android:id="@+id/bSettingsClose"
-            android:layout_width="@dimen/ic_album_overflow_width"
-            android:layout_height="@dimen/ic_album_overflow_height"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
             android:layout_marginTop="@dimen/ic_album_overflow_margin_top"
             android:scaleType="centerCrop"
-            android:src="@drawable/ic_expand_less_white_48dp" />
+            android:src="@drawable/ic_close_white_24dp" />
 
         <LinearLayout
+            android:layout_marginTop="16dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@+id/bSettingsClose"
@@ -45,9 +46,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentEnd="true"
-                    android:layout_marginEnd="8dp"
-                    android:layout_marginStart="8dp"
-                    android:background="@drawable/ic_language_white_24dp"
+                    android:background="@drawable/ic_language_white_36dp"
                     android:contentDescription="Change Currency" />
 
                 <ImageButton
@@ -56,10 +55,8 @@
                     android:layout_height="wrap_content"
                     android:layout_alignParentEnd="true"
                     android:layout_below="@id/bChangeCurrency"
-                    android:layout_marginEnd="8dp"
-                    android:layout_marginStart="8dp"
                     android:layout_marginTop="8dp"
-                    android:background="@drawable/ic_attach_money_white_24dp"
+                    android:background="@drawable/ic_attach_money_white_36dp"
                     android:contentDescription="Add investment" />
 
                 <TextView
@@ -69,7 +66,7 @@
                     android:layout_alignBottom="@id/bChangeCurrency"
                     android:layout_toStartOf="@id/bChangeCurrency"
                     android:fontFamily="@font/ptc_caption"
-                    android:paddingBottom="3dp"
+                    android:paddingBottom="9dp"
                     android:paddingEnd="8dp"
                     android:paddingStart="8dp"
                     android:text="1 BTC = xxx"
@@ -82,7 +79,7 @@
                     android:layout_alignBottom="@id/bAddInvestment"
                     android:layout_toStartOf="@id/bAddInvestment"
                     android:fontFamily="@font/ptc_caption"
-                    android:paddingBottom="3dp"
+                    android:paddingBottom="9dp"
                     android:paddingEnd="8dp"
                     android:paddingStart="8dp"
                     android:text="xxx kr"
@@ -117,7 +114,6 @@
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
             android:layout_centerHorizontal="true"
-            android:layout_marginTop="8dp"
             android:text="About"
             android:textColor="@color/colorCardsText" />
 

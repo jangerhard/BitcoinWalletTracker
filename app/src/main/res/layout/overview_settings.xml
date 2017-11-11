@@ -17,14 +17,15 @@
 
         <ImageView
             android:id="@+id/bSettingsClose"
-            android:layout_width="@dimen/ic_album_overflow_width"
-            android:layout_height="@dimen/ic_album_overflow_height"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
             android:layout_marginTop="@dimen/ic_album_overflow_margin_top"
             android:scaleType="centerCrop"
-            android:src="@drawable/ic_expand_less_white_48dp" />
+            android:src="@drawable/ic_close_white_24dp" />
 
         <LinearLayout
+            android:id="@+id/layout_settings"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@+id/bSettingsClose"
@@ -117,9 +118,9 @@
             style="@style/Widget.AppCompat.Button.Borderless"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
             android:layout_centerHorizontal="true"
-            android:layout_marginTop="8dp"
+            android:layout_below="@id/layout_settings"
+            android:layout_marginTop="16dp"
             android:text="About"
             android:textColor="@color/colorCardsText" />
 
