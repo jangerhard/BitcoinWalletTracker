@@ -39,7 +39,7 @@ public class AccountAdapter extends RecyclerView.Adapter<AccountAdapter.MyViewHo
 
         // Folded
         TextView accNickNameFolded, accBalance, accRate;
-        private ImageView overflow, qrCode;
+        private ImageView overflow, overflow2, qrCode;
         int position;
 
         // Unfolded
@@ -60,6 +60,7 @@ public class AccountAdapter extends RecyclerView.Adapter<AccountAdapter.MyViewHo
             // Unfolded
             accAddress = view.findViewById(R.id.tv_unfolded_address);
             accNickNameUnfolded = view.findViewById(R.id.tv_unfolded_nickname);
+            overflow2 = view.findViewById(R.id.im_OverflowFolded2);
             transactionList = view.findViewById(R.id.transactionList);
             tvAccNumTxs = view.findViewById(R.id.tv_account_number_transactions);
             tvAccTotReceived = view.findViewById(R.id.tv_account_total_received);
@@ -120,6 +121,13 @@ public class AccountAdapter extends RecyclerView.Adapter<AccountAdapter.MyViewHo
         });
 
         holder.overflow.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showPopupMenu(holder.overflow, holder.position);
+            }
+        });
+
+        holder.overflow2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 showPopupMenu(holder.overflow, holder.position);
