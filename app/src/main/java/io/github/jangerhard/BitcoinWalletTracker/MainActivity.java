@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -68,10 +69,11 @@ public class MainActivity extends AppCompatActivity {
             tvInvestmentGain, tvTotalInvestmentSettings, tvExchangeRate;
     BitcoinUtils utils;
     PullRefreshLayout allAccountsView;
+    CardView cv_no_accounts;
     RecyclerView recyclerView;
     EasyFlipView mFlipView;
     SharedPreferences sharedPref;
-    Boolean selectedDarkTheme, showGainPercentage;
+    Boolean selectedDarkTheme, showGainPercentage, noAccounts;
 
     private int numRefreshed;
 
@@ -88,6 +90,8 @@ public class MainActivity extends AppCompatActivity {
 
         utils = new BitcoinUtils(sharedPref, getString(R.string.bitcoinaddresses));
         utils.setup();
+
+        cv_no_accounts = findViewById(R.id.no_accounts_view);
 
         // Overview
         setupOverviewUI();
@@ -306,6 +310,11 @@ public class MainActivity extends AppCompatActivity {
 
     private void updateUI() {
 
+        if (noAccounts)
+            cv_no_accounts.setVisibility(View.VISIBLE);
+        else
+            cv_no_accounts.setVisibility(View.GONE);
+
         allAccountsView.setRefreshing(false);
         tvExchangeRate.setText(utils.getExchangeRate());
         tvTotalBalance.setText(utils.getTotalBalance());
@@ -336,10 +345,12 @@ public class MainActivity extends AppCompatActivity {
     private void refreshData() {
 
         if (utils.getAddresses().isEmpty()) {
-            updateUI();
             Toast.makeText(getBaseContext(), R.string.no_accounts_initial, Toast.LENGTH_SHORT).show();
+            noAccounts = true;
+            updateUI();
             return;
         }
+        noAccounts = false;
         numRefreshed = 0;
         getCurrentPrice(utils.getCurrencyPair());
     }

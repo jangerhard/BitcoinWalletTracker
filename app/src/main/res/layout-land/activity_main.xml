@@ -27,23 +27,34 @@
 
     </com.wajahatkarim3.easyflipview.EasyFlipView>
 
-    <com.baoyz.widget.PullRefreshLayout
-        android:id="@+id/allAccountsView"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:refreshColor="@color/colorPrimary"
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_weight="2"
-        app:refreshType="smartisan">
+        android:orientation="vertical">
 
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/recycler_view"
+        <include
+            layout="@layout/no_accounts"
+            android:visibility="gone" />
+
+        <com.baoyz.widget.PullRefreshLayout
+            android:id="@+id/allAccountsView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:clipChildren="false"
-            android:clipToPadding="false"
-            android:fadeScrollbars="true"
-            android:scrollbars="vertical" />
+            app:refreshColor="@color/colorPrimary"
+            app:refreshType="smartisan">
 
-    </com.baoyz.widget.PullRefreshLayout>
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/recycler_view"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:clipChildren="false"
+                android:clipToPadding="false"
+                android:fadeScrollbars="true"
+                android:scrollbars="vertical" />
+
+        </com.baoyz.widget.PullRefreshLayout>
+
+    </LinearLayout>
 
 </android.widget.LinearLayout>

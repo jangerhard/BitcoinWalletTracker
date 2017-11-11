@@ -25,6 +25,10 @@
 
     </com.wajahatkarim3.easyflipview.EasyFlipView>
 
+    <include
+        layout="@layout/no_accounts"
+        android:visibility="gone"></include>
+
     <com.baoyz.widget.PullRefreshLayout
         android:id="@+id/allAccountsView"
         android:layout_width="match_parent"
