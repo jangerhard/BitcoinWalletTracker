@@ -226,7 +226,8 @@ class BitcoinUtils {
     }
 
     String formatCurrency(double val) {
-        NumberFormat format = NumberFormat.getCurrencyInstance(getCurrentLocale());
+
+        NumberFormat format = NumberFormat.getCurrencyInstance(getCurrentLocale(getCurrencyPair()));
         format.setCurrency(Currency.getInstance(getCurrencyPair()));
         return format.format(val);
     }
@@ -404,14 +405,21 @@ class BitcoinUtils {
 
         String formated = formatCurrency(cPrice);
 
-        if (cPrice > 10000) // Over 10 000
-            formated = formated.substring(0, formated.length() - 3); // Cut off commas
-
         return "Rate: " + formated;
     }
 
-    private static Locale getCurrentLocale() {
-        return new Locale("no", "NO");
+    private static Locale getCurrentLocale(String currencyPair) {
+        switch (currencyPair) {
+            case "NOK":
+                return new Locale("no", "NO");
+            case "SEK":
+                return new Locale("sv", "SV");
+            case "DKK":
+                return new Locale("da", "DA");
+            default:
+                return Locale.getDefault();
+        }
+
     }
 
     private Double getCurrentPrice() {
