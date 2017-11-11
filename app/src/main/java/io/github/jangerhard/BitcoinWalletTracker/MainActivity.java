@@ -275,6 +275,7 @@ public class MainActivity extends AppCompatActivity {
 
                 new LovelyCustomDialog(mActivity)
                         .setView(aboutPage)
+                        .setTopColorRes(R.color.cardview_dark_background)
                         .show();
             }
         });
