@@ -112,6 +112,7 @@ class BitcoinUtils {
 
         deleteNicknameFromPrefs(selectedAccountTag);
         bitmapList.remove(getAccountIndex(selectedAccountTag));
+        bigBitmapList.remove(getAccountIndex(selectedAccountTag));
         accountList.remove(getAccountIndex(selectedAccountTag));
         addresses.remove(selectedAccountTag);
         totalBalance = calculateTotalBalance(accountList);
@@ -122,7 +123,7 @@ class BitcoinUtils {
         if (!addresses.contains(address)) {
             addresses.add(address);
             bitmapList.put(address, createQRThumbnail(address, REGULAR_QR_SIZE));
-            bitmapList.put(address, createQRThumbnail(address, BIG_QR_SIZE));
+            bigBitmapList.put(address, createQRThumbnail(address, BIG_QR_SIZE));
             saveAddressesToPrefs();
         }
     }
