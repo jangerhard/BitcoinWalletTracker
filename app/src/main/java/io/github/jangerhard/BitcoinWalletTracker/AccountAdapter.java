@@ -123,14 +123,16 @@ public class AccountAdapter extends RecyclerView.Adapter<AccountAdapter.MyViewHo
         holder.overflow.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                showPopupMenu(holder.overflow, holder.position);
+                selectedAccountPosition = holder.getAdapterPosition();
+                showPopupMenu(holder.overflow);
             }
         });
 
         holder.overflow2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                showPopupMenu(holder.overflow, holder.position);
+                selectedAccountPosition = holder.getAdapterPosition();
+                showPopupMenu(holder.overflow);
             }
         });
 
@@ -189,10 +191,9 @@ public class AccountAdapter extends RecyclerView.Adapter<AccountAdapter.MyViewHo
     /**
      * Showing popup menu when tapping on 3 dots
      */
-    private void showPopupMenu(View view, int position) {
+    private void showPopupMenu(View view) {
         // inflate menu
-        selectedAccountPosition = position;
-        selectedAccountAddress = utils.getAccounts().get(position).getAddress();
+        selectedAccountAddress = utils.getAccounts().get(selectedAccountPosition).getAddress();
         selectedAccountNickname = utils.getNickname(selectedAccountAddress);
         PopupMenu popup = new PopupMenu(mContext, view);
         MenuInflater inflater = popup.getMenuInflater();
