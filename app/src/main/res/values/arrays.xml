@@ -1,6 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string-array name="currencies">
+        <item>USD</item>
+        <item>EUR</item>
+        <item>GBP</item>
+        <item>CNY</item>
+        <item>JPY</item>
+        <item>CAD</item>
+        <item>CHF</item>
+        <item>AUD</item>
         <item>AED</item>
         <item>AFN</item>
         <item>ALL</item>
@@ -8,7 +16,6 @@
         <item>ANG</item>
         <item>AOA</item>
         <item>ARS</item>
-        <item>AUD</item>
         <item>AWG</item>
         <item>AZN</item>
         <item>BAM</item>
@@ -28,12 +35,9 @@
         <item>BYN</item>
         <item>BYR</item>
         <item>BZD</item>
-        <item>CAD</item>
         <item>CDF</item>
-        <item>CHF</item>
         <item>CLF</item>
         <item>CLP</item>
-        <item>CNY</item>
         <item>COP</item>
         <item>CRC</item>
         <item>CUC</item>
@@ -47,10 +51,8 @@
         <item>EGP</item>
         <item>ERN</item>
         <item>ETB</item>
-        <item>EUR</item>
         <item>FJD</item>
         <item>FKP</item>
-        <item>GBP</item>
         <item>GEL</item>
         <item>GGP</item>
         <item>GHS</item>
@@ -73,7 +75,6 @@
         <item>JEP</item>
         <item>JMD</item>
         <item>JOD</item>
-        <item>JPY</item>
         <item>KES</item>
         <item>KGS</item>
         <item>KHR</item>
@@ -148,7 +149,6 @@
         <item>TZS</item>
         <item>UAH</item>
         <item>UGX</item>
-        <item>USD</item>
         <item>UYU</item>
         <item>UZS</item>
         <item>VEF</item>
@@ -171,6 +171,14 @@
         <item>ZWL</item>
     </string-array>
     <string-array name="currencyNames">
+        <item>United States Dollar</item>
+        <item>Euro</item>
+        <item>British Pound</item>
+        <item>Chinese Renminbi Yuan</item>
+        <item>Japanese Yen</item>
+        <item>Canadian Dollar</item>
+        <item>Swiss Franc</item>
+        <item>Australian Dollar</item>
         <item>United Arab Emirates Dirham</item>
         <item>Afghan Afghani</item>
         <item>Albanian Lek</item>
@@ -178,7 +186,6 @@
         <item>Netherlands Antillean Gulden</item>
         <item>Angolan Kwanza</item>
         <item>Argentine Peso</item>
-        <item>Australian Dollar</item>
         <item>Aruban Florin</item>
         <item>Azerbaijani Manat</item>
         <item>Bosnia and Herzegovina Convertible Mark</item>
@@ -198,12 +205,9 @@
         <item>Belarusian Ruble</item>
         <item>Belarusian Ruble</item>
         <item>Belize Dollar</item>
-        <item>Canadian Dollar</item>
         <item>Congolese Franc</item>
-        <item>Swiss Franc</item>
         <item>Unidad de Fomento</item>
         <item>Chilean Peso</item>
-        <item>Chinese Renminbi Yuan</item>
         <item>Colombian Peso</item>
         <item>Costa Rican Colón</item>
         <item>Cuban Convertible Peso</item>
@@ -217,10 +221,8 @@
         <item>Egyptian Pound</item>
         <item>Eritrean Nakfa</item>
         <item>Ethiopian Birr</item>
-        <item>Euro</item>
         <item>Fijian Dollar</item>
         <item>Falkland Pound</item>
-        <item>British Pound</item>
         <item>Georgian Lari</item>
         <item>Guernsey Pound</item>
         <item>Ghanaian Cedi</item>
@@ -243,7 +245,6 @@
         <item>Jersey Pound</item>
         <item>Jamaican Dollar</item>
         <item>Jordanian Dinar</item>
-        <item>Japanese Yen</item>
         <item>Kenyan Shilling</item>
         <item>Kyrgyzstani Som</item>
         <item>Cambodian Riel</item>
@@ -318,7 +319,6 @@
         <item>Tanzanian Shilling</item>
         <item>Ukrainian Hryvnia</item>
         <item>Ugandan Shilling</item>
-        <item>United States Dollar</item>
         <item>Uruguayan Peso</item>
         <item>Uzbekistan Som</item>
         <item>Venezuelan Bolívar</item>
