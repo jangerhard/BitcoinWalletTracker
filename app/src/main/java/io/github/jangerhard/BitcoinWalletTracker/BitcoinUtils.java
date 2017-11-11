@@ -42,7 +42,7 @@ class BitcoinUtils {
     private String prefsAccountsKey;
     private Double currentPrice;
     private String currencyPair;
-    private double totalBalance;
+    private long totalBalance;
 
     BitcoinUtils(SharedPreferences sharedPref, String key) {
         accountList = new ArrayList<>();
@@ -246,12 +246,12 @@ class BitcoinUtils {
     }
 
     @NonNull
-    static String formatBitcoinBalanceToString(double bal) {
+    static String formatBitcoinBalanceToString(long bal) {
 
         BigDecimal newBalance;
         String endTag;
 
-        if (bal < 10000000) {
+        if (bal < 10000000 && bal > -10000000) {
             newBalance = new BigDecimal(formatBalance(bal, MICRO_BITCOIN_FACTOR));
             endTag = " mBTC";
         } else {

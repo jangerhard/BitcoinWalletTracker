@@ -12,16 +12,28 @@ public class BitcoinUtilsTest {
     @Test
     public void testFormatingBalanceToString() throws Exception {
 
-        String bal = BitcoinUtils.formatBitcoinBalanceToString(2195820);
+        String bal = BitcoinUtils.formatBitcoinBalanceToString(2195820L);
         assertEquals("21.9582 mBTC", bal);
 
-        bal = BitcoinUtils.formatBitcoinBalanceToString(21958200);
+        bal = BitcoinUtils.formatBitcoinBalanceToString(21958200L);
         assertEquals("0.2196 BTC", bal);
-        bal = BitcoinUtils.formatBitcoinBalanceToString(219582000);
+        bal = BitcoinUtils.formatBitcoinBalanceToString(219582000L);
         assertEquals("2.1958 BTC", bal);
 
-        bal = BitcoinUtils.formatBitcoinBalanceToString(0);
+        bal = BitcoinUtils.formatBitcoinBalanceToString(0L);
         assertEquals("0.0000 mBTC", bal);
+
+        bal = BitcoinUtils.formatBitcoinBalanceToString(3428272196L);
+        assertEquals("34.2827 BTC", bal);
+
+        bal = BitcoinUtils.formatBitcoinBalanceToString(541721794L);
+        assertEquals("5.4172 BTC", bal);
+
+        bal = BitcoinUtils.formatBitcoinBalanceToString(-3428272196L);
+        assertEquals("-34.2827 BTC", bal);
+
+        bal = BitcoinUtils.formatBitcoinBalanceToString(-541721794L);
+        assertEquals("-5.4172 BTC", bal);
     }
 
 
