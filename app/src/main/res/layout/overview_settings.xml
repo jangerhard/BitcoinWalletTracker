@@ -73,7 +73,7 @@
                     android:paddingBottom="12dp"
                     android:paddingEnd="8dp"
                     android:paddingStart="8dp"
-                    android:text="1 BTC = xxx"
+                    android:text="Rate: xxx"
                     android:textColor="@color/colorCardsText"
                     android:textSize="18sp" />
 
@@ -118,8 +118,8 @@
             style="@style/Widget.AppCompat.Button.Borderless"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
             android:layout_below="@id/layout_settings"
+            android:layout_centerHorizontal="true"
             android:layout_marginTop="16dp"
             android:text="About"
             android:textColor="@color/colorCardsText" />

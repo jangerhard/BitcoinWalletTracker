@@ -69,7 +69,7 @@
                     android:paddingBottom="9dp"
                     android:paddingEnd="8dp"
                     android:paddingStart="8dp"
-                    android:text="1 BTC = xxx"
+                    android:text="Rate: xxx"
                     android:textColor="@color/colorCardsText" />
 
                 <TextView

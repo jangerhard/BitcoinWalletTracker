@@ -398,9 +398,16 @@ class BitcoinUtils {
     }
 
     String getExchangeRate() {
-        if (getCurrentPrice() == null || getCurrentPrice() == 0) return "";
+        Double cPrice = getCurrentPrice();
 
-        return "1 BTC = " + formatCurrency(getCurrentPrice());
+        if (cPrice == null || cPrice == 0) return "";
+
+        String formated = formatCurrency(cPrice);
+
+        if (cPrice > 10000) // Over 10 000
+            formated = formated.substring(0, formated.length() - 3); // Cut off commas
+
+        return "Rate: " + formated;
     }
 
     private static Locale getCurrentLocale() {
