@@ -140,7 +140,7 @@ public class MainActivity extends AppCompatActivity {
         tvTotalInvestmentSettings = findViewById(R.id.tv_total_investment_settings);
         tvExchangeRate = findViewById(R.id.tv_exchange_rate);
 
-        Button bChangeCurrency = findViewById(R.id.bChangeCurrency);
+        ImageButton bChangeCurrency = findViewById(R.id.bChangeCurrency);
         bChangeCurrency.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -161,7 +161,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        Button bChangeInvestment = findViewById(R.id.bAddInvestment);
+        ImageButton bChangeInvestment = findViewById(R.id.bAddInvestment);
         bChangeInvestment.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
