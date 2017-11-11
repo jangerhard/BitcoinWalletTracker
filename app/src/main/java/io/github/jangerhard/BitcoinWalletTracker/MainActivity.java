@@ -64,7 +64,7 @@ public class MainActivity extends AppCompatActivity {
     Activity mActivity;
     AccountAdapter adapter;
     TextView tvTotalBalance, tvTotalValue,
-            tvTotalInvestment, tvTotalInvestmentSettings, tvExchangeRate;
+            tvInvestmentGain, tvTotalInvestmentSettings, tvExchangeRate;
     BitcoinUtils utils;
     PullRefreshLayout allAccountsView;
     RecyclerView recyclerView;
@@ -102,7 +102,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void setupOverviewUI() {
         tvTotalBalance = findViewById(R.id.tvCalculatedBalance);
-        tvTotalValue = findViewById(R.id.tvInvestmentPercentage);
+        tvTotalValue = findViewById(R.id.tvTotalInvestment);
 
         ImageButton bAddAccount = findViewById(R.id.bAddAccount);
         bAddAccount.setOnClickListener(new View.OnClickListener() {
@@ -134,7 +134,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void setupSettingsUI() {
-        tvTotalInvestment = findViewById(R.id.tv_total_investment);
+        tvInvestmentGain = findViewById(R.id.tvInvestmentGain);
         tvTotalInvestmentSettings = findViewById(R.id.tv_total_investment_settings);
         tvExchangeRate = findViewById(R.id.tv_exchange_rate);
 
@@ -291,7 +291,7 @@ public class MainActivity extends AppCompatActivity {
         tvExchangeRate.setText(utils.getExchangeRate());
         tvTotalBalance.setText(utils.getTotalBalance());
         tvTotalValue.setText(utils.getTotalValue());
-        tvTotalInvestment.setText(utils.getTotalInvestmentPercentage());
+        tvInvestmentGain.setText(utils.getTotalInvestmentPercentage());
         tvTotalInvestmentSettings.setText(utils.getTotalInvestmentFormated());
     }
 

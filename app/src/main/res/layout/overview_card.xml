@@ -65,7 +65,7 @@
                 android:layout_gravity="center">
 
                 <TextView
-                    android:id="@+id/tvInvestmentPercentage"
+                    android:id="@+id/tvTotalInvestment"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:paddingEnd="8dp"
@@ -74,7 +74,7 @@
                     android:textSize="20sp" />
 
                 <TextView
-                    android:id="@+id/tv_total_investment"
+                    android:id="@+id/tvInvestmentGain"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
