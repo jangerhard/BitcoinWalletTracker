@@ -56,6 +56,7 @@ public class MainActivity extends AppCompatActivity {
     private static final int BARCODE_READER_REQUEST_CODE = 1337;
     private static final String DARK_THEME_SELECTED = "dark_theme_selected";
     private static final String REFRESHING_THEME = "refreshing_theme";
+    private static final String SHOW_GAIN_PERCENTAGE = "show_gain_percentage";
     private static final String LOG_TAG = "MainActivity";
 
     private RequestQueue mRequestQueue;
@@ -70,7 +71,7 @@ public class MainActivity extends AppCompatActivity {
     RecyclerView recyclerView;
     EasyFlipView mFlipView;
     SharedPreferences sharedPref;
-    Boolean selectedDarkTheme;
+    Boolean selectedDarkTheme, showGainPercentage;
 
     private int numRefreshed;
 
@@ -78,6 +79,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         sharedPref = this.getPreferences(Context.MODE_PRIVATE);
         selectedDarkTheme = sharedPref.getBoolean(DARK_THEME_SELECTED, true);
+        showGainPercentage = sharedPref.getBoolean(SHOW_GAIN_PERCENTAGE, true);
         setTheme(selectedDarkTheme ? R.style.AppThemeDark : R.style.AppThemeLight);
 
         super.onCreate(savedInstanceState);
@@ -201,6 +203,22 @@ public class MainActivity extends AppCompatActivity {
                 finish();
             }
         });
+        CheckBox cbInvestmentGain = findViewById(R.id.checkbox_investment_gain);
+        cbInvestmentGain.setChecked(showGainPercentage);
+        cbInvestmentGain.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                if (b)
+                    Toast.makeText(mActivity, R.string.toast_message_show_gain_percentage, Toast.LENGTH_SHORT).show();
+                else
+                    Toast.makeText(mActivity, R.string.toast_message_show_gain, Toast.LENGTH_SHORT).show();
+
+                sharedPref.edit().putBoolean(SHOW_GAIN_PERCENTAGE, b).apply();
+                showGainPercentage = b;
+
+                updateUI();
+            }
+        });
 
         Button bAbout = findViewById(R.id.about_page);
         bAbout.setOnClickListener(new View.OnClickListener() {
@@ -291,7 +309,10 @@ public class MainActivity extends AppCompatActivity {
         tvExchangeRate.setText(utils.getExchangeRate());
         tvTotalBalance.setText(utils.getTotalBalance());
         tvTotalValue.setText(utils.getTotalValue());
-        tvInvestmentGain.setText(utils.getTotalInvestmentPercentage());
+        if (showGainPercentage)
+            tvInvestmentGain.setText(utils.getTotalInvestmentPercentage());
+        else
+            tvInvestmentGain.setText(utils.getTotalInvestmentGain());
         tvTotalInvestmentSettings.setText(utils.getTotalInvestmentFormated());
     }
 

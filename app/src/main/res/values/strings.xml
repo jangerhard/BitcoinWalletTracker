@@ -43,5 +43,7 @@
     <string name="error_investment_input">You have to enter a number!</string>
     <string name="change_currency_dialog_title">Change currency</string>
     <string name="toast_message_changing_theme">Changing theme</string>
+    <string name="toast_message_show_gain_percentage">Showing gain in percentage</string>
+    <string name="toast_message_show_gain">Showing gain in fiat</string>
 
 </resources>

@@ -68,10 +68,20 @@
                 android:text="Add investment" />
 
             <CheckBox
-                android:id="@+id/checkbox_darktheme"
+                android:id="@+id/checkbox_investment_gain"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/bAddInvestment"
+                android:layout_centerHorizontal="true"
+                android:checked="true"
+                android:text="Show gain in percentage"
+                android:textColor="@color/colorCardsText" />
+
+            <CheckBox
+                android:id="@+id/checkbox_darktheme"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/checkbox_investment_gain"
                 android:layout_centerHorizontal="true"
                 android:checked="true"
                 android:text="Dark Theme"

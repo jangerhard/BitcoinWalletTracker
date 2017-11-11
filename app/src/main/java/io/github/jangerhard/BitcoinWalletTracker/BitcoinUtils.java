@@ -189,6 +189,28 @@ class BitcoinUtils {
 
     }
 
+    String getTotalInvestmentGain() {
+
+        double investment = getTotalInvestment();
+        double totalVal = convertBTCtoCurrency(totalBalance);
+
+        if (investment == 0 || totalVal == 0) {
+            return "";
+        }
+
+        double result = totalVal - investment;
+
+        String pre = "";
+
+        if (result > 0)
+            pre = "+";
+
+        return "(" + pre + BigDecimal.valueOf(result)
+                .setScale(2, RoundingMode.HALF_UP)
+                .toEngineeringString() + ")";
+
+    }
+
     long getTotalInvestment() {
         return getInvestmentFromPrefs();
     }
