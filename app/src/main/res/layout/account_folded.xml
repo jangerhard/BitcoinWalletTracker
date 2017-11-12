@@ -14,14 +14,14 @@
 
         <ImageView
             android:id="@+id/im_thumbnailFolded"
-            android:layout_width="@dimen/album_cover_height"
-            android:layout_height="@dimen/album_cover_height"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
             android:layout_margin="16dp"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:clickable="true"
             android:contentDescription="@string/qr_code_associated_with_account"
             android:focusable="true"
-            android:foregroundGravity="center_vertical"
+            android:layout_centerVertical="true"
             android:scaleType="fitXY"
             android:src="@drawable/bitcoin_128" />
 
@@ -30,9 +30,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_toEndOf="@+id/im_thumbnailFolded"
-            android:layout_alignBaseline="@id/im_thumbnailFolded"
             android:contentDescription="@string/account_nickname"
-            android:paddingTop="16dp"
+            android:paddingTop="8dp"
             android:text="@string/loading"
             android:textSize="@dimen/album_title" />
 
@@ -40,9 +39,10 @@
             android:id="@+id/tvAccountBalanceFolded"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignBottom="@+id/im_thumbnailFolded"
             android:layout_toEndOf="@+id/im_thumbnailFolded"
+            android:layout_below="@id/tvAccountNameFolded"
             android:contentDescription="@string/balance_in_btc"
+            android:paddingTop="8dp"
             android:paddingBottom="8dp"
             android:text="@string/loading" />
 

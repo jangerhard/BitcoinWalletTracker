@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.app.AppCompatDelegate;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -79,6 +80,9 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
+        AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
+
         sharedPref = this.getPreferences(Context.MODE_PRIVATE);
         selectedDarkTheme = sharedPref.getBoolean(DARK_THEME_SELECTED, true);
         showGainPercentage = sharedPref.getBoolean(SHOW_GAIN_PERCENTAGE, true);
@@ -230,7 +234,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View view) {
 
                 Element donationElement = new Element();
-                donationElement.setIconDrawable(R.drawable.ic_monetization_on_black_18dp);
+                donationElement.setIconDrawable(R.drawable.ic_attach_money);
                 donationElement.setTitle("Donation");
                 donationElement.setOnClickListener(new View.OnClickListener() {
                     @Override
