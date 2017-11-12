@@ -20,12 +20,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
-            android:layout_marginTop="@dimen/ic_album_overflow_margin_top"
             android:scaleType="centerCrop"
             android:src="@drawable/ic_close_white_24dp" />
 
         <LinearLayout
-            android:layout_marginTop="16dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@+id/bSettingsClose"
@@ -92,7 +90,7 @@
                 android:id="@+id/checkbox_darktheme"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
+                android:layout_marginTop="8dp"
                 android:checked="true"
                 android:text="Dark Theme"
                 android:textColor="@color/colorCardsText" />
