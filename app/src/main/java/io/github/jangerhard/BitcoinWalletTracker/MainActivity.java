@@ -118,9 +118,34 @@ public class MainActivity extends AppCompatActivity {
         bAddAccount.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(mActivity, "Launching camera", Toast.LENGTH_SHORT).show();
-                Intent intent = new Intent(getApplicationContext(), BarcodeCaptureActivity.class);
-                startActivityForResult(intent, BARCODE_READER_REQUEST_CODE);
+
+                new LovelyTextInputDialog(mActivity)
+                        .setTopColorRes(R.color.dialog_info)
+                        .setTitle("Add address")
+                        .setIcon(R.drawable.bitcoin_128)
+                        .setHint("1FfmbHfnpaZjKFvyi1okTjJJusN455paPH")
+                        .setInputFilter("That is not a valid address!", new LovelyTextInputDialog.TextFilter() {
+                            @Override
+                            public boolean check(String text) {
+                                return BitcoinUtils.verifyAddress(text);
+                            }
+                        })
+                        .setConfirmButton(android.R.string.ok, new LovelyTextInputDialog.OnTextInputConfirmListener() {
+                            @Override
+                            public void onTextInputConfirmed(String text) {
+                                utils.addAddress(text);
+                                getSingleWalletInfo(text, true);
+                            }
+                        })
+                        .setNegativeButton("Scan", new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                Toast.makeText(mActivity, "Launching camera", Toast.LENGTH_SHORT).show();
+                                Intent intent = new Intent(getApplicationContext(), BarcodeCaptureActivity.class);
+                                startActivityForResult(intent, BARCODE_READER_REQUEST_CODE);
+                            }
+                        })
+                        .show();
             }
         });
 
