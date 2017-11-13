@@ -45,6 +45,7 @@
     <string name="toast_message_changing_theme">Changing theme</string>
     <string name="toast_message_show_gain_percentage">Showing gain in percentage</string>
     <string name="toast_message_show_gain">Showing gain in fiat</string>
-    <string name="no_accounts_view_info">No accounts added yet! Share an address with this app or scan a barcode!</string>
+    <string name="no_accounts_view_info">No accounts added yet! Click the button below or the add-button in the overview.</string>
+    <string name="add_new_account">Add new account</string>
 
 </resources>
