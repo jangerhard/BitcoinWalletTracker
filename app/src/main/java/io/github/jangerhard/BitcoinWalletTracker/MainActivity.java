@@ -518,6 +518,9 @@ public class MainActivity extends AppCompatActivity {
 
     private void addBarcode(String address) {
 
+        if (address.contains("label"))
+            address = address.substring(address.indexOf(":") + 1, address.indexOf("?"));
+
         Log.i(LOG_TAG, "Address: " + address);
 
         if (utils.hasAddress(address)) {

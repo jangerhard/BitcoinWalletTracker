@@ -7,8 +7,8 @@ android {
         applicationId 'io.github.jangerhard.BitcoinWalletTracker'
         minSdkVersion 21
         targetSdkVersion 27
-        versionCode 3
-        versionName "1.0.2"
+        versionCode 4
+        versionName "1.0.3"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
     }
@@ -22,6 +22,13 @@ android {
     }
     testOptions {
         unitTests.returnDefaultValues = true
+    }
+    packagingOptions {
+        exclude 'lib/x86_64/darwin/libscrypt.dylib'
+        exclude 'lib/x86_64/freebsd/libscrypt.so'
+        exclude 'lib/x86_64/linux/libscrypt.so'
+        exclude 'org/bitcoinj/crypto/mnemonic/wordlist/english.txt'
+        exclude 'org/bitcoinj/crypto/cacerts'
     }
 }
 
@@ -46,6 +53,7 @@ dependencies {
     compile 'com.ramotion.foldingcell:folding-cell:1.2.1'        // Foldable
     compile 'com.wajahatkarim3.EasyFlipView:EasyFlipView:1.0.2'  // Flip views
     compile 'com.github.medyo:android-about-page:1.2.1'          // About page
+    compile 'org.bitcoinj:bitcoinj-core:0.14.5'                  // Bitcoin support library
 
     testCompile 'junit:junit:4.12'
 }

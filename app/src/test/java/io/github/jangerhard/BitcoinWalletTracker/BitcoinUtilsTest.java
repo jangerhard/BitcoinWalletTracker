@@ -69,6 +69,31 @@ public class BitcoinUtilsTest {
         // Real address, should return true
         verified = BitcoinUtils.verifyAddress("1H6a4TidysCEV91PDdQZmyEphpJD9M7VmN");
         assertEquals(true, verified);
+        // Real address, should return true
+        verified = BitcoinUtils.verifyAddress("3KHDFXJQC9eD4MEMi2bUFhyXaQ5DEpT7JG");
+        assertEquals(true, verified);
+        // Real address, should return true
+        verified = BitcoinUtils.verifyAddress("3ARbVBdz6jfg7WUMSBsMe5cvaxghbHs6Ch");
+        assertEquals(true, verified);
+        // Real address, should return true
+        verified = BitcoinUtils.verifyAddress("3J98t1WpEZ73CNmQviecrnyiWrnqRhWNLy");
+        assertEquals(true, verified);
+        // Real address, should return true
+        verified = BitcoinUtils.verifyAddress("1BvBMSEYstWetqTFn5Au4m4GFg7xJaNVN2");
+        assertEquals(true, verified);
+
+        // Wrong address, should return false
+        verified = BitcoinUtils.verifyAddress("33ghcYT1EKNKUzgGaXnv8qty16mifc8iy2");
+        assertEquals(false, verified);
+        // Wrong address, should return false
+        verified = BitcoinUtils.verifyAddress("43ghcYT1EKNKUzgGaXnv8qty16mifc8iy2");
+        assertEquals(false, verified);
+        // Wrong address, should return false
+        verified = BitcoinUtils.verifyAddress("133ghcYT1EKNKUzgGaXnv8qty16mifc8iy2");
+        assertEquals(false, verified);
+        // Wrong address, should return false
+        verified = BitcoinUtils.verifyAddress("333ghcYT1EKNKUzgGaXnv8qty16mifc8iy2");
+        assertEquals(false, verified);
 
         verified = BitcoinUtils.verifyAddress("");
         assertEquals(false, verified);

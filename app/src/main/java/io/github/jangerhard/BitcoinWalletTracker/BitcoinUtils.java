@@ -11,6 +11,10 @@ import com.google.zxing.WriterException;
 import com.google.zxing.common.BitMatrix;
 import com.journeyapps.barcodescanner.BarcodeEncoder;
 
+import org.bitcoinj.core.Address;
+import org.bitcoinj.core.AddressFormatException;
+import org.bitcoinj.params.MainNetParams;
+
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.DateFormat;
@@ -279,18 +283,12 @@ class BitcoinUtils {
         if (qrString == null)
             return false;
 
-        /*
-          A Bitcoin address is between 25 and 34 characters long;
-          the address always starts with a 1;
-          an address can contain all alphanumeric characters,
-          with the exceptions of 0, O, I, and l.
-
-         */
-
-        return (qrString.length() <= 34 && qrString.length() >= 25) &&
-                (qrString.substring(0, 1).equals("1") || (qrString.substring(0, 1).equals("3"))) &&
-                (!qrString.contains("0")) && (!qrString.contains("O")) &&
-                (!qrString.contains("I")) && (!qrString.contains("l"));
+        try {
+            Address.fromBase58(MainNetParams.get(), qrString);
+        } catch (AddressFormatException e) {
+            return false;
+        }
+        return true;
 
     }
 
