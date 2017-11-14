@@ -500,8 +500,10 @@ public class MainActivity extends AppCompatActivity {
 
     private void addBarcode(String address) {
 
-        if (address.contains("label"))
-            address = address.substring(address.indexOf(":") + 1, address.indexOf("?"));
+        if (address.contains(":"))
+            address = address.substring(address.indexOf(":") + 1, address.length());
+        if (address.contains("?"))
+            address = address.substring(0, address.indexOf("?"));
 
         Log.i(LOG_TAG, "Address: " + address);
 
