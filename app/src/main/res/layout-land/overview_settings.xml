@@ -1,120 +1,126 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
-                                    xmlns:app="http://schemas.android.com/apk/res-auto"
-                                    android:layout_width="match_parent"
-                                    android:layout_height="match_parent"
-                                    android:padding="@dimen/activity_horizontal_margin"
-                                    app:cardBackgroundColor="@color/colorPrimary"
-                                    app:cardCornerRadius="3dp">
 
-    <RelativeLayout
-        android:id="@+id/totalOverview"
+<FrameLayout android:layout_height="wrap_content"
+    android:layout_width="wrap_content"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:orientation="vertical"
-        android:padding="16dp">
+        android:layout_height="match_parent"
+        android:padding="@dimen/activity_horizontal_margin"
+        app:cardBackgroundColor="@color/colorPrimary"
+        app:cardCornerRadius="3dp">
 
-        <ImageView
-            android:id="@+id/bSettingsClose"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:scaleType="centerCrop"
-            android:src="@drawable/ic_close_white_24dp" />
-
-        <LinearLayout
+        <RelativeLayout
+            android:id="@+id/totalOverview"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/bSettingsClose"
-            android:gravity="center_horizontal"
+            android:layout_gravity="center_horizontal"
             android:orientation="vertical"
-            android:paddingLeft="8dp"
-            android:paddingRight="8dp">
+            android:padding="16dp">
 
-            <RelativeLayout
+            <ImageView
+                android:id="@+id/bSettingsClose"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:scaleType="centerCrop"
+                android:src="@drawable/ic_close_white_24dp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/bSettingsClose"
                 android:gravity="center_horizontal"
-                android:paddingEnd="8dp"
-                android:paddingStart="8dp">
+                android:orientation="vertical"
+                android:paddingLeft="8dp"
+                android:paddingRight="8dp">
 
-                <ImageButton
-                    android:id="@+id/bChangeCurrency"
+                <RelativeLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentEnd="true"
-                    android:background="@drawable/ic_language_white_36dp"
-                    android:contentDescription="Change Currency" />
+                    android:gravity="center_horizontal"
+                    android:paddingEnd="8dp"
+                    android:paddingStart="8dp">
 
-                <ImageButton
-                    android:id="@+id/bAddInvestment"
+                    <ImageButton
+                        android:id="@+id/bChangeCurrency"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentEnd="true"
+                        android:background="@drawable/ic_language_white_36dp"
+                        android:contentDescription="Change Currency" />
+
+                    <ImageButton
+                        android:id="@+id/bAddInvestment"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentEnd="true"
+                        android:layout_below="@id/bChangeCurrency"
+                        android:layout_marginTop="8dp"
+                        android:background="@drawable/ic_attach_money_white_36dp"
+                        android:contentDescription="Add investment" />
+
+                    <TextView
+                        android:id="@+id/tv_exchange_rate"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignBottom="@id/bChangeCurrency"
+                        android:layout_toStartOf="@id/bChangeCurrency"
+                        android:fontFamily="@font/ptc_caption"
+                        android:paddingBottom="9dp"
+                        android:paddingEnd="8dp"
+                        android:paddingStart="8dp"
+                        android:text="Rate: xxx"
+                        android:textColor="@color/colorCardsText" />
+
+                    <TextView
+                        android:id="@+id/tv_total_investment_settings"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignBottom="@id/bAddInvestment"
+                        android:layout_toStartOf="@id/bAddInvestment"
+                        android:fontFamily="@font/ptc_caption"
+                        android:paddingBottom="9dp"
+                        android:paddingEnd="8dp"
+                        android:paddingStart="8dp"
+                        android:text="xxx kr"
+                        android:textColor="@color/colorCardsText" />
+
+
+                </RelativeLayout>
+
+                <CheckBox
+                    android:id="@+id/checkbox_darktheme"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentEnd="true"
-                    android:layout_below="@id/bChangeCurrency"
                     android:layout_marginTop="8dp"
-                    android:background="@drawable/ic_attach_money_white_36dp"
-                    android:contentDescription="Add investment" />
-
-                <TextView
-                    android:id="@+id/tv_exchange_rate"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignBottom="@id/bChangeCurrency"
-                    android:layout_toStartOf="@id/bChangeCurrency"
-                    android:fontFamily="@font/ptc_caption"
-                    android:paddingBottom="9dp"
-                    android:paddingEnd="8dp"
-                    android:paddingStart="8dp"
-                    android:text="Rate: xxx"
+                    android:checked="true"
+                    android:text="Dark Theme"
                     android:textColor="@color/colorCardsText" />
 
-                <TextView
-                    android:id="@+id/tv_total_investment_settings"
+                <CheckBox
+                    android:id="@+id/checkbox_investment_gain"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignBottom="@id/bAddInvestment"
-                    android:layout_toStartOf="@id/bAddInvestment"
-                    android:fontFamily="@font/ptc_caption"
-                    android:paddingBottom="9dp"
-                    android:paddingEnd="8dp"
-                    android:paddingStart="8dp"
-                    android:text="xxx kr"
+                    android:checked="true"
+                    android:text="Show gain in percentage"
                     android:textColor="@color/colorCardsText" />
 
+            </LinearLayout>
 
-            </RelativeLayout>
-
-            <CheckBox
-                android:id="@+id/checkbox_darktheme"
+            <Button
+                android:id="@+id/about_page"
+                style="@style/Widget.AppCompat.Button.Borderless"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:checked="true"
-                android:text="Dark Theme"
+                android:layout_alignParentBottom="true"
+                android:layout_centerHorizontal="true"
+                android:text="About"
                 android:textColor="@color/colorCardsText" />
 
-            <CheckBox
-                android:id="@+id/checkbox_investment_gain"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:checked="true"
-                android:text="Show gain in percentage"
-                android:textColor="@color/colorCardsText" />
+        </RelativeLayout>
 
-        </LinearLayout>
-
-        <Button
-            android:id="@+id/about_page"
-            style="@style/Widget.AppCompat.Button.Borderless"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_centerHorizontal="true"
-            android:text="About"
-            android:textColor="@color/colorCardsText" />
-
-    </RelativeLayout>
-
-</androidx.cardview.widget.CardView>
+    </androidx.cardview.widget.CardView>
+</FrameLayout>

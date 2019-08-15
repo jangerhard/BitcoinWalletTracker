@@ -50,7 +50,7 @@ dependencies {
     implementation 'jp.wasabeef:recyclerview-animators:2.2.7'           // Scroll animations
     implementation 'com.yarolegovich:lovely-dialog:1.0.7'               // Material Dialogs
     implementation 'com.ramotion.foldingcell:folding-cell:1.2.1'        // Foldable
-    implementation 'com.wajahatkarim3.EasyFlipView:EasyFlipView:1.0.2'  // Flip views
+    implementation 'com.wajahatkarim3.EasyFlipView:EasyFlipView:2.1.2'  // Flip views
     implementation 'com.github.medyo:android-about-page:1.2.1'          // About page
     implementation 'org.bitcoinj:bitcoinj-core:0.14.5'                  // Bitcoin support library
 
