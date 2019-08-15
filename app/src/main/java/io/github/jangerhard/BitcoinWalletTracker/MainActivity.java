@@ -280,7 +280,7 @@ public class MainActivity extends AppCompatActivity {
                                 "Feel free to email me about any weird bugs or any other feedback. " +
                                 "I'd love to hear from you!")
                         .addEmail("jgschoepp@gmail.com", "Contact me")
-                        .addWebsite("http://jangerhard.github.io/", "Visit my website")
+                        .addWebsite("https://janschoepp.com/", "Visit my website")
                         .addGitHub("jangerhard", "Check out my github")
                         .addItem(donationElement)
                         .create();
