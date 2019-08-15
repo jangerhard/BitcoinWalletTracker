@@ -2,7 +2,7 @@ package io.github.jangerhard.BitcoinWalletTracker;
 
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.EncodeHintType;
