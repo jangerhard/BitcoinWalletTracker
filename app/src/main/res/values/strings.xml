@@ -47,5 +47,6 @@
     <string name="toast_message_show_gain">Showing gain in fiat</string>
     <string name="no_accounts_view_info">No accounts added yet! Click the button below or the add-button in the overview.</string>
     <string name="add_new_account">Add new account</string>
+    <string name="donationAddress">1MArRnVPrMf6FR4FqtEThAa8piUbgfYDQ3</string>
 
 </resources>

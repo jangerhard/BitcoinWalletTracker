@@ -3,8 +3,6 @@ package io.github.jangerhard.BitcoinWalletTracker;
 import java.util.List;
 
 import android.app.Activity;
-import android.content.ClipData;
-import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -28,10 +26,7 @@ import com.baoyz.widget.PullRefreshLayout;
 import com.google.android.gms.common.api.CommonStatusCodes;
 import com.google.android.gms.vision.barcode.Barcode;
 import com.wajahatkarim3.easyflipview.EasyFlipView;
-import com.yarolegovich.lovelydialog.LovelyChoiceDialog;
-import com.yarolegovich.lovelydialog.LovelyCustomDialog;
 import com.yarolegovich.lovelydialog.LovelyStandardDialog;
-import com.yarolegovich.lovelydialog.LovelyTextInputDialog;
 import io.github.jangerhard.BitcoinWalletTracker.client.BlockExplorer;
 import io.github.jangerhard.BitcoinWalletTracker.client.PriceFetcher;
 import io.github.jangerhard.BitcoinWalletTracker.qrStuff.barcode.BarcodeCaptureActivity;
@@ -62,6 +57,7 @@ public class MainActivity extends AppCompatActivity {
 
     PriceFetcher priceFetcher;
     BlockExplorer blockExplorer;
+    DialogMaker dialogMaker;
 
     private int numRefreshed;
 
@@ -86,9 +82,11 @@ public class MainActivity extends AppCompatActivity {
         priceFetcher = new PriceFetcher(queue, this, utils);
         blockExplorer = new BlockExplorer(queue, this);
 
+        dialogMaker = new DialogMaker(this, blockExplorer, utils);
+
         cv_no_accounts = findViewById(R.id.no_accounts_view);
         Button bNoAccAdd = findViewById(R.id.bNoAccountsAdd);
-        bNoAccAdd.setOnClickListener(view -> showAddAccountDialog());
+        bNoAccAdd.setOnClickListener(view -> dialogMaker.showAddAccountDialog());
 
         // Overview
         setupOverviewUI();
@@ -108,7 +106,7 @@ public class MainActivity extends AppCompatActivity {
         tvTotalValue = findViewById(R.id.tvTotalInvestment);
 
         ImageButton bAddAccount = findViewById(R.id.bAddAccount);
-        bAddAccount.setOnClickListener(v -> showAddAccountDialog());
+        bAddAccount.setOnClickListener(v -> dialogMaker.showAddAccountDialog());
 
         mFlipView = findViewById(R.id.flipview_layout);
 
@@ -130,36 +128,10 @@ public class MainActivity extends AppCompatActivity {
         tvExchangeRate = findViewById(R.id.tv_exchange_rate);
 
         ImageButton bChangeCurrency = findViewById(R.id.bChangeCurrency);
-        bChangeCurrency.setOnClickListener(view -> {
-            String[] items = getResources().getStringArray(R.array.currencyNames);
-            new LovelyChoiceDialog(mActivity)
-                    .setTopColorRes(R.color.dialog_currencies)
-                    .setTitle(R.string.change_currency_dialog_title)
-                    .setIcon(R.drawable.ic_language_white_48dp)
-                    .setItems(items, (position, item) -> {
-                        String pair = getResources().getStringArray(R.array.currencies)[position];
-                        utils.setCurrencyPair(pair);
-                        refreshData();
-                    })
-                    .show();
-        });
+        bChangeCurrency.setOnClickListener(view -> dialogMaker.showCurrencySelectorDialog());
 
         ImageButton bChangeInvestment = findViewById(R.id.bAddInvestment);
-        bChangeInvestment.setOnClickListener(view -> new LovelyTextInputDialog(mActivity)
-                .setTopColorRes(R.color.dialog_investment)
-                .setTitle(R.string.change_investment)
-                .setIcon(R.drawable.ic_attach_money_white_48dp)
-                .setHint(R.string.total_amount_invested)
-                .setInitialInput("" + utils.getTotalInvestment())
-                .setInputFilter(R.string.error_investment_input,
-                        text -> text.trim().length() == 0 || text.trim().matches("\\d+"))
-                .setConfirmButton(android.R.string.ok, text -> {
-                    if (text.trim().length() == 0)
-                        utils.saveInvestment(Long.parseLong("0"));
-                    else utils.saveInvestment(Long.parseLong(text.trim()));
-                    updateUI();
-                })
-                .show());
+        bChangeInvestment.setOnClickListener(view -> dialogMaker.showInvestmentChangeDialog());
 
         CheckBox cbTheme = findViewById(R.id.checkbox_darktheme);
         cbTheme.setChecked(selectedDarkTheme);
@@ -193,29 +165,7 @@ public class MainActivity extends AppCompatActivity {
             Element donationElement = new Element();
             donationElement.setIconDrawable(R.drawable.ic_attach_money);
             donationElement.setTitle("Donation");
-            donationElement.setOnClickListener(view1 -> {
-                final String donationAddress = "1MArRnVPrMf6FR4FqtEThAa8piUbgfYDQ3";
-                new LovelyStandardDialog(mActivity)
-                        .setTopColorRes(R.color.dialog_qr)
-                        .setIcon(utils.getBigQRThumbnail(donationAddress))
-                        .setTitle(donationAddress)
-                        .setNegativeButton("Copy", view11 -> {
-                            ClipboardManager clipboard = (ClipboardManager) mActivity.getSystemService(Context.CLIPBOARD_SERVICE);
-                            ClipData clip = ClipData.newPlainText("qrCode", donationAddress);
-                            if (clipboard != null) {
-                                Toast.makeText(mActivity, "Address copied to clipboard", Toast.LENGTH_SHORT).show();
-                                clipboard.setPrimaryClip(clip);
-                            }
-                        })
-                        .setPositiveButton(R.string.share, v -> {
-                            Intent sendIntent = new Intent();
-                            sendIntent.setAction(Intent.ACTION_SEND);
-                            sendIntent.putExtra(Intent.EXTRA_TEXT, donationAddress);
-                            sendIntent.setType("text/plain");
-                            mActivity.startActivity(sendIntent);
-                        })
-                        .show();
-            });
+            donationElement.setOnClickListener(view1 -> dialogMaker.showAccountShareDialog(getString(R.string.donationAddress)));
 
             View aboutPage = new AboutPage(mActivity)
                     .isRTL(false)
@@ -229,10 +179,7 @@ public class MainActivity extends AppCompatActivity {
                     .addItem(donationElement)
                     .create();
 
-            new LovelyCustomDialog(mActivity)
-                    .setView(aboutPage)
-                    .setTopColorRes(R.color.cardview_dark_background)
-                    .show();
+            dialogMaker.showCustomViewDialog(aboutPage);
         });
     }
 
@@ -246,7 +193,7 @@ public class MainActivity extends AppCompatActivity {
         // start refresh
         allAccountsView.setOnRefreshListener(this::refreshData);
 
-        adapter = new AccountAdapter(this, utils);
+        adapter = new AccountAdapter(this, utils, dialogMaker);
 //        adapter.notifyDataSetChanged();
 
         recyclerView.setLayoutManager(new LinearLayoutManager(this,
@@ -289,7 +236,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void refreshData() {
+    public void refreshData() {
 
         if (utils.getAddresses().isEmpty()) {
             Toast.makeText(getBaseContext(), R.string.no_accounts_initial, Toast.LENGTH_SHORT).show();
@@ -341,44 +288,15 @@ public class MainActivity extends AppCompatActivity {
         if (utils.hasAddress(address)) {
             Toast.makeText(getBaseContext(), R.string.account_already_added, Toast.LENGTH_SHORT).show();
         } else if (BitcoinUtils.verifyAddress(address)) {
-            showBitcoinAddressDialog(address);
+            dialogMaker.showBitcoinAddressDialog(address);
         } else
             Toast.makeText(getBaseContext(), R.string.invalid_address, Toast.LENGTH_SHORT).show();
     }
 
-    private void showBitcoinAddressDialog(final String address) {
-
-        new LovelyStandardDialog(this)
-                .setTopColorRes(R.color.dialog_info)
-                .setTitle(R.string.new_address)
-                .setIcon(R.drawable.bitcoin_128)
-                .setMessage(getString(R.string.question_correct_address) + "\n\n" + address)
-                .setPositiveButton(android.R.string.yes, v -> {
-                    utils.addAddress(address);
-                    blockExplorer.getSingleWalletInfo(address, true);
-                })
-                .setNegativeButton(android.R.string.no, null)
-                .show();
-    }
-
-    private void showAddAccountDialog() {
-
-        new LovelyTextInputDialog(mActivity)
-                .setTopColorRes(R.color.dialog_info)
-                .setTitle("Add address")
-                .setIcon(R.drawable.bitcoin_128)
-                .setHint("1FfmbHfnpaZjKFvyi1okTjJJusN455paPH")
-                .setInputFilter("That is not a valid address!", text -> BitcoinUtils.verifyAddress(text))
-                .setConfirmButton(android.R.string.ok, text -> {
-                    utils.addAddress(text);
-                    blockExplorer.getSingleWalletInfo(text, true);
-                })
-                .setNegativeButton("Scan", view -> {
-                    Toast.makeText(mActivity, "Launching camera", Toast.LENGTH_SHORT).show();
-                    Intent intent = new Intent(getApplicationContext(), BarcodeCaptureActivity.class);
-                    startActivityForResult(intent, BARCODE_READER_REQUEST_CODE);
-                })
-                .show();
+    public void captureBarcode() {
+        Toast.makeText(this, "Launching camera", Toast.LENGTH_SHORT).show();
+        Intent intent = new Intent(this, BarcodeCaptureActivity.class);
+        startActivityForResult(intent, BARCODE_READER_REQUEST_CODE);
     }
 
     @Override

@@ -5,8 +5,6 @@ import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import android.content.ClipData;
-import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
 import android.view.LayoutInflater;
@@ -33,6 +31,7 @@ public class AccountAdapter extends RecyclerView.Adapter<AccountAdapter.MyViewHo
     private String selectedAccountAddress;
     private String selectedAccountNickname;
     private BitcoinUtils utils;
+    private DialogMaker dialogMaker;
 
     class MyViewHolder extends RecyclerView.ViewHolder {
 
@@ -68,9 +67,10 @@ public class AccountAdapter extends RecyclerView.Adapter<AccountAdapter.MyViewHo
         }
     }
 
-    AccountAdapter(Context mContext, BitcoinUtils utils) {
+    AccountAdapter(Context mContext, BitcoinUtils utils, DialogMaker dialogMaker) {
         this.mContext = mContext;
         this.utils = utils;
+        this.dialogMaker = dialogMaker;
     }
 
     @Override
@@ -109,7 +109,7 @@ public class AccountAdapter extends RecyclerView.Adapter<AccountAdapter.MyViewHo
 
         });
 
-        holder.qrCode.setOnClickListener(view -> showPopupQRCode(account.getAddress()));
+        holder.qrCode.setOnClickListener(view -> dialogMaker.showAccountShareDialog(account.getAddress()));
 
         holder.overflow.setOnClickListener(view -> {
             selectedAccountPosition = holder.getAdapterPosition();
@@ -145,24 +145,6 @@ public class AccountAdapter extends RecyclerView.Adapter<AccountAdapter.MyViewHo
                 new TransactionAdapter(mContext, account.getTxs(), account.getAddress());
 
         holder.transactionList.setAdapter(transactionAdapter);
-    }
-
-    private void showPopupQRCode(final String address) {
-
-        new LovelyStandardDialog(mContext)
-                .setTopColorRes(R.color.dialog_qr)
-                .setIcon(utils.getBigQRThumbnail(address))
-                .setTitle(address)
-                .setNegativeButton("Copy", view -> {
-                    ClipboardManager clipboard = (ClipboardManager) mContext.getSystemService(Context.CLIPBOARD_SERVICE);
-                    ClipData clip = ClipData.newPlainText("qrCode", address);
-                    if (clipboard != null) {
-                        Toast.makeText(mContext, "Address copied to clipboard", Toast.LENGTH_SHORT).show();
-                        clipboard.setPrimaryClip(clip);
-                    }
-                })
-                .setPositiveButton(R.string.share, v -> shareAddress(address))
-                .show();
     }
 
     /**
