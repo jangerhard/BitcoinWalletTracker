@@ -4,22 +4,12 @@ import java.util.ArrayList;
 
 class BitcoinAccount {
 
-    private String hash160;
     private String address;
     private long n_tx = BitcoinUtils.LOADING_ACCOUNT;
-    private long n_unredeemed;
     private long total_received;
     private long total_sent;
     private long final_balance;
     private ArrayList<Transaction> txs;
-
-    String getHash160() {
-        return hash160;
-    }
-
-    void setHash160(String hash160) {
-        this.hash160 = hash160;
-    }
 
     String getAddress() {
         return address;
@@ -35,14 +25,6 @@ class BitcoinAccount {
 
     void setN_tx(long n_tx) {
         this.n_tx = n_tx;
-    }
-
-    long getN_unredeemed() {
-        return n_unredeemed;
-    }
-
-    void setN_unredeemed(long n_unredeemed) {
-        this.n_unredeemed = n_unredeemed;
     }
 
     long getTotal_received() {
@@ -77,9 +59,7 @@ class BitcoinAccount {
         BitcoinAccount acc = (BitcoinAccount) obj;
 
         return (address.equals(acc.getAddress()) &&
-                hash160.equals(acc.hash160) &&
                 n_tx == acc.n_tx &&
-                n_unredeemed == acc.n_unredeemed &&
                 total_received == acc.total_received &&
                 total_sent == acc.total_sent &&
                 final_balance == acc.final_balance);
