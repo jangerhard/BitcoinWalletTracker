@@ -2,7 +2,7 @@ package io.github.jangerhard.BitcoinWalletTracker;
 
 import java.util.ArrayList;
 
-class BitcoinAccount {
+public class BitcoinAccount {
 
     private String address;
     private long n_tx = BitcoinUtils.LOADING_ACCOUNT;

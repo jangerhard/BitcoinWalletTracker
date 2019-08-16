@@ -29,7 +29,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-class BitcoinUtils {
+public class BitcoinUtils {
 
     private static final int BITCOIN_FACTOR = 100000000;
     private static final int MICRO_BITCOIN_FACTOR = 100000;
@@ -77,7 +77,7 @@ class BitcoinUtils {
         return accountList;
     }
 
-    List<String> getAddresses() {
+    public List<String> getAddresses() {
         return addresses;
     }
 
@@ -312,7 +312,7 @@ class BitcoinUtils {
         saveInvestmentToPrefs(investment);
     }
 
-    void updateCurrency(Double price) {
+    public void updateCurrency(Double price) {
         currentPrice = price;
     }
 
@@ -388,7 +388,7 @@ class BitcoinUtils {
         return bitmapList.get(address);
     }
 
-    String getCurrencyPair() {
+    public String getCurrencyPair() {
         return currencyPair;
     }
 

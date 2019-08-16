@@ -20,6 +20,7 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.cardview.widget.CardView;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.android.volley.NetworkError;
@@ -40,6 +41,7 @@ import com.yarolegovich.lovelydialog.LovelyChoiceDialog;
 import com.yarolegovich.lovelydialog.LovelyCustomDialog;
 import com.yarolegovich.lovelydialog.LovelyStandardDialog;
 import com.yarolegovich.lovelydialog.LovelyTextInputDialog;
+import io.github.jangerhard.BitcoinWalletTracker.client.PriceFetcher;
 import io.github.jangerhard.BitcoinWalletTracker.qrStuff.barcode.BarcodeCaptureActivity;
 import jp.wasabeef.recyclerview.animators.LandingAnimator;
 import mehdi.sakout.aboutpage.AboutPage;
@@ -57,7 +59,6 @@ public class MainActivity extends AppCompatActivity {
 
     private RequestQueue mRequestQueue;
     String url_blockchain = "https://blockchain.info/";
-    String url_exchange = "https://api.coinbase.com/v2/prices/";
     Activity mActivity;
     AccountAdapter adapter;
     TextView tvTotalBalance, tvTotalValue,
@@ -69,6 +70,8 @@ public class MainActivity extends AppCompatActivity {
     EasyFlipView mFlipView;
     SharedPreferences sharedPref;
     Boolean selectedDarkTheme, showGainPercentage, noAccounts;
+
+    PriceFetcher priceFetcher;
 
     private int numRefreshed;
 
@@ -88,6 +91,8 @@ public class MainActivity extends AppCompatActivity {
 
         utils = new BitcoinUtils(sharedPref, getString(R.string.bitcoinaddresses));
         utils.setup();
+
+        priceFetcher = new PriceFetcher(getVolleyRequestQueue(), this, utils);
 
         cv_no_accounts = findViewById(R.id.no_accounts_view);
         Button bNoAccAdd = findViewById(R.id.bNoAccountsAdd);
@@ -258,7 +263,7 @@ public class MainActivity extends AppCompatActivity {
         recyclerView.setAdapter(adapter);
     }
 
-    private void updateUI() {
+    public void updateUI() {
 
         if (noAccounts)
             cv_no_accounts.setVisibility(View.VISIBLE);
@@ -302,7 +307,7 @@ public class MainActivity extends AppCompatActivity {
         }
         noAccounts = false;
         numRefreshed = 0;
-        getCurrentPrice(utils.getCurrencyPair());
+        priceFetcher.getCurrentPrice();
     }
 
     private void getSingleWalletInfo(String address, final boolean firstTime) {
@@ -343,61 +348,10 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    private void getAllWalletsInfo(List<String> addresses) {
-
+    public void getAllWalletsInfo(List<String> addresses) {
         for (String address : addresses) {
             getSingleWalletInfo(address, false);
         }
-    }
-
-    private void getCurrentPrice(String currencyPair) {
-
-        // Request a response from the provided URL.
-        JsonObjectRequest jsObjRequest = new JsonObjectRequest
-                (Request.Method.GET,
-                        url_exchange + "BTC-" + currencyPair + "/spot",
-                        null,
-                        this::handleRefreshedCurrency,
-                        error -> {
-
-                            String message = getString(R.string.error_generic);
-
-                            if (error instanceof TimeoutError || error instanceof NoConnectionError) {
-                                message = getString(R.string.error_no_internet);
-                            } else if (error instanceof ServerError) {
-                                message = getString(R.string.error_server);
-                            } else if (error instanceof NetworkError) {
-                                message = getString(R.string.Error_network);
-                            } else if (error instanceof ParseError) {
-                                message = getString(R.string.error_parsing);
-                            }
-
-                            Log.e(LOG_TAG, message);
-                            Toast.makeText(getBaseContext(),
-                                    message,
-                                    Toast.LENGTH_SHORT).show();
-                            updateUI();
-                        });
-
-        getVolleyRequestQueue().add(jsObjRequest);
-    }
-
-    private void handleRefreshedCurrency(JSONObject response) {
-
-        Double price = 0.0;
-
-        try {
-            response = response.getJSONObject("data");
-            price = response.getDouble("amount");
-        } catch (JSONException e) {
-            Log.e(LOG_TAG, "Error parsing price information");
-        }
-
-        Log.i(LOG_TAG, "Got price: " + price);
-        //Toast.makeText(mActivity, "Got price: " + price, Toast.LENGTH_SHORT).show();
-        utils.updateCurrency(price);
-        getAllWalletsInfo(utils.getAddresses());
-
     }
 
     private void handleAddedAccount(BitcoinAccount newAcc) {
