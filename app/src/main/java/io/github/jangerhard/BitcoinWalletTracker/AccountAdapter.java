@@ -101,38 +101,24 @@ public class AccountAdapter extends RecyclerView.Adapter<AccountAdapter.MyViewHo
         holder.qrCode.setImageBitmap(
                 utils.getQRThumbnail(account.getAddress()));
 
-        holder.itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
+        holder.itemView.setOnClickListener(view -> {
 
-                ((FoldingCell) view).toggle(false);
-                // register in adapter that state for selected cell is toggled
-                registerToggle(holder.position);
+            ((FoldingCell) view).toggle(false);
+            // register in adapter that state for selected cell is toggled
+            registerToggle(holder.position);
 
-            }
         });
 
-        holder.qrCode.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                showPopupQRCode(account.getAddress());
-            }
+        holder.qrCode.setOnClickListener(view -> showPopupQRCode(account.getAddress()));
+
+        holder.overflow.setOnClickListener(view -> {
+            selectedAccountPosition = holder.getAdapterPosition();
+            showPopupMenu(holder.overflow);
         });
 
-        holder.overflow.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                selectedAccountPosition = holder.getAdapterPosition();
-                showPopupMenu(holder.overflow);
-            }
-        });
-
-        holder.overflow2.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                selectedAccountPosition = holder.getAdapterPosition();
-                showPopupMenu(holder.overflow);
-            }
+        holder.overflow2.setOnClickListener(view -> {
+            selectedAccountPosition = holder.getAdapterPosition();
+            showPopupMenu(holder.overflow);
         });
 
         // Unfolded
@@ -167,23 +153,15 @@ public class AccountAdapter extends RecyclerView.Adapter<AccountAdapter.MyViewHo
                 .setTopColorRes(R.color.dialog_qr)
                 .setIcon(utils.getBigQRThumbnail(address))
                 .setTitle(address)
-                .setNegativeButton("Copy", new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        ClipboardManager clipboard = (ClipboardManager) mContext.getSystemService(Context.CLIPBOARD_SERVICE);
-                        ClipData clip = ClipData.newPlainText("qrCode", address);
-                        if (clipboard != null) {
-                            Toast.makeText(mContext, "Address copied to clipboard", Toast.LENGTH_SHORT).show();
-                            clipboard.setPrimaryClip(clip);
-                        }
+                .setNegativeButton("Copy", view -> {
+                    ClipboardManager clipboard = (ClipboardManager) mContext.getSystemService(Context.CLIPBOARD_SERVICE);
+                    ClipData clip = ClipData.newPlainText("qrCode", address);
+                    if (clipboard != null) {
+                        Toast.makeText(mContext, "Address copied to clipboard", Toast.LENGTH_SHORT).show();
+                        clipboard.setPrimaryClip(clip);
                     }
                 })
-                .setPositiveButton(R.string.share, new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        shareAddress(address);
-                    }
-                })
+                .setPositiveButton(R.string.share, v -> shareAddress(address))
                 .show();
     }
 
@@ -240,22 +218,16 @@ public class AccountAdapter extends RecyclerView.Adapter<AccountAdapter.MyViewHo
                 .setIcon(R.drawable.ic_mode_edit_white_48dp)
                 .setHint(R.string.savings)
                 .setInitialInput(utils.getNickname(utils.getAddresses().get(selectedAccountPosition)))
-                .setInputFilter(R.string.text_input_error_message, new LovelyTextInputDialog.TextFilter() {
-                    @Override
-                    public boolean check(String text) {
-                        if (text.length() > 30)
-                            return false;
-                        Pattern p = Pattern.compile("\\w+");
-                        Matcher m = p.matcher(text);
-                        return m.find();
-                    }
+                .setInputFilter(R.string.text_input_error_message, text -> {
+                    if (text.length() > 30)
+                        return false;
+                    Pattern p = Pattern.compile("\\w+");
+                    Matcher m = p.matcher(text);
+                    return m.find();
                 })
-                .setConfirmButton(android.R.string.ok, new LovelyTextInputDialog.OnTextInputConfirmListener() {
-                    @Override
-                    public void onTextInputConfirmed(String text) {
-                        utils.setNewNickname(selectedAccountAddress, text);
-                        notifyItemChanged(selectedAccountPosition);
-                    }
+                .setConfirmButton(android.R.string.ok, text -> {
+                    utils.setNewNickname(selectedAccountAddress, text);
+                    notifyItemChanged(selectedAccountPosition);
                 })
                 .show();
     }
@@ -268,12 +240,7 @@ public class AccountAdapter extends RecyclerView.Adapter<AccountAdapter.MyViewHo
                 .setTitle(mContext.getString(R.string.stop_tracking) + " " + selectedAccountNickname + "?")
                 .setMessage(mContext.getString(R.string.it_has_a_balance_of) + " " +
                         utils.getBalanceOfAccount(selectedAccountAddress))
-                .setPositiveButton(android.R.string.yes, new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        removeSelectedAccount();
-                    }
-                })
+                .setPositiveButton(android.R.string.yes, v -> removeSelectedAccount())
                 .setNegativeButton(android.R.string.cancel, null)
                 .show();
     }

@@ -13,7 +13,6 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -28,10 +27,8 @@ import com.android.volley.NoConnectionError;
 import com.android.volley.ParseError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
-import com.android.volley.Response;
 import com.android.volley.ServerError;
 import com.android.volley.TimeoutError;
-import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.baoyz.widget.PullRefreshLayout;
@@ -94,12 +91,7 @@ public class MainActivity extends AppCompatActivity {
 
         cv_no_accounts = findViewById(R.id.no_accounts_view);
         Button bNoAccAdd = findViewById(R.id.bNoAccountsAdd);
-        bNoAccAdd.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                showAddAccountDialog();
-            }
-        });
+        bNoAccAdd.setOnClickListener(view -> showAddAccountDialog());
 
         // Overview
         setupOverviewUI();
@@ -119,12 +111,7 @@ public class MainActivity extends AppCompatActivity {
         tvTotalValue = findViewById(R.id.tvTotalInvestment);
 
         ImageButton bAddAccount = findViewById(R.id.bAddAccount);
-        bAddAccount.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showAddAccountDialog();
-            }
-        });
+        bAddAccount.setOnClickListener(v -> showAddAccountDialog());
 
         mFlipView = findViewById(R.id.flipview_layout);
 
@@ -135,12 +122,7 @@ public class MainActivity extends AppCompatActivity {
 
         ImageButton bOpenSettings = findViewById(R.id.bSettings);
         ImageView bCloseSettings = findViewById(R.id.bSettingsClose);
-        View.OnClickListener clFlip = new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                mFlipView.flipTheView();
-            }
-        };
+        View.OnClickListener clFlip = view -> mFlipView.flipTheView();
         bOpenSettings.setOnClickListener(clFlip);
         bCloseSettings.setOnClickListener(clFlip);
     }
@@ -151,145 +133,109 @@ public class MainActivity extends AppCompatActivity {
         tvExchangeRate = findViewById(R.id.tv_exchange_rate);
 
         ImageButton bChangeCurrency = findViewById(R.id.bChangeCurrency);
-        bChangeCurrency.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                String[] items = getResources().getStringArray(R.array.currencyNames);
-                new LovelyChoiceDialog(mActivity)
-                        .setTopColorRes(R.color.dialog_currencies)
-                        .setTitle(R.string.change_currency_dialog_title)
-                        .setIcon(R.drawable.ic_language_white_48dp)
-                        .setItems(items, new LovelyChoiceDialog.OnItemSelectedListener<String>() {
-                            @Override
-                            public void onItemSelected(int position, String item) {
-                                String pair = getResources().getStringArray(R.array.currencies)[position];
-                                utils.setCurrencyPair(pair);
-                                refreshData();
-                            }
-                        })
-                        .show();
-            }
+        bChangeCurrency.setOnClickListener(view -> {
+            String[] items = getResources().getStringArray(R.array.currencyNames);
+            new LovelyChoiceDialog(mActivity)
+                    .setTopColorRes(R.color.dialog_currencies)
+                    .setTitle(R.string.change_currency_dialog_title)
+                    .setIcon(R.drawable.ic_language_white_48dp)
+                    .setItems(items, (position, item) -> {
+                        String pair = getResources().getStringArray(R.array.currencies)[position];
+                        utils.setCurrencyPair(pair);
+                        refreshData();
+                    })
+                    .show();
         });
 
         ImageButton bChangeInvestment = findViewById(R.id.bAddInvestment);
-        bChangeInvestment.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                new LovelyTextInputDialog(mActivity)
-                        .setTopColorRes(R.color.dialog_investment)
-                        .setTitle(R.string.change_investment)
-                        .setIcon(R.drawable.ic_attach_money_white_48dp)
-                        .setHint(R.string.total_amount_invested)
-                        .setInitialInput("" + utils.getTotalInvestment())
-                        .setInputFilter(R.string.error_investment_input, new LovelyTextInputDialog.TextFilter() {
-                            @Override
-                            public boolean check(String text) {
-                                return text.trim().length() == 0 || text.trim().matches("\\d+");
-                            }
-                        })
-                        .setConfirmButton(android.R.string.ok, new LovelyTextInputDialog.OnTextInputConfirmListener() {
-                            @Override
-                            public void onTextInputConfirmed(String text) {
-                                if (text.trim().length() == 0)
-                                    utils.saveInvestment(Long.parseLong("0"));
-                                else utils.saveInvestment(Long.parseLong(text.trim()));
-                                updateUI();
-                            }
-                        })
-                        .show();
-            }
-        });
+        bChangeInvestment.setOnClickListener(view -> new LovelyTextInputDialog(mActivity)
+                .setTopColorRes(R.color.dialog_investment)
+                .setTitle(R.string.change_investment)
+                .setIcon(R.drawable.ic_attach_money_white_48dp)
+                .setHint(R.string.total_amount_invested)
+                .setInitialInput("" + utils.getTotalInvestment())
+                .setInputFilter(R.string.error_investment_input,
+                        text -> text.trim().length() == 0 || text.trim().matches("\\d+"))
+                .setConfirmButton(android.R.string.ok, text -> {
+                    if (text.trim().length() == 0)
+                        utils.saveInvestment(Long.parseLong("0"));
+                    else utils.saveInvestment(Long.parseLong(text.trim()));
+                    updateUI();
+                })
+                .show());
 
         CheckBox cbTheme = findViewById(R.id.checkbox_darktheme);
         cbTheme.setChecked(selectedDarkTheme);
-        cbTheme.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                Toast.makeText(mActivity, R.string.toast_message_changing_theme, Toast.LENGTH_SHORT).show();
+        cbTheme.setOnCheckedChangeListener((compoundButton, b) -> {
+            Toast.makeText(mActivity, R.string.toast_message_changing_theme, Toast.LENGTH_SHORT).show();
 
-                sharedPref.edit().putBoolean(DARK_THEME_SELECTED, b).apply();
-                sharedPref.edit().putBoolean(REFRESHING_THEME, true).apply();
+            sharedPref.edit().putBoolean(DARK_THEME_SELECTED, b).apply();
+            sharedPref.edit().putBoolean(REFRESHING_THEME, true).apply();
 
-                Intent intent = new Intent(mActivity, mActivity.getClass());
-                startActivity(intent);
-                finish();
-            }
+            Intent intent = new Intent(mActivity, mActivity.getClass());
+            startActivity(intent);
+            finish();
         });
         CheckBox cbInvestmentGain = findViewById(R.id.checkbox_investment_gain);
         cbInvestmentGain.setChecked(showGainPercentage);
-        cbInvestmentGain.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                if (b)
-                    Toast.makeText(mActivity, R.string.toast_message_show_gain_percentage, Toast.LENGTH_SHORT).show();
-                else
-                    Toast.makeText(mActivity, R.string.toast_message_show_gain, Toast.LENGTH_SHORT).show();
+        cbInvestmentGain.setOnCheckedChangeListener((compoundButton, b) -> {
+            if (b)
+                Toast.makeText(mActivity, R.string.toast_message_show_gain_percentage, Toast.LENGTH_SHORT).show();
+            else
+                Toast.makeText(mActivity, R.string.toast_message_show_gain, Toast.LENGTH_SHORT).show();
 
-                sharedPref.edit().putBoolean(SHOW_GAIN_PERCENTAGE, b).apply();
-                showGainPercentage = b;
+            sharedPref.edit().putBoolean(SHOW_GAIN_PERCENTAGE, b).apply();
+            showGainPercentage = b;
 
-                updateUI();
-            }
+            updateUI();
         });
 
         Button bAbout = findViewById(R.id.about_page);
-        bAbout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
+        bAbout.setOnClickListener(view -> {
 
-                Element donationElement = new Element();
-                donationElement.setIconDrawable(R.drawable.ic_attach_money);
-                donationElement.setTitle("Donation");
-                donationElement.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        final String donationAddress = "1MArRnVPrMf6FR4FqtEThAa8piUbgfYDQ3";
-                        new LovelyStandardDialog(mActivity)
-                                .setTopColorRes(R.color.dialog_qr)
-                                .setIcon(utils.getBigQRThumbnail(donationAddress))
-                                .setTitle(donationAddress)
-                                .setNegativeButton("Copy", new View.OnClickListener() {
-                                    @Override
-                                    public void onClick(View view) {
-                                        ClipboardManager clipboard = (ClipboardManager) mActivity.getSystemService(Context.CLIPBOARD_SERVICE);
-                                        ClipData clip = ClipData.newPlainText("qrCode", donationAddress);
-                                        if (clipboard != null) {
-                                            Toast.makeText(mActivity, "Address copied to clipboard", Toast.LENGTH_SHORT).show();
-                                            clipboard.setPrimaryClip(clip);
-                                        }
-                                    }
-                                })
-                                .setPositiveButton(R.string.share, new View.OnClickListener() {
-                                    @Override
-                                    public void onClick(View v) {
-                                        Intent sendIntent = new Intent();
-                                        sendIntent.setAction(Intent.ACTION_SEND);
-                                        sendIntent.putExtra(Intent.EXTRA_TEXT, donationAddress);
-                                        sendIntent.setType("text/plain");
-                                        mActivity.startActivity(sendIntent);
-                                    }
-                                })
-                                .show();
-                    }
-                });
-
-                View aboutPage = new AboutPage(mActivity)
-                        .isRTL(false)
-                        .setImage(R.drawable.avatar_android)
-                        .setDescription("Thanks for downloading the app! " +
-                                "Feel free to email me about any weird bugs or any other feedback. " +
-                                "I'd love to hear from you!")
-                        .addEmail("jgschoepp@gmail.com", "Contact me")
-                        .addWebsite("https://janschoepp.com/", "Visit my website")
-                        .addGitHub("jangerhard", "Check out my github")
-                        .addItem(donationElement)
-                        .create();
-
-                new LovelyCustomDialog(mActivity)
-                        .setView(aboutPage)
-                        .setTopColorRes(R.color.cardview_dark_background)
+            Element donationElement = new Element();
+            donationElement.setIconDrawable(R.drawable.ic_attach_money);
+            donationElement.setTitle("Donation");
+            donationElement.setOnClickListener(view1 -> {
+                final String donationAddress = "1MArRnVPrMf6FR4FqtEThAa8piUbgfYDQ3";
+                new LovelyStandardDialog(mActivity)
+                        .setTopColorRes(R.color.dialog_qr)
+                        .setIcon(utils.getBigQRThumbnail(donationAddress))
+                        .setTitle(donationAddress)
+                        .setNegativeButton("Copy", view11 -> {
+                            ClipboardManager clipboard = (ClipboardManager) mActivity.getSystemService(Context.CLIPBOARD_SERVICE);
+                            ClipData clip = ClipData.newPlainText("qrCode", donationAddress);
+                            if (clipboard != null) {
+                                Toast.makeText(mActivity, "Address copied to clipboard", Toast.LENGTH_SHORT).show();
+                                clipboard.setPrimaryClip(clip);
+                            }
+                        })
+                        .setPositiveButton(R.string.share, v -> {
+                            Intent sendIntent = new Intent();
+                            sendIntent.setAction(Intent.ACTION_SEND);
+                            sendIntent.putExtra(Intent.EXTRA_TEXT, donationAddress);
+                            sendIntent.setType("text/plain");
+                            mActivity.startActivity(sendIntent);
+                        })
                         .show();
-            }
+            });
+
+            View aboutPage = new AboutPage(mActivity)
+                    .isRTL(false)
+                    .setImage(R.drawable.avatar_android)
+                    .setDescription("Thanks for downloading the app! " +
+                            "Feel free to email me about any weird bugs or any other feedback. " +
+                            "I'd love to hear from you!")
+                    .addEmail("jgschoepp@gmail.com", "Contact me")
+                    .addWebsite("https://janschoepp.com/", "Visit my website")
+                    .addGitHub("jangerhard", "Check out my github")
+                    .addItem(donationElement)
+                    .create();
+
+            new LovelyCustomDialog(mActivity)
+                    .setView(aboutPage)
+                    .setTopColorRes(R.color.cardview_dark_background)
+                    .show();
         });
     }
 
@@ -299,13 +245,9 @@ public class MainActivity extends AppCompatActivity {
 
         // listen refresh event
         allAccountsView = findViewById(R.id.allAccountsView);
-        allAccountsView.setOnRefreshListener(new PullRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                // start refresh
-                refreshData();
-            }
-        });
+
+        // start refresh
+        allAccountsView.setOnRefreshListener(this::refreshData);
 
         adapter = new AccountAdapter(this, utils);
 //        adapter.notifyDataSetChanged();
@@ -369,39 +311,31 @@ public class MainActivity extends AppCompatActivity {
         JsonObjectRequest jsObjRequest = new JsonObjectRequest
                 (Request.Method.GET,
                         url_blockchain + "rawaddr/" + address + "?limit=5",
-                        null, new Response.Listener<JSONObject>() {
+                        null, response -> {
+                    BitcoinAccount newAcc = new Gson().fromJson(response.toString(), BitcoinAccount.class);
+                    if (firstTime)
+                        handleAddedAccount(newAcc);
+                    else
+                        handleRefreshedAccount(newAcc);
+                }, error -> {
 
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        BitcoinAccount newAcc = new Gson().fromJson(response.toString(), BitcoinAccount.class);
-                        if (firstTime)
-                            handleAddedAccount(newAcc);
-                        else
-                            handleRefreshedAccount(newAcc);
+                    String message = getString(R.string.error_generic);
+
+                    if (error instanceof TimeoutError || error instanceof NoConnectionError) {
+                        message = getString(R.string.error_no_internet);
+                    } else if (error instanceof ServerError) {
+                        message = getString(R.string.error_server);
+                    } else if (error instanceof NetworkError) {
+                        message = getString(R.string.Error_network);
+                    } else if (error instanceof ParseError) {
+                        message = getString(R.string.error_parsing);
                     }
-                }, new Response.ErrorListener() {
 
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-
-                        String message = getString(R.string.error_generic);
-
-                        if (error instanceof TimeoutError || error instanceof NoConnectionError) {
-                            message = getString(R.string.error_no_internet);
-                        } else if (error instanceof ServerError) {
-                            message = getString(R.string.error_server);
-                        } else if (error instanceof NetworkError) {
-                            message = getString(R.string.Error_network);
-                        } else if (error instanceof ParseError) {
-                            message = getString(R.string.error_parsing);
-                        }
-
-                        Log.e(LOG_TAG, message);
-                        Toast.makeText(getBaseContext(),
-                                message,
-                                Toast.LENGTH_SHORT).show();
-                        updateUI();
-                    }
+                    Log.e(LOG_TAG, message);
+                    Toast.makeText(getBaseContext(),
+                            message,
+                            Toast.LENGTH_SHORT).show();
+                    updateUI();
                 });
 
         // Add the request to the RequestQueue.
@@ -422,36 +356,28 @@ public class MainActivity extends AppCompatActivity {
         JsonObjectRequest jsObjRequest = new JsonObjectRequest
                 (Request.Method.GET,
                         url_exchange + "BTC-" + currencyPair + "/spot",
-                        null, new Response.Listener<JSONObject>() {
+                        null,
+                        this::handleRefreshedCurrency,
+                        error -> {
 
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        handleRefreshedCurrency(response);
-                    }
-                }, new Response.ErrorListener() {
+                            String message = getString(R.string.error_generic);
 
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
+                            if (error instanceof TimeoutError || error instanceof NoConnectionError) {
+                                message = getString(R.string.error_no_internet);
+                            } else if (error instanceof ServerError) {
+                                message = getString(R.string.error_server);
+                            } else if (error instanceof NetworkError) {
+                                message = getString(R.string.Error_network);
+                            } else if (error instanceof ParseError) {
+                                message = getString(R.string.error_parsing);
+                            }
 
-                        String message = getString(R.string.error_generic);
-
-                        if (error instanceof TimeoutError || error instanceof NoConnectionError) {
-                            message = getString(R.string.error_no_internet);
-                        } else if (error instanceof ServerError) {
-                            message = getString(R.string.error_server);
-                        } else if (error instanceof NetworkError) {
-                            message = getString(R.string.Error_network);
-                        } else if (error instanceof ParseError) {
-                            message = getString(R.string.error_parsing);
-                        }
-
-                        Log.e(LOG_TAG, message);
-                        Toast.makeText(getBaseContext(),
-                                message,
-                                Toast.LENGTH_SHORT).show();
-                        updateUI();
-                    }
-                });
+                            Log.e(LOG_TAG, message);
+                            Toast.makeText(getBaseContext(),
+                                    message,
+                                    Toast.LENGTH_SHORT).show();
+                            updateUI();
+                        });
 
         getVolleyRequestQueue().add(jsObjRequest);
     }
@@ -498,7 +424,7 @@ public class MainActivity extends AppCompatActivity {
     private void addBarcode(String address) {
 
         if (address.contains(":"))
-            address = address.substring(address.indexOf(":") + 1, address.length());
+            address = address.substring(address.indexOf(":") + 1);
         if (address.contains("?"))
             address = address.substring(0, address.indexOf("?"));
 
@@ -519,43 +445,30 @@ public class MainActivity extends AppCompatActivity {
                 .setTitle(R.string.new_address)
                 .setIcon(R.drawable.bitcoin_128)
                 .setMessage(getString(R.string.question_correct_address) + "\n\n" + address)
-                .setPositiveButton(android.R.string.yes, new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        utils.addAddress(address);
-                        getSingleWalletInfo(address, true);
-                    }
+                .setPositiveButton(android.R.string.yes, v -> {
+                    utils.addAddress(address);
+                    getSingleWalletInfo(address, true);
                 })
                 .setNegativeButton(android.R.string.no, null)
                 .show();
     }
 
     private void showAddAccountDialog() {
+
         new LovelyTextInputDialog(mActivity)
                 .setTopColorRes(R.color.dialog_info)
                 .setTitle("Add address")
                 .setIcon(R.drawable.bitcoin_128)
                 .setHint("1FfmbHfnpaZjKFvyi1okTjJJusN455paPH")
-                .setInputFilter("That is not a valid address!", new LovelyTextInputDialog.TextFilter() {
-                    @Override
-                    public boolean check(String text) {
-                        return BitcoinUtils.verifyAddress(text);
-                    }
+                .setInputFilter("That is not a valid address!", text -> BitcoinUtils.verifyAddress(text))
+                .setConfirmButton(android.R.string.ok, text -> {
+                    utils.addAddress(text);
+                    getSingleWalletInfo(text, true);
                 })
-                .setConfirmButton(android.R.string.ok, new LovelyTextInputDialog.OnTextInputConfirmListener() {
-                    @Override
-                    public void onTextInputConfirmed(String text) {
-                        utils.addAddress(text);
-                        getSingleWalletInfo(text, true);
-                    }
-                })
-                .setNegativeButton("Scan", new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        Toast.makeText(mActivity, "Launching camera", Toast.LENGTH_SHORT).show();
-                        Intent intent = new Intent(getApplicationContext(), BarcodeCaptureActivity.class);
-                        startActivityForResult(intent, BARCODE_READER_REQUEST_CODE);
-                    }
+                .setNegativeButton("Scan", view -> {
+                    Toast.makeText(mActivity, "Launching camera", Toast.LENGTH_SHORT).show();
+                    Intent intent = new Intent(getApplicationContext(), BarcodeCaptureActivity.class);
+                    startActivityForResult(intent, BARCODE_READER_REQUEST_CODE);
                 })
                 .show();
     }
@@ -589,12 +502,7 @@ public class MainActivity extends AppCompatActivity {
             mFlipView.flipTheView();
         else {
             new LovelyStandardDialog(this)
-                    .setPositiveButton("Quit", new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            finish();
-                        }
-                    })
+                    .setPositiveButton("Quit", view -> finish())
                     .setTitle("Quit the app?")
                     .setTopColor(getResources().getColor(R.color.about_instagram_color))
                     .show();
