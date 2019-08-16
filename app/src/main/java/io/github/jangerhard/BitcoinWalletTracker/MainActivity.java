@@ -42,22 +42,21 @@ public class MainActivity extends AppCompatActivity {
     private static final String SHOW_GAIN_PERCENTAGE = "show_gain_percentage";
     private static final String LOG_TAG = "MainActivity";
 
-    String url_blockchain = "https://blockchain.info/";
-    Activity mActivity;
-    AccountAdapter adapter;
-    TextView tvTotalBalance, tvTotalValue,
+    private Activity mActivity;
+    private AccountAdapter adapter;
+    private TextView tvTotalBalance, tvTotalValue,
             tvInvestmentGain, tvTotalInvestmentSettings, tvExchangeRate;
-    BitcoinUtils utils;
-    PullRefreshLayout allAccountsView;
-    CardView cv_no_accounts;
-    RecyclerView recyclerView;
-    EasyFlipView mFlipView;
-    SharedPreferences sharedPref;
-    Boolean selectedDarkTheme, showGainPercentage, noAccounts;
+    private BitcoinUtils utils;
+    private PullRefreshLayout allAccountsView;
+    private CardView cv_no_accounts;
+    private RecyclerView recyclerView;
+    private EasyFlipView mFlipView;
+    private SharedPreferences sharedPref;
+    private Boolean selectedDarkTheme, showGainPercentage, noAccounts;
 
-    PriceFetcher priceFetcher;
-    BlockExplorer blockExplorer;
-    DialogMaker dialogMaker;
+    private PriceFetcher priceFetcher;
+    private BlockExplorer blockExplorer;
+    private DialogMaker dialogMaker;
 
     private int numRefreshed;
 
