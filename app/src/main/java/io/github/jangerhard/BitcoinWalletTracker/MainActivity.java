@@ -20,34 +20,24 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.cardview.widget.CardView;
-import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import com.android.volley.NetworkError;
-import com.android.volley.NoConnectionError;
-import com.android.volley.ParseError;
-import com.android.volley.Request;
 import com.android.volley.RequestQueue;
-import com.android.volley.ServerError;
-import com.android.volley.TimeoutError;
-import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.baoyz.widget.PullRefreshLayout;
 import com.google.android.gms.common.api.CommonStatusCodes;
 import com.google.android.gms.vision.barcode.Barcode;
-import com.google.gson.Gson;
 import com.wajahatkarim3.easyflipview.EasyFlipView;
 import com.yarolegovich.lovelydialog.LovelyChoiceDialog;
 import com.yarolegovich.lovelydialog.LovelyCustomDialog;
 import com.yarolegovich.lovelydialog.LovelyStandardDialog;
 import com.yarolegovich.lovelydialog.LovelyTextInputDialog;
+import io.github.jangerhard.BitcoinWalletTracker.client.BlockExplorer;
 import io.github.jangerhard.BitcoinWalletTracker.client.PriceFetcher;
 import io.github.jangerhard.BitcoinWalletTracker.qrStuff.barcode.BarcodeCaptureActivity;
 import jp.wasabeef.recyclerview.animators.LandingAnimator;
 import mehdi.sakout.aboutpage.AboutPage;
 import mehdi.sakout.aboutpage.Element;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -57,7 +47,6 @@ public class MainActivity extends AppCompatActivity {
     private static final String SHOW_GAIN_PERCENTAGE = "show_gain_percentage";
     private static final String LOG_TAG = "MainActivity";
 
-    private RequestQueue mRequestQueue;
     String url_blockchain = "https://blockchain.info/";
     Activity mActivity;
     AccountAdapter adapter;
@@ -72,6 +61,7 @@ public class MainActivity extends AppCompatActivity {
     Boolean selectedDarkTheme, showGainPercentage, noAccounts;
 
     PriceFetcher priceFetcher;
+    BlockExplorer blockExplorer;
 
     private int numRefreshed;
 
@@ -92,7 +82,9 @@ public class MainActivity extends AppCompatActivity {
         utils = new BitcoinUtils(sharedPref, getString(R.string.bitcoinaddresses));
         utils.setup();
 
-        priceFetcher = new PriceFetcher(getVolleyRequestQueue(), this, utils);
+        RequestQueue queue = Volley.newRequestQueue(this);
+        priceFetcher = new PriceFetcher(queue, this, utils);
+        blockExplorer = new BlockExplorer(queue, this);
 
         cv_no_accounts = findViewById(R.id.no_accounts_view);
         Button bNoAccAdd = findViewById(R.id.bNoAccountsAdd);
@@ -310,51 +302,13 @@ public class MainActivity extends AppCompatActivity {
         priceFetcher.getCurrentPrice();
     }
 
-    private void getSingleWalletInfo(String address, final boolean firstTime) {
-
-        // Request a response from the provided URL.
-        JsonObjectRequest jsObjRequest = new JsonObjectRequest
-                (Request.Method.GET,
-                        url_blockchain + "rawaddr/" + address + "?limit=5",
-                        null, response -> {
-                    BitcoinAccount newAcc = new Gson().fromJson(response.toString(), BitcoinAccount.class);
-                    if (firstTime)
-                        handleAddedAccount(newAcc);
-                    else
-                        handleRefreshedAccount(newAcc);
-                }, error -> {
-
-                    String message = getString(R.string.error_generic);
-
-                    if (error instanceof TimeoutError || error instanceof NoConnectionError) {
-                        message = getString(R.string.error_no_internet);
-                    } else if (error instanceof ServerError) {
-                        message = getString(R.string.error_server);
-                    } else if (error instanceof NetworkError) {
-                        message = getString(R.string.Error_network);
-                    } else if (error instanceof ParseError) {
-                        message = getString(R.string.error_parsing);
-                    }
-
-                    Log.e(LOG_TAG, message);
-                    Toast.makeText(getBaseContext(),
-                            message,
-                            Toast.LENGTH_SHORT).show();
-                    updateUI();
-                });
-
-        // Add the request to the RequestQueue.
-        getVolleyRequestQueue().add(jsObjRequest);
-
-    }
-
     public void getAllWalletsInfo(List<String> addresses) {
         for (String address : addresses) {
-            getSingleWalletInfo(address, false);
+            blockExplorer.getSingleWalletInfo(address, false);
         }
     }
 
-    private void handleAddedAccount(BitcoinAccount newAcc) {
+    public void handleAddedAccount(BitcoinAccount newAcc) {
         utils.addNewAccount(newAcc);
 
         recyclerView.smoothScrollToPosition(adapter.getItemCount());
@@ -364,7 +318,7 @@ public class MainActivity extends AppCompatActivity {
         refreshData();
     }
 
-    private void handleRefreshedAccount(BitcoinAccount acc) {
+    public void handleRefreshedAccount(BitcoinAccount acc) {
 
         numRefreshed++;
         int index = utils.updateAccount(acc);
@@ -401,7 +355,7 @@ public class MainActivity extends AppCompatActivity {
                 .setMessage(getString(R.string.question_correct_address) + "\n\n" + address)
                 .setPositiveButton(android.R.string.yes, v -> {
                     utils.addAddress(address);
-                    getSingleWalletInfo(address, true);
+                    blockExplorer.getSingleWalletInfo(address, true);
                 })
                 .setNegativeButton(android.R.string.no, null)
                 .show();
@@ -417,7 +371,7 @@ public class MainActivity extends AppCompatActivity {
                 .setInputFilter("That is not a valid address!", text -> BitcoinUtils.verifyAddress(text))
                 .setConfirmButton(android.R.string.ok, text -> {
                     utils.addAddress(text);
-                    getSingleWalletInfo(text, true);
+                    blockExplorer.getSingleWalletInfo(text, true);
                 })
                 .setNegativeButton("Scan", view -> {
                     Toast.makeText(mActivity, "Launching camera", Toast.LENGTH_SHORT).show();
@@ -439,14 +393,6 @@ public class MainActivity extends AppCompatActivity {
             } else Log.e(LOG_TAG, String.format(getString(R.string.barcode_error_format),
                     CommonStatusCodes.getStatusCodeString(resultCode)));
         } else super.onActivityResult(requestCode, resultCode, data);
-    }
-
-    public RequestQueue getVolleyRequestQueue() {
-        if (mRequestQueue == null) {
-            mRequestQueue = Volley.newRequestQueue(this);
-        }
-
-        return mRequestQueue;
     }
 
     @Override
