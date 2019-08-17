@@ -49,14 +49,11 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
 
         long transactionValue = BitcoinUtils.getTransactionValue(t, address);
 
-        // Received BTC
-        if (transactionValue > 0)
-            holder.tvResult.setTextColor(ContextCompat.getColor(mContext, R.color.transaction_received));
-            // Paid BTC
-        else if (transactionValue < 0)
-            holder.tvResult.setTextColor(ContextCompat.getColor(mContext, R.color.transaction_paid));
-        else
-            holder.tvResult.setTextColor(Color.BLUE);
+        int color = transactionValue < 0
+                ? ContextCompat.getColor(mContext, R.color.transaction_paid)
+                : ContextCompat.getColor(mContext, R.color.transaction_received);
+
+        holder.tvResult.setTextColor(color);
 
         holder.tvResult.setText(
                 BitcoinUtils.formatBitcoinBalanceToString(transactionValue)
