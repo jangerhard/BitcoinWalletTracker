@@ -1,19 +1,4 @@
-package io.github.jangerhard.BitcoinWalletTracker;
-
-import android.content.SharedPreferences;
-import android.graphics.Bitmap;
-import androidx.annotation.NonNull;
-
-import com.google.zxing.BarcodeFormat;
-import com.google.zxing.EncodeHintType;
-import com.google.zxing.MultiFormatWriter;
-import com.google.zxing.WriterException;
-import com.google.zxing.common.BitMatrix;
-import com.journeyapps.barcodescanner.BarcodeEncoder;
-
-import org.bitcoinj.core.Address;
-import org.bitcoinj.core.AddressFormatException;
-import org.bitcoinj.params.MainNetParams;
+package io.github.jangerhard.BitcoinWalletTracker.utilities;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -29,11 +14,24 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import androidx.annotation.NonNull;
+import com.google.zxing.BarcodeFormat;
+import com.google.zxing.EncodeHintType;
+import com.google.zxing.MultiFormatWriter;
+import com.google.zxing.WriterException;
+import com.google.zxing.common.BitMatrix;
+import com.journeyapps.barcodescanner.BarcodeEncoder;
+import org.bitcoinj.core.Address;
+import org.bitcoinj.core.AddressFormatException;
+import org.bitcoinj.params.MainNetParams;
+
 public class BitcoinUtils {
 
     private static final int BITCOIN_FACTOR = 100000000;
     private static final int MICRO_BITCOIN_FACTOR = 100000;
-    static final int LOADING_ACCOUNT = -1;
+    public static final int LOADING_ACCOUNT = -1;
     private final int BIG_QR_SIZE = 512;
     private final int REGULAR_QR_SIZE = 70;
 
@@ -48,7 +46,7 @@ public class BitcoinUtils {
     private String currencyPair;
     private long totalBalance;
 
-    BitcoinUtils(SharedPreferences sharedPref, String key) {
+    public BitcoinUtils(SharedPreferences sharedPref, String key) {
         accountList = new ArrayList<>();
         addresses = new ArrayList<>();
         bitmapList = new HashMap<>();
@@ -57,7 +55,7 @@ public class BitcoinUtils {
         prefsAccountsKey = key;
     }
 
-    void setup() {
+    public void setup() {
         addAddressesFromPrefs();
         makeAccounts();
         createBitmaps();
@@ -73,7 +71,7 @@ public class BitcoinUtils {
         }
     }
 
-    List<BitcoinAccount> getAccounts() {
+    public List<BitcoinAccount> getAccounts() {
         return accountList;
     }
 
@@ -81,15 +79,15 @@ public class BitcoinUtils {
         return addresses;
     }
 
-    String getNickname(String address) {
+    public String getNickname(String address) {
         return sharedPref.getString(address, "Wallet");
     }
 
-    void setNewNickname(String selectedAccount, String newNickname) {
+    public void setNewNickname(String selectedAccount, String newNickname) {
         saveNicknameToPrefs(selectedAccount, newNickname);
     }
 
-    void addNewAccount(BitcoinAccount newAcc) {
+    public void addNewAccount(BitcoinAccount newAcc) {
         totalBalance = calculateTotalBalance(accountList);
         accountList.add(newAcc);
     }
@@ -98,7 +96,7 @@ public class BitcoinUtils {
      * @param refreshedAccount A BitcoinAccount that is being refreshed
      * @return Given an account to update returns the index where it is updated
      */
-    int updateAccount(BitcoinAccount refreshedAccount) {
+    public int updateAccount(BitcoinAccount refreshedAccount) {
 
         int index = getAccountIndex(refreshedAccount.getAddress());
 
@@ -112,7 +110,7 @@ public class BitcoinUtils {
         return index;
     }
 
-    void removeAccount(String selectedAccountTag) {
+    public void removeAccount(String selectedAccountTag) {
 
         deleteNicknameFromPrefs(selectedAccountTag);
         bitmapList.remove(getAccountIndex(selectedAccountTag));
@@ -123,7 +121,7 @@ public class BitcoinUtils {
         saveAddressesToPrefs();
     }
 
-    void addAddress(String address) {
+    public void addAddress(String address) {
         if (!addresses.contains(address)) {
             addresses.add(address);
             bitmapList.put(address, createQRThumbnail(address, REGULAR_QR_SIZE));
@@ -132,11 +130,11 @@ public class BitcoinUtils {
         }
     }
 
-    boolean hasAddress(String displayValue) {
+    public boolean hasAddress(String displayValue) {
         return addresses.contains(displayValue);
     }
 
-    int getNumberOfAccounts() {
+    public int getNumberOfAccounts() {
         return accountList.size();
     }
 
@@ -164,15 +162,15 @@ public class BitcoinUtils {
         return total;
     }
 
-    String getTotalBalance() {
+    public String getTotalBalance() {
         return formatBitcoinBalanceToString(totalBalance);
     }
 
-    String getTotalValue() {
+    public String getTotalValue() {
         return formatCurrency(convertBTCtoCurrency(totalBalance));
     }
 
-    String getTotalInvestmentPercentage() {
+    public String getTotalInvestmentPercentage() {
 
         double investment = getTotalInvestment();
         double totalVal = convertBTCtoCurrency(totalBalance);
@@ -194,7 +192,7 @@ public class BitcoinUtils {
 
     }
 
-    String getTotalInvestmentGain() {
+    public String getTotalInvestmentGain() {
 
         double investment = getTotalInvestment();
         double totalVal = convertBTCtoCurrency(totalBalance);
@@ -216,17 +214,17 @@ public class BitcoinUtils {
 
     }
 
-    long getTotalInvestment() {
+    public long getTotalInvestment() {
         return getInvestmentFromPrefs();
     }
 
-    String getTotalInvestmentFormated() {
+    public String getTotalInvestmentFormated() {
 
         return formatCurrency(getTotalInvestment());
 
     }
 
-    String formatBTCtoCurrency(long btc) {
+    public String formatBTCtoCurrency(long btc) {
         return formatCurrency(convertBTCtoCurrency(btc));
     }
 
@@ -251,7 +249,7 @@ public class BitcoinUtils {
     }
 
     @NonNull
-    static String formatBitcoinBalanceToString(long bal) {
+    public static String formatBitcoinBalanceToString(long bal) {
 
         BigDecimal newBalance;
         String endTag;
@@ -278,7 +276,7 @@ public class BitcoinUtils {
                 BigDecimal.ROUND_HALF_DOWN).doubleValue();
     }
 
-    static boolean verifyAddress(String qrString) {
+    public static boolean verifyAddress(String qrString) {
 
         if (qrString == null)
             return false;
@@ -308,7 +306,7 @@ public class BitcoinUtils {
         sharedPref.edit().putLong("totalInvestment", investment).apply();
     }
 
-    void saveInvestment(long investment) {
+    public void saveInvestment(long investment) {
         saveInvestmentToPrefs(investment);
     }
 
@@ -353,7 +351,7 @@ public class BitcoinUtils {
         sharedPref.edit().putString(prefsAccountsKey, addressString.toString()).apply();
     }
 
-    String getBalanceOfAccount(String selectedAccountAddress) {
+    public String getBalanceOfAccount(String selectedAccountAddress) {
 
         int index = getAccountIndex(selectedAccountAddress);
 
@@ -380,11 +378,11 @@ public class BitcoinUtils {
         return bitmap;
     }
 
-    Bitmap getBigQRThumbnail(String address) {
+    public Bitmap getBigQRThumbnail(String address) {
         return bigBitmapList.get(address);
     }
 
-    Bitmap getQRThumbnail(String address) {
+    public Bitmap getQRThumbnail(String address) {
         return bitmapList.get(address);
     }
 
@@ -392,12 +390,12 @@ public class BitcoinUtils {
         return currencyPair;
     }
 
-    void setCurrencyPair(String pair) {
+    public void setCurrencyPair(String pair) {
         currencyPair = pair;
         sharedPref.edit().putString("currencyPair", pair).apply();
     }
 
-    String getExchangeRate() {
+    public String getExchangeRate() {
         Double cPrice = getCurrentPrice();
 
         if (cPrice == null || cPrice == 0) return "";
@@ -434,7 +432,7 @@ public class BitcoinUtils {
      * @return BigInteger value, positive if received, and negative
      * if paid. If no transaction is associated, returns 0.
      */
-    static long getTransactionValue(Transaction t, String address) {
+    public static long getTransactionValue(Transaction t, String address) {
         if (t.getOut() == null && t.getInputs() == null)
             return 0;
 
@@ -454,7 +452,7 @@ public class BitcoinUtils {
         return 0;
     }
 
-    static String getConvertedTimeStamp(Long time) {
+    public static String getConvertedTimeStamp(Long time) {
 
         DateFormat formatter = DateFormat.getDateTimeInstance();
         Calendar calendar = Calendar.getInstance();

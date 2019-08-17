@@ -1,4 +1,4 @@
-package io.github.jangerhard.BitcoinWalletTracker;
+package io.github.jangerhard.BitcoinWalletTracker.utilities;
 
 import java.util.ArrayList;
 
@@ -11,43 +11,43 @@ public class BitcoinAccount {
     private long final_balance;
     private ArrayList<Transaction> txs;
 
-    String getAddress() {
+    public String getAddress() {
         return address;
     }
 
-    void setAddress(String address) {
+    public void setAddress(String address) {
         this.address = address;
     }
 
-    long getN_tx() {
+    public long getN_tx() {
         return n_tx;
     }
 
-    void setN_tx(long n_tx) {
+    public void setN_tx(long n_tx) {
         this.n_tx = n_tx;
     }
 
-    long getTotal_received() {
+    public long getTotal_received() {
         return total_received;
     }
 
-    void setTotal_received(long total_received) {
+    public void setTotal_received(long total_received) {
         this.total_received = total_received;
     }
 
-    long getTotal_sent() {
+    public long getTotal_sent() {
         return total_sent;
     }
 
-    void setTotal_sent(long total_sent) {
+    public void setTotal_sent(long total_sent) {
         this.total_sent = total_sent;
     }
 
-    long getFinal_balance() {
+    public long getFinal_balance() {
         return final_balance;
     }
 
-    void setFinal_balance(long final_balance) {
+    public void setFinal_balance(long final_balance) {
         this.final_balance = final_balance;
     }
 

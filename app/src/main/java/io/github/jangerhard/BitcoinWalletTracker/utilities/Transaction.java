@@ -1,8 +1,8 @@
-package io.github.jangerhard.BitcoinWalletTracker;
+package io.github.jangerhard.BitcoinWalletTracker.utilities;
 
 import java.util.ArrayList;
 
-class Transaction {
+public class Transaction {
 
     private long result;
     private ArrayList<TransactionOut> out;

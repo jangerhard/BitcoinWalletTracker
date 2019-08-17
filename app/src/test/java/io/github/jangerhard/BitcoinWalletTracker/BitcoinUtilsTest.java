@@ -1,5 +1,11 @@
 package io.github.jangerhard.BitcoinWalletTracker;
 
+import io.github.jangerhard.BitcoinWalletTracker.utilities.BitcoinAccount;
+import io.github.jangerhard.BitcoinWalletTracker.utilities.BitcoinUtils;
+import io.github.jangerhard.BitcoinWalletTracker.utilities.Transaction;
+import io.github.jangerhard.BitcoinWalletTracker.utilities.TransactionInput;
+import io.github.jangerhard.BitcoinWalletTracker.utilities.TransactionOut;
+import io.github.jangerhard.BitcoinWalletTracker.utilities.TransactionPrevOut;
 import org.junit.Test;
 
 import java.util.ArrayList;

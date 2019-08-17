@@ -1,4 +1,4 @@
-package io.github.jangerhard.BitcoinWalletTracker;
+package io.github.jangerhard.BitcoinWalletTracker.utilities;
 
 class TransactionOut {
 

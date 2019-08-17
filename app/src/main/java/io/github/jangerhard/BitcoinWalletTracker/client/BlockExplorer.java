@@ -11,7 +11,7 @@ import com.android.volley.ServerError;
 import com.android.volley.TimeoutError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.google.gson.Gson;
-import io.github.jangerhard.BitcoinWalletTracker.BitcoinAccount;
+import io.github.jangerhard.BitcoinWalletTracker.utilities.BitcoinAccount;
 import io.github.jangerhard.BitcoinWalletTracker.MainActivity;
 import io.github.jangerhard.BitcoinWalletTracker.R;
 

@@ -1,4 +1,4 @@
-package io.github.jangerhard.BitcoinWalletTracker;
+package io.github.jangerhard.BitcoinWalletTracker.utilities;
 
 /**
  * Created by jangerhard on 23-Oct-17.

@@ -11,6 +11,8 @@ import com.yarolegovich.lovelydialog.LovelyCustomDialog;
 import com.yarolegovich.lovelydialog.LovelyStandardDialog;
 import com.yarolegovich.lovelydialog.LovelyTextInputDialog;
 import io.github.jangerhard.BitcoinWalletTracker.client.BlockExplorer;
+import io.github.jangerhard.BitcoinWalletTracker.utilities.BitcoinAccount;
+import io.github.jangerhard.BitcoinWalletTracker.utilities.BitcoinUtils;
 
 public class DialogMaker {
     private MainActivity activity;

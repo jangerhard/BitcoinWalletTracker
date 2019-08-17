@@ -1,15 +1,17 @@
-package io.github.jangerhard.BitcoinWalletTracker;
+package io.github.jangerhard.BitcoinWalletTracker.adapter;
 
 import java.util.List;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
+import io.github.jangerhard.BitcoinWalletTracker.R;
+import io.github.jangerhard.BitcoinWalletTracker.utilities.BitcoinUtils;
+import io.github.jangerhard.BitcoinWalletTracker.utilities.Transaction;
 
 public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.MyViewHolder> {
 

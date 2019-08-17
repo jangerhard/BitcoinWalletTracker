@@ -1,4 +1,4 @@
-package io.github.jangerhard.BitcoinWalletTracker;
+package io.github.jangerhard.BitcoinWalletTracker.adapter;
 
 import java.util.HashSet;
 import java.util.Locale;
@@ -21,6 +21,10 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.ramotion.foldingcell.FoldingCell;
 import com.yarolegovich.lovelydialog.LovelyStandardDialog;
 import com.yarolegovich.lovelydialog.LovelyTextInputDialog;
+import io.github.jangerhard.BitcoinWalletTracker.DialogMaker;
+import io.github.jangerhard.BitcoinWalletTracker.R;
+import io.github.jangerhard.BitcoinWalletTracker.utilities.BitcoinAccount;
+import io.github.jangerhard.BitcoinWalletTracker.utilities.BitcoinUtils;
 
 public class AccountAdapter extends RecyclerView.Adapter<AccountAdapter.MyViewHolder> {
 
@@ -67,7 +71,7 @@ public class AccountAdapter extends RecyclerView.Adapter<AccountAdapter.MyViewHo
         }
     }
 
-    AccountAdapter(Context mContext, BitcoinUtils utils, DialogMaker dialogMaker) {
+    public AccountAdapter(Context mContext, BitcoinUtils utils, DialogMaker dialogMaker) {
         this.mContext = mContext;
         this.utils = utils;
         this.dialogMaker = dialogMaker;
@@ -225,14 +229,6 @@ public class AccountAdapter extends RecyclerView.Adapter<AccountAdapter.MyViewHo
                 .setPositiveButton(android.R.string.yes, v -> removeSelectedAccount())
                 .setNegativeButton(android.R.string.cancel, null)
                 .show();
-    }
-
-    private void shareAddress(String address) {
-        Intent sendIntent = new Intent();
-        sendIntent.setAction(Intent.ACTION_SEND);
-        sendIntent.putExtra(Intent.EXTRA_TEXT, address);
-        sendIntent.setType("text/plain");
-        mContext.startActivity(sendIntent);
     }
 
     @Override
