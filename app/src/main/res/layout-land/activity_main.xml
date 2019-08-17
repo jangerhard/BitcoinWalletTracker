@@ -51,7 +51,8 @@
                 android:clipChildren="false"
                 android:clipToPadding="false"
                 android:fadeScrollbars="true"
-                android:scrollbars="vertical" />
+                android:scrollbars="vertical"
+                tools:listitem="@layout/account_folded"/>
 
         </com.baoyz.widget.PullRefreshLayout>
 

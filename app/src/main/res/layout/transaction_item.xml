@@ -2,6 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
+    xmlns:tools="http://schemas.android.com/tools"
     android:padding="8dp">
 
     <TextView
@@ -10,7 +11,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
         android:layout_marginStart="8dp"
-        android:text="TIME" />
+        tools:text="Oct 26, 2017 12:42:22" />
 
     <TextView
         android:id="@+id/transactionResult"
@@ -18,7 +19,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
         android:layout_marginEnd="8dp"
-        android:text="RESULT"
+        tools:text="20.7900 mBTC"
         android:textStyle="italic" />
 
 </RelativeLayout>

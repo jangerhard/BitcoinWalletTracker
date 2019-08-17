@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
-                                    style="@style/customCard"
-                                    android:layout_width="match_parent"
-                                    android:layout_height="wrap_content"
-                                    android:layout_gravity="center"
-                                    android:padding="16dp">
+    xmlns:tools="http://schemas.android.com/tools"
+    style="@style/customCard"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center"
+    android:padding="16dp">
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -26,7 +27,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
-            android:text="NICKNAME"
+            tools:text="NICKNAME"
             android:textStyle="italic" />
 
         <TextView
@@ -35,7 +36,7 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/tv_unfolded_nickname"
             android:layout_centerHorizontal="true"
-            android:text="ACCOUNT ADDRESS"
+            tools:text="ACCOUNT ADDRESS"
             android:textStyle="bold" />
 
         <RelativeLayout
@@ -58,17 +59,17 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="NO. Transactions" />
+                    android:text="@string/account_number_transactions" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Total Received" />
+                    android:text="@string/account_total_received" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Final Balance" />
+                    android:text="@string/account_final_balance" />
 
             </LinearLayout>
 
@@ -82,19 +83,19 @@
                     android:id="@+id/tv_account_number_transactions"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="666" />
+                    tools:text="666" />
 
                 <TextView
                     android:id="@+id/tv_account_total_received"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="100 000 000" />
+                    tools:text="5 000 BTC" />
 
                 <TextView
                     android:id="@+id/tv_account_final_balance"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Final Balance" />
+                    tools:text="30 000 BTC" />
 
             </LinearLayout>
 
@@ -118,7 +119,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@+id/tv_unfolded_last_transactions"
-            android:layout_centerHorizontal="true" />
+            android:layout_centerHorizontal="true"
+            tools:listitem="@layout/transaction_item" />
 
     </RelativeLayout>
 
