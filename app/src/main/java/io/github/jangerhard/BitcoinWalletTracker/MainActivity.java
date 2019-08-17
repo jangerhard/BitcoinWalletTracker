@@ -18,6 +18,7 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.cardview.widget.CardView;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.android.volley.RequestQueue;
@@ -321,7 +322,7 @@ public class MainActivity extends AppCompatActivity {
             new LovelyStandardDialog(this)
                     .setPositiveButton("Quit", view -> finish())
                     .setTitle("Quit the app?")
-                    .setTopColor(getResources().getColor(R.color.about_instagram_color))
+                    .setTopColor(ContextCompat.getColor(this, R.color.about_instagram_color))
                     .show();
         }
     }

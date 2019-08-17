@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.MyViewHolder> {
@@ -50,10 +51,10 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
 
         // Received BTC
         if (transactionValue > 0)
-            holder.tvResult.setTextColor(mContext.getResources().getColor(R.color.transaction_received));
+            holder.tvResult.setTextColor(ContextCompat.getColor(mContext, R.color.transaction_received));
             // Paid BTC
         else if (transactionValue < 0)
-            holder.tvResult.setTextColor(mContext.getResources().getColor(R.color.transaction_paid));
+            holder.tvResult.setTextColor(ContextCompat.getColor(mContext, R.color.transaction_paid));
         else
             holder.tvResult.setTextColor(Color.BLUE);
 
