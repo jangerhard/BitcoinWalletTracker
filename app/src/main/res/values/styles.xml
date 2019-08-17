@@ -1,7 +1,7 @@
 <resources>
     <attr name="ic_account_settings" format="reference" />
 
-    <style name="AppThemeLight" parent="Theme.AppCompat.Light.DarkActionBar">
+    <style name="AppThemeLight" parent="Theme.AppCompat.Light.NoActionBar">
 
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
@@ -11,7 +11,7 @@
         <item name="ic_account_settings">@drawable/ic_more_horiz_black_18dp</item>
     </style>
 
-    <style name="AppThemeDark" parent="Theme.AppCompat">
+    <style name="AppThemeDark" parent="Theme.AppCompat.NoActionBar">
 
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
