@@ -69,7 +69,7 @@
                         android:paddingEnd="4dp"
                         tools:text="kr 20000"
                         android:textColor="@color/text_dark_secondary"
-                        android:textSize="24sp" />
+                        android:textSize="20sp" />
 
                     <TextView
                         android:id="@+id/tvInvestmentGain"
@@ -79,7 +79,7 @@
                         android:paddingEnd="4dp"
                         tools:text="(+99.82%)"
                         android:textColor="@color/text_dark_secondary"
-                        android:textSize="24sp" />
+                        android:textSize="20sp" />
 
                 </LinearLayout>
 
