@@ -78,8 +78,7 @@ public class MainActivity extends AppCompatActivity {
         mActivity = this;
         setContentView(R.layout.activity_main);
 
-        utils = new BitcoinUtils(sharedPref, getString(R.string.bitcoinaddresses));
-        utils.setup();
+        utils = new BitcoinUtils(sharedPref, this);
 
         RequestQueue queue = Volley.newRequestQueue(this);
         priceFetcher = new PriceFetcher(queue, this, utils);

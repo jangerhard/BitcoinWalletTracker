@@ -23,6 +23,8 @@ import com.google.zxing.MultiFormatWriter;
 import com.google.zxing.WriterException;
 import com.google.zxing.common.BitMatrix;
 import com.journeyapps.barcodescanner.BarcodeEncoder;
+import io.github.jangerhard.BitcoinWalletTracker.MainActivity;
+import io.github.jangerhard.BitcoinWalletTracker.R;
 import org.bitcoinj.core.Address;
 import org.bitcoinj.core.AddressFormatException;
 import org.bitcoinj.params.MainNetParams;
@@ -46,22 +48,20 @@ public class BitcoinUtils {
     private String currencyPair;
     private long totalBalance;
 
-    public BitcoinUtils(SharedPreferences sharedPref, String key) {
+    public BitcoinUtils(SharedPreferences sharedPref, MainActivity activity) {
         accountList = new ArrayList<>();
         addresses = new ArrayList<>();
         bitmapList = new HashMap<>();
         bigBitmapList = new HashMap<>();
         this.sharedPref = sharedPref;
-        prefsAccountsKey = key;
-    }
+        prefsAccountsKey = activity.getString(R.string.bitcoinaddresses);
 
-    public void setup() {
         addAddressesFromPrefs();
         makeAccounts();
         createBitmaps();
         currencyPair = sharedPref.getString("currencyPair", "USD");
         totalBalance = calculateTotalBalance(accountList);
-        bigBitmapList.put("1MArRnVPrMf6FR4FqtEThAa8piUbgfYDQ3", createQRThumbnail("1MArRnVPrMf6FR4FqtEThAa8piUbgfYDQ3", BIG_QR_SIZE));
+        bigBitmapList.put(activity.getString(R.string.donationAddress), createQRThumbnail(activity.getString(R.string.donationAddress), BIG_QR_SIZE));
     }
 
     private void createBitmaps() {
