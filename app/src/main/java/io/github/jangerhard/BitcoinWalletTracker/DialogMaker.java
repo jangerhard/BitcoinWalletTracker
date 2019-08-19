@@ -11,8 +11,10 @@ import com.yarolegovich.lovelydialog.LovelyCustomDialog;
 import com.yarolegovich.lovelydialog.LovelyStandardDialog;
 import com.yarolegovich.lovelydialog.LovelyTextInputDialog;
 import io.github.jangerhard.BitcoinWalletTracker.client.BlockExplorer;
-import io.github.jangerhard.BitcoinWalletTracker.utilities.BitcoinAccount;
+import io.github.jangerhard.BitcoinWalletTracker.qrStuff.barcode.BarcodeCaptureActivity;
 import io.github.jangerhard.BitcoinWalletTracker.utilities.BitcoinUtils;
+
+import static io.github.jangerhard.BitcoinWalletTracker.MainActivity.BARCODE_READER_REQUEST_CODE;
 
 public class DialogMaker {
     private MainActivity activity;
@@ -51,7 +53,11 @@ public class DialogMaker {
                     utils.addAddress(text);
                     blockExplorer.getSingleWalletInfo(text, true);
                 })
-                .setNegativeButton("Scan", view -> activity.captureBarcode())
+                .setNegativeButton("Scan", view -> {
+                    Toast.makeText(activity, "Launching camera", Toast.LENGTH_SHORT).show();
+                    Intent intent = new Intent(activity, BarcodeCaptureActivity.class);
+                    activity.startActivityForResult(intent, BARCODE_READER_REQUEST_CODE);
+                })
                 .show();
     }
 
@@ -110,7 +116,7 @@ public class DialogMaker {
                 .show();
     }
 
-    public void showCustomViewDialog(View view){
+    public void showCustomViewDialog(View view) {
         new LovelyCustomDialog(activity)
                 .setView(view)
                 .setTopColorRes(R.color.cardview_dark_background)

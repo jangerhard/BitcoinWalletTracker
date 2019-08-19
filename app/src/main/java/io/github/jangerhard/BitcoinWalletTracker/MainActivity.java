@@ -40,7 +40,7 @@ import mehdi.sakout.aboutpage.Element;
 
 public class MainActivity extends AppCompatActivity {
 
-    private static final int BARCODE_READER_REQUEST_CODE = 1337;
+    public static final int BARCODE_READER_REQUEST_CODE = 1337;
     private static final String DARK_THEME_SELECTED = "dark_theme_selected";
     private static final String REFRESHING_THEME = "refreshing_theme";
     private static final String SHOW_GAIN_PERCENTAGE = "show_gain_percentage";
@@ -294,12 +294,6 @@ public class MainActivity extends AppCompatActivity {
             dialogMaker.showBitcoinAddressDialog(address);
         } else
             Toast.makeText(getBaseContext(), R.string.invalid_address, Toast.LENGTH_SHORT).show();
-    }
-
-    public void captureBarcode() {
-        Toast.makeText(this, "Launching camera", Toast.LENGTH_SHORT).show();
-        Intent intent = new Intent(this, BarcodeCaptureActivity.class);
-        startActivityForResult(intent, BARCODE_READER_REQUEST_CODE);
     }
 
     @Override
