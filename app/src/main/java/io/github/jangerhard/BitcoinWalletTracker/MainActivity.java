@@ -34,6 +34,7 @@ import io.github.jangerhard.BitcoinWalletTracker.client.PriceFetcher;
 import io.github.jangerhard.BitcoinWalletTracker.qrStuff.barcode.BarcodeCaptureActivity;
 import io.github.jangerhard.BitcoinWalletTracker.utilities.BitcoinAccount;
 import io.github.jangerhard.BitcoinWalletTracker.utilities.BitcoinUtils;
+import io.github.jangerhard.BitcoinWalletTracker.utilities.SharedPreferencesHelper;
 import jp.wasabeef.recyclerview.animators.LandingAnimator;
 import mehdi.sakout.aboutpage.AboutPage;
 import mehdi.sakout.aboutpage.Element;
@@ -55,8 +56,9 @@ public class MainActivity extends AppCompatActivity {
     private CardView cv_no_accounts;
     private RecyclerView recyclerView;
     private EasyFlipView mFlipView;
-    private SharedPreferences sharedPref;
     private Boolean selectedDarkTheme, showGainPercentage, noAccounts;
+
+    private SharedPreferencesHelper preferences;
 
     private PriceFetcher priceFetcher;
     private BlockExplorer blockExplorer;
@@ -68,17 +70,18 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
 
         AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
+        preferences = new SharedPreferencesHelper(this.getPreferences(Context.MODE_PRIVATE));
 
-        sharedPref = this.getPreferences(Context.MODE_PRIVATE);
-        selectedDarkTheme = sharedPref.getBoolean(DARK_THEME_SELECTED, true);
-        showGainPercentage = sharedPref.getBoolean(SHOW_GAIN_PERCENTAGE, true);
+        selectedDarkTheme = preferences.isDarkTheme();
+        showGainPercentage = preferences.shouldShowGainInPercentage();
         setTheme(selectedDarkTheme ? R.style.AppThemeDark : R.style.AppThemeLight);
 
         super.onCreate(savedInstanceState);
+
         mActivity = this;
         setContentView(R.layout.activity_main);
 
-        utils = new BitcoinUtils(sharedPref, this);
+        utils = new BitcoinUtils(preferences, getString(R.string.donationAddress));
 
         RequestQueue queue = Volley.newRequestQueue(this);
         priceFetcher = new PriceFetcher(queue, this, utils);
@@ -112,9 +115,9 @@ public class MainActivity extends AppCompatActivity {
 
         mFlipView = findViewById(R.id.flipview_layout);
 
-        if (sharedPref.getBoolean(REFRESHING_THEME, false)) {
+        if (preferences.isThemeRefreshing()) {
             mFlipView.flipTheView(false);
-            sharedPref.edit().putBoolean(REFRESHING_THEME, false).apply();
+            preferences.stopThemeRefreshing();
         }
 
         ImageButton bOpenSettings = findViewById(R.id.bSettings);
@@ -140,8 +143,7 @@ public class MainActivity extends AppCompatActivity {
         cbTheme.setOnCheckedChangeListener((compoundButton, b) -> {
             Toast.makeText(mActivity, R.string.toast_message_changing_theme, Toast.LENGTH_SHORT).show();
 
-            sharedPref.edit().putBoolean(DARK_THEME_SELECTED, b).apply();
-            sharedPref.edit().putBoolean(REFRESHING_THEME, true).apply();
+            preferences.toggleDarkThemeSelected(b);
 
             Intent intent = new Intent(mActivity, mActivity.getClass());
             startActivity(intent);
@@ -155,7 +157,7 @@ public class MainActivity extends AppCompatActivity {
             else
                 Toast.makeText(mActivity, R.string.toast_message_show_gain, Toast.LENGTH_SHORT).show();
 
-            sharedPref.edit().putBoolean(SHOW_GAIN_PERCENTAGE, b).apply();
+            preferences.setShowGainInPercentage(b);
             showGainPercentage = b;
 
             updateUI();

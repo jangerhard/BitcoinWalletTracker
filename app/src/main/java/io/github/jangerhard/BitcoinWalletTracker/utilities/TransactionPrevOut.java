@@ -4,7 +4,7 @@ package io.github.jangerhard.BitcoinWalletTracker.utilities;
  * Created by jangerhard on 23-Oct-17.
  */
 
-class TransactionPrevOut {
+public class TransactionPrevOut {
 
     private boolean spent;
     private String addr;

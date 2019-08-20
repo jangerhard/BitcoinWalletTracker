@@ -14,7 +14,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import androidx.annotation.NonNull;
 import com.google.zxing.BarcodeFormat;
@@ -23,8 +22,6 @@ import com.google.zxing.MultiFormatWriter;
 import com.google.zxing.WriterException;
 import com.google.zxing.common.BitMatrix;
 import com.journeyapps.barcodescanner.BarcodeEncoder;
-import io.github.jangerhard.BitcoinWalletTracker.MainActivity;
-import io.github.jangerhard.BitcoinWalletTracker.R;
 import org.bitcoinj.core.Address;
 import org.bitcoinj.core.AddressFormatException;
 import org.bitcoinj.params.MainNetParams;
@@ -42,26 +39,34 @@ public class BitcoinUtils {
     private Map<String, Bitmap> bitmapList;
     private Map<String, Bitmap> bigBitmapList;
 
-    private SharedPreferences sharedPref;
-    private String prefsAccountsKey;
+    private List<TrackedWallet> trackedWallets;
+
+    private SharedPreferencesHelper preferences;
     private Double currentPrice;
     private String currencyPair;
     private long totalBalance;
 
-    public BitcoinUtils(SharedPreferences sharedPref, MainActivity activity) {
+    public BitcoinUtils(SharedPreferencesHelper helper, String donationAddress) {
         accountList = new ArrayList<>();
         addresses = new ArrayList<>();
         bitmapList = new HashMap<>();
         bigBitmapList = new HashMap<>();
-        this.sharedPref = sharedPref;
-        prefsAccountsKey = activity.getString(R.string.bitcoinaddresses);
+        preferences = helper;
+
+        trackedWallets = getAddressesFromPrefs();
 
         addAddressesFromPrefs();
         makeAccounts();
         createBitmaps();
-        currencyPair = sharedPref.getString("currencyPair", "USD");
+        currencyPair = helper.getCurrencyPair();
         totalBalance = calculateTotalBalance(accountList);
-        bigBitmapList.put(activity.getString(R.string.donationAddress), createQRThumbnail(activity.getString(R.string.donationAddress), BIG_QR_SIZE));
+        bigBitmapList.put(donationAddress, createQRThumbnail(donationAddress, BIG_QR_SIZE));
+    }
+
+    public List<TrackedWallet> getAddressesFromPrefs() {
+        return io.vavr.collection.List.of(preferences.getAccountsString().split(","))
+                .map(TrackedWallet::new)
+                .toJavaList();
     }
 
     private void createBitmaps() {
@@ -80,7 +85,7 @@ public class BitcoinUtils {
     }
 
     public String getNickname(String address) {
-        return sharedPref.getString(address, "Wallet");
+        return preferences.getNickname(address);
     }
 
     public void setNewNickname(String selectedAccount, String newNickname) {
@@ -151,7 +156,7 @@ public class BitcoinUtils {
         return -1;
     }
 
-    static long calculateTotalBalance(List<BitcoinAccount> accounts) {
+    public static long calculateTotalBalance(List<BitcoinAccount> accounts) {
         if (accounts.size() == 0)
             return 0;
 
@@ -291,19 +296,19 @@ public class BitcoinUtils {
     }
 
     private void deleteNicknameFromPrefs(String address) {
-        sharedPref.edit().remove(address).apply();
+        preferences.deleteNickname(address);
     }
 
     private void saveNicknameToPrefs(String address, String name) {
-        sharedPref.edit().putString(address, name).apply();
+        preferences.saveNickname(address, name);
     }
 
     private long getInvestmentFromPrefs() {
-        return sharedPref.getLong("totalInvestment", 0L);
+        return preferences.getInvestmentFromPrefs();
     }
 
     private void saveInvestmentToPrefs(long investment) {
-        sharedPref.edit().putLong("totalInvestment", investment).apply();
+        preferences.saveInvestment(investment);
     }
 
     public void saveInvestment(long investment) {
@@ -316,9 +321,9 @@ public class BitcoinUtils {
 
     private void addAddressesFromPrefs() {
 
-        String savedString = sharedPref.getString(prefsAccountsKey, "");
+        String savedString = preferences.getAccountsString();
 
-        if (savedString.length() != 0) {
+        if (savedString != null && savedString.length() != 0) {
             String[] items = new String[1];
 
             if (savedString.contains(","))
@@ -343,12 +348,7 @@ public class BitcoinUtils {
     }
 
     private void saveAddressesToPrefs() {
-        StringBuilder addressString = new StringBuilder();
-        for (String s : addresses) {
-            addressString.append(s);
-            addressString.append(",");
-        }
-        sharedPref.edit().putString(prefsAccountsKey, addressString.toString()).apply();
+        preferences.saveAddresses(addresses);
     }
 
     public String getBalanceOfAccount(String selectedAccountAddress) {
@@ -392,7 +392,7 @@ public class BitcoinUtils {
 
     public void setCurrencyPair(String pair) {
         currencyPair = pair;
-        sharedPref.edit().putString("currencyPair", pair).apply();
+        preferences.saveCurrencyPair(pair);
     }
 
     public String getExchangeRate() {

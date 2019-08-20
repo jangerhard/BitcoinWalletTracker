@@ -1,6 +1,6 @@
 package io.github.jangerhard.BitcoinWalletTracker.utilities;
 
-class TransactionOut {
+public class TransactionOut {
 
     private boolean spent;
     private long value;

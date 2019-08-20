@@ -1,6 +1,5 @@
 <resources>
     <string name="app_name">Wallet Watcher</string>
-    <string name="bitcoinaddresses">BitcoinAddresses</string>
 
     <!-- Strings related to MainActivity-->
     <string name="no_barcode_captured">No barcode captured</string>
