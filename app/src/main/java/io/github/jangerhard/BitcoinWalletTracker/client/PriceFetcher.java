@@ -77,6 +77,6 @@ public class PriceFetcher {
         Log.i(LOG_TAG, "Got price in pricefetcher: " + price);
         //Toast.makeText(mActivity, "Got price: " + price, Toast.LENGTH_SHORT).show();
         utils.updateCurrency(price);
-        activity.getAllWalletsInfo(utils.getAddresses());
+        activity.getAllWalletsInfo(utils.getTrackedWallets());
     }
 }

@@ -29,18 +29,6 @@ public class TrackedWallet {
         return Option.of(assosiatedAccount.getFinal_balance());
     }
 
-    public long getNumberOfTransactions() {
-        return assosiatedAccount != null ? assosiatedAccount.getN_tx() : 0;
-    }
-
-    public long getTotalReceived() {
-        return assosiatedAccount != null ? assosiatedAccount.getTotal_received() : 0;
-    }
-
-    public ArrayList getTransactions() {
-        return assosiatedAccount != null ? assosiatedAccount.getTxs() : new ArrayList();
-    }
-
     public String getAddress() {
         return address;
     }
@@ -52,4 +40,10 @@ public class TrackedWallet {
     public Bitmap getRegularQRImage() {
         return regularQRImage;
     }
+
+    public void setAssosiatedAccount(BitcoinAccount assosiatedAccount) {
+        this.assosiatedAccount = assosiatedAccount;
+    }
+
+    public Option<BitcoinAccount> getAssosiatedAccount() {return Option.of(assosiatedAccount);}
 }

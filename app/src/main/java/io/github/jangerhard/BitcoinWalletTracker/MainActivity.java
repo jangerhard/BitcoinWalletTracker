@@ -1,11 +1,8 @@
 package io.github.jangerhard.BitcoinWalletTracker;
 
-import java.util.List;
-
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -35,6 +32,7 @@ import io.github.jangerhard.BitcoinWalletTracker.qrStuff.barcode.BarcodeCaptureA
 import io.github.jangerhard.BitcoinWalletTracker.utilities.BitcoinAccount;
 import io.github.jangerhard.BitcoinWalletTracker.utilities.BitcoinUtils;
 import io.github.jangerhard.BitcoinWalletTracker.utilities.SharedPreferencesHelper;
+import io.github.jangerhard.BitcoinWalletTracker.utilities.TrackedWallet;
 import jp.wasabeef.recyclerview.animators.LandingAnimator;
 import mehdi.sakout.aboutpage.AboutPage;
 import mehdi.sakout.aboutpage.Element;
@@ -42,9 +40,6 @@ import mehdi.sakout.aboutpage.Element;
 public class MainActivity extends AppCompatActivity {
 
     public static final int BARCODE_READER_REQUEST_CODE = 1337;
-    private static final String DARK_THEME_SELECTED = "dark_theme_selected";
-    private static final String REFRESHING_THEME = "refreshing_theme";
-    private static final String SHOW_GAIN_PERCENTAGE = "show_gain_percentage";
     private static final String LOG_TAG = "MainActivity";
 
     private Activity mActivity;
@@ -81,7 +76,7 @@ public class MainActivity extends AppCompatActivity {
         mActivity = this;
         setContentView(R.layout.activity_main);
 
-        utils = new BitcoinUtils(preferences, getString(R.string.donationAddress));
+        utils = new BitcoinUtils(preferences);
 
         RequestQueue queue = Volley.newRequestQueue(this);
         priceFetcher = new PriceFetcher(queue, this, utils);
@@ -166,10 +161,12 @@ public class MainActivity extends AppCompatActivity {
         Button bAbout = findViewById(R.id.about_page);
         bAbout.setOnClickListener(view -> {
 
+            TrackedWallet donationWallet = new TrackedWallet(getString(R.string.donationAddress));
+
             Element donationElement = new Element();
             donationElement.setIconDrawable(R.drawable.ic_attach_money);
             donationElement.setTitle("Donation");
-            donationElement.setOnClickListener(view1 -> dialogMaker.showAccountShareDialog(getString(R.string.donationAddress)));
+            donationElement.setOnClickListener(view1 -> dialogMaker.showAccountShareDialog(donationWallet));
 
             View aboutPage = new AboutPage(mActivity)
                     .isRTL(false)
@@ -242,7 +239,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void refreshData() {
 
-        if (utils.getAddresses().isEmpty()) {
+        if (utils.getTrackedWallets().isEmpty()) {
             Toast.makeText(getBaseContext(), R.string.no_accounts_initial, Toast.LENGTH_SHORT).show();
             noAccounts = true;
             updateUI();
@@ -253,31 +250,32 @@ public class MainActivity extends AppCompatActivity {
         priceFetcher.getCurrentPrice();
     }
 
-    public void getAllWalletsInfo(List<String> addresses) {
-        for (String address : addresses) {
-            blockExplorer.getSingleWalletInfo(address, false);
-        }
+    public void getAllWalletsInfo(io.vavr.collection.List<TrackedWallet> addresses) {
+        addresses.map(TrackedWallet::getAddress)
+                .forEach(address -> blockExplorer.getSingleWalletInfo(address));
     }
 
-    public void handleAddedAccount(BitcoinAccount newAcc) {
-        utils.addNewAccount(newAcc);
+    public void handleAddedAccount(String newAcc) {
+
+        utils.addTrackedWallet(newAcc);
 
         recyclerView.smoothScrollToPosition(adapter.getItemCount());
         if (adapter.getItemCount() > 0)
             adapter.notifyItemInserted(adapter.getItemCount() - 1);
         else adapter.notifyItemInserted(0);
+
         refreshData();
     }
 
     public void handleRefreshedAccount(BitcoinAccount acc) {
-
-        numRefreshed++;
-        int index = utils.updateAccount(acc);
-        adapter.notifyItemChanged(index);
+        utils.handleUpdatedAccount(acc)
+                .peek(it -> {
+                    numRefreshed++;
+                    adapter.notifyItemChanged(it);
+                });
 
         if (numRefreshed == utils.getNumberOfAccounts())
             updateUI();
-
     }
 
     private void addBarcode(String address) {

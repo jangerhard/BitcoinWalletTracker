@@ -11,9 +11,9 @@ import com.android.volley.ServerError;
 import com.android.volley.TimeoutError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.google.gson.Gson;
-import io.github.jangerhard.BitcoinWalletTracker.utilities.BitcoinAccount;
 import io.github.jangerhard.BitcoinWalletTracker.MainActivity;
 import io.github.jangerhard.BitcoinWalletTracker.R;
+import io.github.jangerhard.BitcoinWalletTracker.utilities.BitcoinAccount;
 
 public class BlockExplorer {
 
@@ -27,18 +27,16 @@ public class BlockExplorer {
         this.activity = activity;
     }
 
-    public void getSingleWalletInfo(String address, final boolean firstTime) {
+    public void getSingleWalletInfo(String address) {
 
         // Request a response from the provided URL.
         JsonObjectRequest jsObjRequest = new JsonObjectRequest
                 (Request.Method.GET,
                         url_blockchain + "rawaddr/" + address + "?limit=5",
                         null, response -> {
-                    BitcoinAccount newAcc = new Gson().fromJson(response.toString(), BitcoinAccount.class);
-                    if (firstTime)
-                        activity.handleAddedAccount(newAcc);
-                    else
-                        activity.handleRefreshedAccount(newAcc);
+                    BitcoinAccount accountInfo = new Gson().fromJson(response.toString(), BitcoinAccount.class);
+
+                    activity.handleRefreshedAccount(accountInfo);
                 }, error -> {
 
                     String message = activity.getString(R.string.error_generic);

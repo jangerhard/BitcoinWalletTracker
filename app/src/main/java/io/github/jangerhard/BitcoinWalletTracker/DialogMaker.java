@@ -13,6 +13,7 @@ import com.yarolegovich.lovelydialog.LovelyTextInputDialog;
 import io.github.jangerhard.BitcoinWalletTracker.client.BlockExplorer;
 import io.github.jangerhard.BitcoinWalletTracker.qrStuff.barcode.BarcodeCaptureActivity;
 import io.github.jangerhard.BitcoinWalletTracker.utilities.BitcoinUtils;
+import io.github.jangerhard.BitcoinWalletTracker.utilities.TrackedWallet;
 
 import static io.github.jangerhard.BitcoinWalletTracker.MainActivity.BARCODE_READER_REQUEST_CODE;
 
@@ -35,8 +36,7 @@ public class DialogMaker {
                 .setIcon(R.drawable.bitcoin_128)
                 .setMessage(activity.getString(R.string.question_correct_address) + "\n\n" + address)
                 .setPositiveButton(android.R.string.yes, view -> {
-                    utils.addAddress(address);
-                    blockExplorer.getSingleWalletInfo(address, true);
+                    activity.handleAddedAccount(address);
                 })
                 .setNegativeButton(android.R.string.no, null)
                 .show();
@@ -50,8 +50,8 @@ public class DialogMaker {
                 .setHint("1FfmbHfnpaZjKFvyi1okTjJJusN455paPH")
                 .setInputFilter("That is not a valid address!", BitcoinUtils::verifyAddress)
                 .setConfirmButton(android.R.string.ok, text -> {
-                    utils.addAddress(text);
-                    blockExplorer.getSingleWalletInfo(text, true);
+                    utils.addTrackedWallet(text);
+                    blockExplorer.getSingleWalletInfo(text);
                 })
                 .setNegativeButton("Scan", view -> {
                     Toast.makeText(activity, "Launching camera", Toast.LENGTH_SHORT).show();
@@ -61,14 +61,14 @@ public class DialogMaker {
                 .show();
     }
 
-    public void showAccountShareDialog(String address) {
+    public void showAccountShareDialog(TrackedWallet trackedWallet) {
         new LovelyStandardDialog(activity)
                 .setTopColorRes(R.color.dialog_qr)
-                .setIcon(utils.getBigQRThumbnail(address))
-                .setTitle(address)
+                .setIcon(trackedWallet.getBigQRImage())
+                .setTitle(trackedWallet.getAddress())
                 .setNegativeButton("Copy", view -> {
                     ClipboardManager clipboard = (ClipboardManager) activity.getSystemService(Context.CLIPBOARD_SERVICE);
-                    ClipData clip = ClipData.newPlainText("qrCode", address);
+                    ClipData clip = ClipData.newPlainText("qrCode", trackedWallet.getAddress());
                     if (clipboard != null) {
                         Toast.makeText(activity, "Address copied to clipboard", Toast.LENGTH_SHORT).show();
                         clipboard.setPrimaryClip(clip);
@@ -77,7 +77,7 @@ public class DialogMaker {
                 .setPositiveButton(R.string.share, v -> {
                     Intent sendIntent = new Intent();
                     sendIntent.setAction(Intent.ACTION_SEND);
-                    sendIntent.putExtra(Intent.EXTRA_TEXT, address);
+                    sendIntent.putExtra(Intent.EXTRA_TEXT, trackedWallet.getAddress());
                     sendIntent.setType("text/plain");
                     activity.startActivity(sendIntent);
                 })

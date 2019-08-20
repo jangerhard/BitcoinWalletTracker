@@ -51,4 +51,6 @@
     <string name="account_total_received">Total Received</string>
     <string name="account_final_balance">Final Balance</string>
 
+    <string name="account_error_balance">Unknown</string>
+
 </resources>

@@ -78,12 +78,12 @@ public class SharedPreferencesHelper {
         preferences.edit().putString(PREFS_ACCOUNT_KEY, addressString.toString()).apply();
     }
 
-    public void saveTrackedWallets(List<TrackedWallet> addresses) {
-        StringBuilder addressString = new StringBuilder();
-        for (TrackedWallet s : addresses) {
-            addressString.append(s.getAddress());
-            addressString.append(",");
-        }
-        preferences.edit().putString(PREFS_ACCOUNT_KEY, addressString.toString()).apply();
+    public void saveTrackedWallets(io.vavr.collection.List<TrackedWallet> addresses) {
+        String s = addresses
+                .map(TrackedWallet::getAddress)
+                .intersperse(",")
+                .foldLeft(new StringBuilder(), StringBuilder::append)
+                .toString();
+        preferences.edit().putString(PREFS_ACCOUNT_KEY, s).apply();
     }
 }

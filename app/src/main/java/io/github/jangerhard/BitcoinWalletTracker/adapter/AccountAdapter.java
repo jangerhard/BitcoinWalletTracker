@@ -6,7 +6,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import android.content.Context;
-import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -23,8 +22,8 @@ import com.yarolegovich.lovelydialog.LovelyStandardDialog;
 import com.yarolegovich.lovelydialog.LovelyTextInputDialog;
 import io.github.jangerhard.BitcoinWalletTracker.DialogMaker;
 import io.github.jangerhard.BitcoinWalletTracker.R;
-import io.github.jangerhard.BitcoinWalletTracker.utilities.BitcoinAccount;
 import io.github.jangerhard.BitcoinWalletTracker.utilities.BitcoinUtils;
+import io.github.jangerhard.BitcoinWalletTracker.utilities.TrackedWallet;
 
 public class AccountAdapter extends RecyclerView.Adapter<AccountAdapter.MyViewHolder> {
 
@@ -88,22 +87,15 @@ public class AccountAdapter extends RecyclerView.Adapter<AccountAdapter.MyViewHo
     @Override
     public void onBindViewHolder(final MyViewHolder holder, int position) {
 
-        final BitcoinAccount account = utils.getAccounts().get(position);
+        final TrackedWallet trackedWallet = utils.getTrackedWallets().get(position);
 
-        if (account.getN_tx() == BitcoinUtils.LOADING_ACCOUNT)
-            return;
 
-        String nickname = utils.getNickname(account.getAddress());
+        String nickname = utils.getNickname(trackedWallet.getAddress());
         holder.accNickNameFolded.setText(nickname);
-        holder.accBalance.setText(
-                BitcoinUtils.formatBitcoinBalanceToString(
-                        account.getFinal_balance())
-        );
-        holder.accRate.setText(
-                utils.formatBTCtoCurrency(account.getFinal_balance()));
+
+
         holder.position = holder.getAdapterPosition();
-        holder.qrCode.setImageBitmap(
-                utils.getQRThumbnail(account.getAddress()));
+        holder.qrCode.setImageBitmap(trackedWallet.getRegularQRImage());
 
         holder.itemView.setOnClickListener(view -> {
 
@@ -113,7 +105,7 @@ public class AccountAdapter extends RecyclerView.Adapter<AccountAdapter.MyViewHo
 
         });
 
-        holder.qrCode.setOnClickListener(view -> dialogMaker.showAccountShareDialog(account.getAddress()));
+        holder.qrCode.setOnClickListener(view -> dialogMaker.showAccountShareDialog(trackedWallet));
 
         holder.overflow.setOnClickListener(view -> {
             selectedAccountPosition = holder.getAdapterPosition();
@@ -126,29 +118,46 @@ public class AccountAdapter extends RecyclerView.Adapter<AccountAdapter.MyViewHo
         });
 
         // Unfolded
-        holder.accAddress.setText(account.getAddress());
+        holder.accAddress.setText(trackedWallet.getAddress());
         holder.accNickNameUnfolded.setText(nickname);
-
-        holder.tvAccNumTxs.setText(
-                String.format(Locale.ENGLISH, "%d", account.getN_tx()));
-        holder.tvAccTotReceived.setText(
-                BitcoinUtils.formatBitcoinBalanceToString(account.getTotal_received()));
-        holder.tvAccFinalBalance.setText(
-                BitcoinUtils.formatBitcoinBalanceToString(account.getFinal_balance()));
-
-        if (account.getN_tx() == 0)
-            holder.tvRecentTransaction.setText(mContext.getResources().getString(R.string.no_activity_on_this_address));
-        else
-            holder.tvRecentTransaction.setText(mContext.getResources().getString(R.string.latest_transactions));
 
         holder.transactionList.setLayoutManager(
                 new LinearLayoutManager(
                         mContext, RecyclerView.VERTICAL, false));
 
-        TransactionAdapter transactionAdapter =
-                new TransactionAdapter(mContext, account.getTxs(), account.getAddress());
+        trackedWallet.getAssosiatedAccount()
+                .onEmpty(() -> {
+                    holder.accBalance.setText(mContext.getResources().getString(R.string.account_error_balance));
+                    holder.accRate.setText(mContext.getResources().getString(R.string.account_error_balance));
+                })
+                .peek(account -> {
 
-        holder.transactionList.setAdapter(transactionAdapter);
+                    holder.accBalance.setText(
+                            BitcoinUtils.formatBitcoinBalanceToString(
+                                    account.getFinal_balance())
+                    );
+                    holder.accRate.setText(
+                            utils.formatBTCtoCurrency(account.getFinal_balance()));
+
+
+                    // unfolded
+                    holder.tvAccNumTxs.setText(
+                            String.format(Locale.ENGLISH, "%d", account.getN_tx()));
+                    holder.tvAccTotReceived.setText(
+                            BitcoinUtils.formatBitcoinBalanceToString(account.getTotal_received()));
+                    holder.tvAccFinalBalance.setText(
+                            BitcoinUtils.formatBitcoinBalanceToString(account.getFinal_balance()));
+
+                    if (account.getN_tx() == 0)
+                        holder.tvRecentTransaction.setText(mContext.getResources().getString(R.string.no_activity_on_this_address));
+                    else
+                        holder.tvRecentTransaction.setText(mContext.getResources().getString(R.string.latest_transactions));
+
+                    TransactionAdapter transactionAdapter =
+                            new TransactionAdapter(mContext, account.getTxs(), account.getAddress());
+
+                    holder.transactionList.setAdapter(transactionAdapter);
+                });
     }
 
     /**

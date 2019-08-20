@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Currency;
-import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -16,12 +15,7 @@ import java.util.Map;
 
 import android.graphics.Bitmap;
 import androidx.annotation.NonNull;
-import com.google.zxing.BarcodeFormat;
-import com.google.zxing.EncodeHintType;
-import com.google.zxing.MultiFormatWriter;
-import com.google.zxing.WriterException;
-import com.google.zxing.common.BitMatrix;
-import com.journeyapps.barcodescanner.BarcodeEncoder;
+import io.vavr.control.Option;
 import org.bitcoinj.core.Address;
 import org.bitcoinj.core.AddressFormatException;
 import org.bitcoinj.params.MainNetParams;
@@ -30,50 +24,49 @@ public class BitcoinUtils {
 
     private static final int BITCOIN_FACTOR = 100000000;
     private static final int MICRO_BITCOIN_FACTOR = 100000;
-    public static final int LOADING_ACCOUNT = -1;
-    private final int BIG_QR_SIZE = 512;
-    private final int REGULAR_QR_SIZE = 70;
 
     private List<BitcoinAccount> accountList;
     private List<String> addresses;
-    private Map<String, Bitmap> bitmapList;
-    private Map<String, Bitmap> bigBitmapList;
 
-    private List<TrackedWallet> trackedWallets;
+    private io.vavr.collection.List<TrackedWallet> trackedWallets;
 
     private SharedPreferencesHelper preferences;
     private Double currentPrice;
     private String currencyPair;
     private long totalBalance;
 
-    public BitcoinUtils(SharedPreferencesHelper helper, String donationAddress) {
+    public BitcoinUtils(SharedPreferencesHelper helper) {
         accountList = new ArrayList<>();
         addresses = new ArrayList<>();
-        bitmapList = new HashMap<>();
-        bigBitmapList = new HashMap<>();
         preferences = helper;
 
         trackedWallets = getAddressesFromPrefs();
 
         addAddressesFromPrefs();
         makeAccounts();
-        createBitmaps();
         currencyPair = helper.getCurrencyPair();
-        totalBalance = calculateTotalBalance(accountList);
-        bigBitmapList.put(donationAddress, createQRThumbnail(donationAddress, BIG_QR_SIZE));
+        totalBalance = calculateTotalBalance(trackedWallets);
     }
 
-    public List<TrackedWallet> getAddressesFromPrefs() {
-        return io.vavr.collection.List.of(preferences.getAccountsString().split(","))
-                .map(TrackedWallet::new)
-                .toJavaList();
+    public io.vavr.collection.List<TrackedWallet> getTrackedWallets() {
+        return trackedWallets;
     }
 
-    private void createBitmaps() {
-        for (String address : addresses) {
-            bitmapList.put(address, createQRThumbnail(address, REGULAR_QR_SIZE));
-            bigBitmapList.put(address, createQRThumbnail(address, BIG_QR_SIZE));
+    public boolean alreadyTrackingWallet(String address) {
+        return trackedWallets.map(TrackedWallet::getAddress).contains(address);
+    }
+
+    public void addTrackedWallet(String address) {
+        if (!alreadyTrackingWallet(address)) {
+            trackedWallets = trackedWallets.append(new TrackedWallet(address));
+            totalBalance = calculateTotalBalance(trackedWallets);
+            preferences.saveTrackedWallets(trackedWallets);
         }
+    }
+
+    public io.vavr.collection.List<TrackedWallet> getAddressesFromPrefs() {
+        return io.vavr.collection.List.of(preferences.getAccountsString().split(","))
+                .map(TrackedWallet::new);
     }
 
     public List<BitcoinAccount> getAccounts() {
@@ -92,47 +85,30 @@ public class BitcoinUtils {
         saveNicknameToPrefs(selectedAccount, newNickname);
     }
 
-    public void addNewAccount(BitcoinAccount newAcc) {
-        totalBalance = calculateTotalBalance(accountList);
-        accountList.add(newAcc);
+    public Option<Integer> handleUpdatedAccount(BitcoinAccount refreshedAccount) {
+        trackedWallets = updateTrackedWallets(refreshedAccount);
+        totalBalance = calculateTotalBalance(trackedWallets);
+        return Option.of(trackedWallets.indexWhere(trackedWallet ->
+                trackedWallet.getAddress().equals(refreshedAccount.getAddress()))
+        );
     }
 
-    /**
-     * @param refreshedAccount A BitcoinAccount that is being refreshed
-     * @return Given an account to update returns the index where it is updated
-     */
-    public int updateAccount(BitcoinAccount refreshedAccount) {
+    private io.vavr.collection.List<TrackedWallet> updateTrackedWallets(BitcoinAccount account) {
+        return trackedWallets.map(wallet -> {
+            if (wallet.getAddress().equals(account.getAddress()))
+                wallet.setAssosiatedAccount(account);
 
-        int index = getAccountIndex(refreshedAccount.getAddress());
-
-        if (index != -1) {
-            accountList.set(index, refreshedAccount);
-        } else {
-            index = 0;
-            accountList.add(index, refreshedAccount);
-        }
-        totalBalance = calculateTotalBalance(accountList);
-        return index;
+            return wallet;
+        });
     }
 
     public void removeAccount(String selectedAccountTag) {
 
         deleteNicknameFromPrefs(selectedAccountTag);
-        bitmapList.remove(getAccountIndex(selectedAccountTag));
-        bigBitmapList.remove(getAccountIndex(selectedAccountTag));
         accountList.remove(getAccountIndex(selectedAccountTag));
         addresses.remove(selectedAccountTag);
-        totalBalance = calculateTotalBalance(accountList);
+        totalBalance = calculateTotalBalance(trackedWallets);
         saveAddressesToPrefs();
-    }
-
-    public void addAddress(String address) {
-        if (!addresses.contains(address)) {
-            addresses.add(address);
-            bitmapList.put(address, createQRThumbnail(address, REGULAR_QR_SIZE));
-            bigBitmapList.put(address, createQRThumbnail(address, BIG_QR_SIZE));
-            saveAddressesToPrefs();
-        }
     }
 
     public boolean hasAddress(String displayValue) {
@@ -156,15 +132,8 @@ public class BitcoinUtils {
         return -1;
     }
 
-    public static long calculateTotalBalance(List<BitcoinAccount> accounts) {
-        if (accounts.size() == 0)
-            return 0;
-
-        long total = 0;
-
-        for (BitcoinAccount acc : accounts) total += acc.getFinal_balance();
-
-        return total;
+    public static long calculateTotalBalance(io.vavr.collection.List<TrackedWallet> accounts) {
+        return accounts.flatMap(TrackedWallet::getCurrentBalance).sum().longValue();
     }
 
     public String getTotalBalance() {
@@ -352,38 +321,10 @@ public class BitcoinUtils {
     }
 
     public String getBalanceOfAccount(String selectedAccountAddress) {
-
-        int index = getAccountIndex(selectedAccountAddress);
-
-        if (index != -1)
-            return formatBitcoinBalanceToString(accountList.get(index).getFinal_balance());
-        else
-            return "0 BTC";
-
-    }
-
-    private static Bitmap createQRThumbnail(String address, int size) {
-        Bitmap bitmap = null;
-        MultiFormatWriter multiFormatWriter = new MultiFormatWriter();
-        Map<EncodeHintType, Object> hints = new EnumMap<>(EncodeHintType.class);
-        hints.put(EncodeHintType.CHARACTER_SET, "UTF-8");
-        hints.put(EncodeHintType.MARGIN, 2); /* default = 4 */
-        try {
-            BitMatrix bitMatrix = multiFormatWriter.encode(address, BarcodeFormat.QR_CODE, size, size, hints);
-            BarcodeEncoder barcodeEncoder = new BarcodeEncoder();
-            bitmap = barcodeEncoder.createBitmap(bitMatrix);
-        } catch (WriterException e) {
-            e.printStackTrace();
-        }
-        return bitmap;
-    }
-
-    public Bitmap getBigQRThumbnail(String address) {
-        return bigBitmapList.get(address);
-    }
-
-    public Bitmap getQRThumbnail(String address) {
-        return bitmapList.get(address);
+        return formatBitcoinBalanceToString(
+                trackedWallets.filter(account -> account.getAddress().equals(selectedAccountAddress))
+                        .flatMap(TrackedWallet::getCurrentBalance)
+                        .getOrElse(0L));
     }
 
     public String getCurrencyPair() {
