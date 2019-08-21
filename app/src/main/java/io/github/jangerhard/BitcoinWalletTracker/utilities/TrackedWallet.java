@@ -21,6 +21,12 @@ public class TrackedWallet {
         this.address = address;
     }
 
+    public String getFormattedBalance() {
+        return BitcoinUtils.formatBitcoinBalanceToString(
+                getCurrentBalance().getOrElse(0L)
+        );
+    }
+
     public Option<Long> getCurrentBalance() {
         if (assosiatedAccount == null) return Option.none();
 

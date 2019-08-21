@@ -83,7 +83,7 @@ public class MainActivity extends AppCompatActivity {
         priceFetcher = new PriceFetcher(queue, this);
         blockExplorer = new BlockExplorer(queue, this);
 
-        dialogMaker = new DialogMaker(this, utils);
+        dialogMaker = new DialogMaker(this);
 
         cv_no_accounts = findViewById(R.id.no_accounts_view);
         Button bNoAccAdd = findViewById(R.id.bNoAccountsAdd);
@@ -132,7 +132,7 @@ public class MainActivity extends AppCompatActivity {
         bChangeCurrency.setOnClickListener(view -> dialogMaker.showCurrencySelectorDialog());
 
         ImageButton bChangeInvestment = findViewById(R.id.bAddInvestment);
-        bChangeInvestment.setOnClickListener(view -> dialogMaker.showInvestmentChangeDialog());
+        bChangeInvestment.setOnClickListener(view -> dialogMaker.showInvestmentChangeDialog(utils.getTotalInvestment()));
 
         CheckBox cbTheme = findViewById(R.id.checkbox_darktheme);
         cbTheme.setChecked(selectedDarkTheme);
@@ -252,6 +252,34 @@ public class MainActivity extends AppCompatActivity {
                     updateAllTrackedWallets();
                 });
 
+        updateUI();
+    }
+
+    public void handleOpenCamera() {
+        Toast.makeText(this, "Launching camera", Toast.LENGTH_SHORT).show();
+        Intent intent = new Intent(this, BarcodeCaptureActivity.class);
+        startActivityForResult(intent, BARCODE_READER_REQUEST_CODE);
+    }
+
+    public void handleOpenShare(String address) {
+        Intent sendIntent = new Intent();
+        sendIntent.setAction(Intent.ACTION_SEND);
+        sendIntent.putExtra(Intent.EXTRA_TEXT, address);
+        sendIntent.setType("text/plain");
+        startActivity(sendIntent);
+    }
+
+    public void handleChangeCurrency(int position) {
+        String pair = getResources().getStringArray(R.array.currencies)[position];
+        utils.setCurrencyPair(pair);
+        priceFetcher.getCurrentPrice(pair);
+    }
+
+    public void handleUpdateInvestment(String newInvestment) {
+        if (newInvestment.trim().length() == 0)
+            utils.saveInvestment(Long.parseLong("0"));
+        else
+            utils.saveInvestment(Long.parseLong(newInvestment.trim()));
         updateUI();
     }
 
