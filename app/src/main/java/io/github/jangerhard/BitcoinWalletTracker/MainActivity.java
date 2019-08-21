@@ -294,6 +294,7 @@ public class MainActivity extends AppCompatActivity {
                 Toast.LENGTH_SHORT).show();
         utils.removeTrackedAccount(trackedWallet);
         adapter.handleRemoveSelectedAccount(position);
+        updateUI();
     }
 
     private void addBarcode(String address) {
