@@ -1,22 +1,43 @@
-package io.github.jangerhard.BitcoinWalletTracker;
-
-import io.github.jangerhard.BitcoinWalletTracker.utilities.BitcoinAccount;
-import io.github.jangerhard.BitcoinWalletTracker.utilities.BitcoinUtils;
-import io.github.jangerhard.BitcoinWalletTracker.utilities.Transaction;
-import io.github.jangerhard.BitcoinWalletTracker.utilities.TransactionInput;
-import io.github.jangerhard.BitcoinWalletTracker.utilities.TransactionOut;
-import io.github.jangerhard.BitcoinWalletTracker.utilities.TransactionPrevOut;
-import org.junit.Test;
+package io.github.jangerhard.BitcoinWalletTracker.utilities;
 
 import java.util.ArrayList;
-import java.util.List;
+
+import io.vavr.collection.List;
+import org.junit.Before;
+import org.junit.Test;
+import org.mockito.Mockito;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.when;
 
 public class BitcoinUtilsTest {
 
+    private SharedPreferencesHelper preferences = Mockito.mock(SharedPreferencesHelper.class);
+
+    private BitcoinUtils bitcoinUtils;
+
+    @Before
+    public void setup() {
+        when(preferences.getCurrencyPair()).thenReturn("USD");
+        when(preferences.getAccountsString()).thenReturn("1LVuX2MLwerH6sFb25HnyCFS8Zcuxc2u1s,1H6a4TidysCEV91PDdQZmyEphpJD9M7VmN");
+        bitcoinUtils = new BitcoinUtils(preferences);
+    }
+
     @Test
-    public void testFormatingBalanceToString() throws Exception {
+    public void getting_wallets_from_prefs_given_existing_addresses_returns_list() {
+        assertFalse(bitcoinUtils.getAddressesFromPrefs().isEmpty());
+    }
+
+    @Test
+    public void getting_wallets_from_prefs_given_no_existing_addresses_returns_list() {
+        when(preferences.getAccountsString()).thenReturn("");
+        assertTrue(bitcoinUtils.getAddressesFromPrefs().isEmpty());
+    }
+
+    @Test
+    public void testFormatingBalanceToString() {
 
         String bal = BitcoinUtils.formatBitcoinBalanceToString(2195820L);
         assertEquals("21.9582 mBTC", bal);
@@ -44,29 +65,29 @@ public class BitcoinUtilsTest {
 
 
     @Test
-    public void testCalculateTotalAmount() throws Exception {
+    public void testCalculateTotalAmount() {
 
         long a = 12345678;
+        TrackedWallet wallet = new TrackedWallet("Someaddress");
         BitcoinAccount acc = new BitcoinAccount();
         acc.setFinal_balance(a);
-        List<BitcoinAccount> accounts = new ArrayList<>();
-        accounts.add(acc);
-        accounts.add(acc);
-        accounts.add(acc);
-        accounts.add(acc);
-        accounts.add(acc);
+        wallet.setAssosiatedAccount(acc);
+        List<TrackedWallet> accounts = List.of(
+                wallet,
+                wallet,
+                wallet,
+                wallet,
+                wallet
+        );
 
-        long expectedTotal = 61728390;
+        assertEquals(61728390, BitcoinUtils.calculateTotalBalance(accounts));
 
-        assertEquals(expectedTotal, BitcoinUtils.calculateTotalBalance(accounts));
-
-        expectedTotal = 0;
-        assertEquals(expectedTotal, BitcoinUtils.calculateTotalBalance(new ArrayList<BitcoinAccount>()));
+        assertEquals(0, BitcoinUtils.calculateTotalBalance(List.empty()));
 
     }
 
     @Test
-    public void testVerifyAddress() throws Exception {
+    public void testVerifyAddress() {
 
         // Real address, should return true
         Boolean verified = BitcoinUtils.verifyAddress("1LVuX2MLwerH6sFb25HnyCFS8Zcuxc2u1s");
@@ -103,7 +124,7 @@ public class BitcoinUtilsTest {
 
         verified = BitcoinUtils.verifyAddress("");
         assertEquals(false, verified);
-        verified = BitcoinUtils.verifyAddress(null);
+        verified = false;
         assertEquals(false, verified);
 
     }
@@ -135,7 +156,7 @@ public class BitcoinUtilsTest {
 //    }
 
     @Test
-    public void testGetTransactionValue() throws Exception {
+    public void testGetTransactionValue() {
 
         String testAddress = "testAddr";
 
