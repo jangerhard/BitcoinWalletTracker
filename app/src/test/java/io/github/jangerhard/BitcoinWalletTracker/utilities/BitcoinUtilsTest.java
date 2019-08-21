@@ -3,8 +3,11 @@ package io.github.jangerhard.BitcoinWalletTracker.utilities;
 import java.util.ArrayList;
 
 import io.vavr.collection.List;
+import io.vavr.control.Option;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 import org.mockito.Mockito;
 
 import static org.junit.Assert.assertEquals;
@@ -12,6 +15,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.when;
 
+@RunWith(JUnit4.class)
 public class BitcoinUtilsTest {
 
     private SharedPreferencesHelper preferences = Mockito.mock(SharedPreferencesHelper.class);
@@ -151,46 +155,42 @@ public class BitcoinUtilsTest {
     }
 
     @Test
-    public void testVerifyAddress() {
+    public void given_correct_bitcoin_address_return_BITCOIN_address() {
 
         // Real address, should return true
-        Boolean verified = BitcoinUtils.verifyAddress("1LVuX2MLwerH6sFb25HnyCFS8Zcuxc2u1s");
-        assertEquals(true, verified);
+        Option<BitcoinUtils.ACCOUNT_TYPE> maybeVerified = BitcoinUtils.verifyAddress("1LVuX2MLwerH6sFb25HnyCFS8Zcuxc2u1s");
+        assertTrue(maybeVerified.isDefined());
+        assertEquals(BitcoinUtils.ACCOUNT_TYPE.BITCOIN, maybeVerified.get());
 
         // Real address, should return true
-        verified = BitcoinUtils.verifyAddress("1H6a4TidysCEV91PDdQZmyEphpJD9M7VmN");
-        assertEquals(true, verified);
+        maybeVerified = BitcoinUtils.verifyAddress("1H6a4TidysCEV91PDdQZmyEphpJD9M7VmN");
+        assertTrue(maybeVerified.isDefined());
+        assertEquals(BitcoinUtils.ACCOUNT_TYPE.BITCOIN, maybeVerified.get());
+    }
+
+    @Test
+    public void given_correct_segwit_address_return_SEGWIT_address() {
         // Real address, should return true
-        verified = BitcoinUtils.verifyAddress("3KHDFXJQC9eD4MEMi2bUFhyXaQ5DEpT7JG");
-        assertEquals(true, verified);
-        // Real address, should return true
-        verified = BitcoinUtils.verifyAddress("3ARbVBdz6jfg7WUMSBsMe5cvaxghbHs6Ch");
-        assertEquals(true, verified);
-        // Real address, should return true
-        verified = BitcoinUtils.verifyAddress("3J98t1WpEZ73CNmQviecrnyiWrnqRhWNLy");
-        assertEquals(true, verified);
-        // Real address, should return true
-        verified = BitcoinUtils.verifyAddress("1BvBMSEYstWetqTFn5Au4m4GFg7xJaNVN2");
-        assertEquals(true, verified);
+        Option<BitcoinUtils.ACCOUNT_TYPE> maybeVerified = BitcoinUtils.verifyAddress("bc1qw508d6qejxtdg4y5r3zarvary0c5xw7kv8f3t4");
+        assertTrue(maybeVerified.isDefined());
+        assertEquals(BitcoinUtils.ACCOUNT_TYPE.SEGWIT, maybeVerified.get());
+    }
+
+    @Test
+    public void given_wrong_address_return_none() {
 
         // Wrong address, should return false
-        verified = BitcoinUtils.verifyAddress("33ghcYT1EKNKUzgGaXnv8qty16mifc8iy2");
-        assertEquals(false, verified);
+        Option<BitcoinUtils.ACCOUNT_TYPE> maybeVerified = BitcoinUtils.verifyAddress("randobambo");
+        assertFalse(maybeVerified.isDefined());
         // Wrong address, should return false
-        verified = BitcoinUtils.verifyAddress("43ghcYT1EKNKUzgGaXnv8qty16mifc8iy2");
-        assertEquals(false, verified);
-        // Wrong address, should return false
-        verified = BitcoinUtils.verifyAddress("133ghcYT1EKNKUzgGaXnv8qty16mifc8iy2");
-        assertEquals(false, verified);
-        // Wrong address, should return false
-        verified = BitcoinUtils.verifyAddress("333ghcYT1EKNKUzgGaXnv8qty16mifc8iy2");
-        assertEquals(false, verified);
+        maybeVerified = BitcoinUtils.verifyAddress("43ghcYT1EKNKUzgGaXnv8qty16mifc8iy2");
+        assertFalse(maybeVerified.isDefined());
 
-        verified = BitcoinUtils.verifyAddress("");
-        assertEquals(false, verified);
-        verified = false;
-        assertEquals(false, verified);
+        maybeVerified = BitcoinUtils.verifyAddress("");
+        assertFalse(maybeVerified.isDefined());
 
+        maybeVerified = BitcoinUtils.verifyAddress(null);
+        assertFalse(maybeVerified.isDefined());
     }
 
 //    @Test

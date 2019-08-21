@@ -18,6 +18,10 @@ import org.bitcoinj.params.MainNetParams;
 
 public class BitcoinUtils {
 
+    public enum ACCOUNT_TYPE {
+        BITCOIN, SEGWIT
+    }
+
     private static final String LOG_TAG = "BitcoinUtilities";
 
     private static final int BITCOIN_FACTOR = 100000000;
@@ -59,7 +63,7 @@ public class BitcoinUtils {
 
     public List<TrackedWallet> getAddressesFromPrefs() {
         return io.vavr.collection.List.of(preferences.getAccountsString().split(","))
-                .filter(BitcoinUtils::verifyAddress)
+                .filter(it -> verifyAddress(it).isDefined())
                 .map(TrackedWallet::new);
     }
 
@@ -227,18 +231,27 @@ public class BitcoinUtils {
                 BigDecimal.ROUND_HALF_DOWN).doubleValue();
     }
 
-    public static boolean verifyAddress(String qrString) {
+    public static Option<ACCOUNT_TYPE> verifyAddress(String qrString) {
 
-        if (qrString == null)
-            return false;
+        if (qrString == null) return Option.none();
 
         try {
-            Address.fromBase58(MainNetParams.get(), qrString);
-        } catch (AddressFormatException e) {
-            return false;
+            switch (Address.fromString(MainNetParams.get(), qrString).getOutputScriptType()) {
+                case P2PKH:
+                    return Option.some(ACCOUNT_TYPE.BITCOIN);
+                // case P2PK:
+                //    break;
+                // case P2SH:
+                //    break;
+                case P2WPKH:
+                    return Option.some(ACCOUNT_TYPE.SEGWIT);
+                // case P2WSH:
+                //    break;
+            }
+        } catch (AddressFormatException ignored) {
         }
-        return true;
 
+        return Option.none();
     }
 
     private void deleteNicknameFromPrefs(String address) {

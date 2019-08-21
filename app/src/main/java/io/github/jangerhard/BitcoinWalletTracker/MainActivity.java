@@ -336,7 +336,7 @@ public class MainActivity extends AppCompatActivity {
 
         if (utils.alreadyTrackingWallet(address)) {
             Toast.makeText(getBaseContext(), R.string.account_already_added, Toast.LENGTH_SHORT).show();
-        } else if (BitcoinUtils.verifyAddress(address)) {
+        } else if (BitcoinUtils.verifyAddress(address).isDefined()) {
             dialogMaker.showBitcoinAddressDialog(address);
         } else
             Toast.makeText(getBaseContext(), R.string.invalid_address, Toast.LENGTH_SHORT).show();

@@ -38,7 +38,8 @@ public class DialogMaker {
                 .setTitle("Add address")
                 .setIcon(R.drawable.bitcoin_128)
                 .setHint("1FfmbHfnpaZjKFvyi1okTjJJusN455paPH")
-                .setInputFilter("That is not a valid address!", BitcoinUtils::verifyAddress)
+                .setInputFilter("That is not a valid address!",
+                        address -> BitcoinUtils.verifyAddress(address).isDefined())
                 .setConfirmButton(android.R.string.ok, text -> activity.handleAddedAccount(text))
                 .setNegativeButton("Scan", view -> activity.handleOpenCamera())
                 .show();
