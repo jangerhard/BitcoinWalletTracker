@@ -35,7 +35,6 @@ public class BlockExplorer {
                         url_blockchain + "rawaddr/" + address + "?limit=5",
                         null, response -> {
                     BitcoinAccount accountInfo = new Gson().fromJson(response.toString(), BitcoinAccount.class);
-                    Log.d(LOG_TAG, "Got info for: " + address);
                     activity.handleRefreshedAccount(accountInfo);
                 }, error -> {
 
