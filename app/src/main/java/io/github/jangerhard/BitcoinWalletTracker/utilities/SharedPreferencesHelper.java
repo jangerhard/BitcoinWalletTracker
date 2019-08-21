@@ -1,8 +1,7 @@
 package io.github.jangerhard.BitcoinWalletTracker.utilities;
 
-import java.util.List;
-
 import android.content.SharedPreferences;
+import io.vavr.collection.List;
 
 public class SharedPreferencesHelper {
 
@@ -54,10 +53,6 @@ public class SharedPreferencesHelper {
         preferences.edit().putLong(TOTAL_INVESTMENT, investment).apply();
     }
 
-    public void setRefreshingTheme(boolean b) {
-        preferences.edit().putBoolean(REFRESHING_THEME, b).apply();
-    }
-
     public boolean shouldShowGainInPercentage() {return preferences.getBoolean(DARK_THEME_SELECTED, true);}
 
     public void setShowGainInPercentage(boolean b) {
@@ -68,17 +63,7 @@ public class SharedPreferencesHelper {
         return preferences.getString(PREFS_ACCOUNT_KEY, "");
     }
 
-    @Deprecated
-    public void saveAddresses(List<String> addresses) {
-        StringBuilder addressString = new StringBuilder();
-        for (String s : addresses) {
-            addressString.append(s);
-            addressString.append(",");
-        }
-        preferences.edit().putString(PREFS_ACCOUNT_KEY, addressString.toString()).apply();
-    }
-
-    public void saveTrackedWallets(io.vavr.collection.List<TrackedWallet> addresses) {
+    public void saveTrackedWallets(List<TrackedWallet> addresses) {
         String s = addresses
                 .map(TrackedWallet::getAddress)
                 .intersperse(",")

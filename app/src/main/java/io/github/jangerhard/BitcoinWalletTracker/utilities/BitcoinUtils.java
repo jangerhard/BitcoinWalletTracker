@@ -10,6 +10,7 @@ import java.util.Locale;
 
 import android.util.Log;
 import androidx.annotation.NonNull;
+import io.vavr.collection.List;
 import io.vavr.control.Option;
 import org.bitcoinj.core.Address;
 import org.bitcoinj.core.AddressFormatException;
@@ -22,7 +23,7 @@ public class BitcoinUtils {
     private static final int BITCOIN_FACTOR = 100000000;
     private static final int MICRO_BITCOIN_FACTOR = 100000;
 
-    private io.vavr.collection.List<TrackedWallet> trackedWallets;
+    private List<TrackedWallet> trackedWallets;
 
     private SharedPreferencesHelper preferences;
     private Double currentPrice;
@@ -39,7 +40,7 @@ public class BitcoinUtils {
         totalBalance = calculateTotalBalance(trackedWallets);
     }
 
-    public io.vavr.collection.List<TrackedWallet> getTrackedWallets() {
+    public List<TrackedWallet> getTrackedWallets() {
         return trackedWallets;
     }
 
@@ -56,7 +57,7 @@ public class BitcoinUtils {
             Log.d(LOG_TAG, "Already tracking " + address);
     }
 
-    public io.vavr.collection.List<TrackedWallet> getAddressesFromPrefs() {
+    public List<TrackedWallet> getAddressesFromPrefs() {
         return io.vavr.collection.List.of(preferences.getAccountsString().split(","))
                 .filter(BitcoinUtils::verifyAddress)
                 .map(TrackedWallet::new);
@@ -78,7 +79,7 @@ public class BitcoinUtils {
         );
     }
 
-    private io.vavr.collection.List<TrackedWallet> updateTrackedWallets(BitcoinAccount account) {
+    private List<TrackedWallet> updateTrackedWallets(BitcoinAccount account) {
 
         return trackedWallets.map(wallet -> {
             if (wallet.getAddress().equals(account.getAddress()))
@@ -108,7 +109,7 @@ public class BitcoinUtils {
         totalBalance = calculateTotalBalance(trackedWallets);
     }
 
-    public static long calculateTotalBalance(io.vavr.collection.List<TrackedWallet> accounts) {
+    public static long calculateTotalBalance(List<TrackedWallet> accounts) {
         return accounts.flatMap(TrackedWallet::getCurrentBalance).sum().longValue();
     }
 
@@ -262,13 +263,6 @@ public class BitcoinUtils {
 
     public void updateCurrency(Double price) {
         currentPrice = price;
-    }
-
-    public String getBalanceOfAccount(String selectedAccountAddress) {
-        return formatBitcoinBalanceToString(
-                trackedWallets.filter(account -> account.getAddress().equals(selectedAccountAddress))
-                        .flatMap(TrackedWallet::getCurrentBalance)
-                        .getOrElse(0L));
     }
 
     public String getCurrencyPair() {
