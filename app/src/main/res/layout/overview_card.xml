@@ -21,27 +21,33 @@
             android:orientation="vertical"
             android:padding="16dp">
 
-            <ImageButton
-                android:id="@+id/bAddAccount"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentStart="true"
-                android:layout_centerVertical="true"
-                android:background="?attr/selectableItemBackgroundBorderless"
-                android:src="@drawable/ic_add_circle_outline_white_36dp" />
+            <RelativeLayout
+                android:id="@+id/layout_top_buttons"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
 
-            <ImageButton
-                android:id="@+id/bSettings"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
-                android:layout_centerVertical="true"
-                android:background="?attr/selectableItemBackgroundBorderless"
-                android:src="@drawable/ic_menu_white_36dp" />
+                <ImageButton
+                    android:id="@+id/bAddAccount"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:alpha="0.5"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:src="@drawable/ic_add_circle_outline_white_36dp" />
+
+                <ImageButton
+                    android:id="@+id/bSettings"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:alpha="0.5"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:src="@drawable/ic_menu_white_36dp" />
+            </RelativeLayout>
 
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_below="@id/layout_top_buttons"
                 android:layout_centerInParent="true"
                 android:orientation="vertical">
 
@@ -54,7 +60,7 @@
                     tools:text="300.0 mBTC"
                     android:layout_gravity="center_horizontal"
                     android:textColor="@color/text_dark_primary"
-                    android:textSize="32sp" />
+                    android:textSize="36sp" />
 
                 <LinearLayout
                     android:layout_width="wrap_content"
