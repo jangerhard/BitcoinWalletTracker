@@ -1,5 +1,8 @@
 package io.github.jangerhard.BitcoinWalletTracker;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
@@ -10,7 +13,6 @@ import com.yarolegovich.lovelydialog.LovelyChoiceDialog;
 import com.yarolegovich.lovelydialog.LovelyCustomDialog;
 import com.yarolegovich.lovelydialog.LovelyStandardDialog;
 import com.yarolegovich.lovelydialog.LovelyTextInputDialog;
-import io.github.jangerhard.BitcoinWalletTracker.client.BlockExplorer;
 import io.github.jangerhard.BitcoinWalletTracker.qrStuff.barcode.BarcodeCaptureActivity;
 import io.github.jangerhard.BitcoinWalletTracker.utilities.BitcoinUtils;
 import io.github.jangerhard.BitcoinWalletTracker.utilities.TrackedWallet;
@@ -19,12 +21,10 @@ import static io.github.jangerhard.BitcoinWalletTracker.MainActivity.BARCODE_REA
 
 public class DialogMaker {
     private MainActivity activity;
-    private BlockExplorer blockExplorer;
     private BitcoinUtils utils;
 
-    public DialogMaker(MainActivity activity, BlockExplorer blockExplorer, BitcoinUtils utils) {
+    public DialogMaker(MainActivity activity, BitcoinUtils utils) {
         this.activity = activity;
-        this.blockExplorer = blockExplorer;
         this.utils = utils;
     }
 
@@ -35,9 +35,7 @@ public class DialogMaker {
                 .setTitle(R.string.new_address)
                 .setIcon(R.drawable.bitcoin_128)
                 .setMessage(activity.getString(R.string.question_correct_address) + "\n\n" + address)
-                .setPositiveButton(android.R.string.yes, view -> {
-                    activity.handleAddedAccount(address);
-                })
+                .setPositiveButton(android.R.string.yes, view -> activity.handleAddedAccount(address))
                 .setNegativeButton(android.R.string.no, null)
                 .show();
     }
@@ -49,10 +47,7 @@ public class DialogMaker {
                 .setIcon(R.drawable.bitcoin_128)
                 .setHint("1FfmbHfnpaZjKFvyi1okTjJJusN455paPH")
                 .setInputFilter("That is not a valid address!", BitcoinUtils::verifyAddress)
-                .setConfirmButton(android.R.string.ok, text -> {
-                    utils.addTrackedWallet(text);
-                    blockExplorer.getSingleWalletInfo(text);
-                })
+                .setConfirmButton(android.R.string.ok, text -> activity.handleAddedAccount(text))
                 .setNegativeButton("Scan", view -> {
                     Toast.makeText(activity, "Launching camera", Toast.LENGTH_SHORT).show();
                     Intent intent = new Intent(activity, BarcodeCaptureActivity.class);
@@ -120,6 +115,42 @@ public class DialogMaker {
         new LovelyCustomDialog(activity)
                 .setView(view)
                 .setTopColorRes(R.color.cardview_dark_background)
+                .show();
+    }
+
+    public void changeNicknameOnSelected(int position) {
+
+        String address = utils.getTrackedWallets().get(position).getAddress();
+
+        new LovelyTextInputDialog(activity)
+                .setTopColorRes(R.color.dialog_edit)
+                .setTitle(R.string.edit_nickname)
+                .setIcon(R.drawable.ic_mode_edit_white_48dp)
+                .setHint(R.string.savings)
+                .setInitialInput(utils.getNickname(address))
+                .setInputFilter(R.string.text_input_error_message, text -> {
+                    if (text.length() > 30)
+                        return false;
+                    Pattern p = Pattern.compile("\\w+");
+                    Matcher m = p.matcher(text);
+                    return m.find();
+                })
+                .setConfirmButton(android.R.string.ok, newNickname ->
+                        activity.handleUpdatedNickname(address, newNickname, position))
+                .show();
+    }
+
+    public void showRemoveConfirmDialog(int position) {
+        TrackedWallet trackedWallet = utils.getTrackedWallets().get(position);
+
+        new LovelyStandardDialog(activity)
+                .setTopColorRes(R.color.dialog_warning)
+                .setIcon(R.drawable.ic_delete_forever_white_48dp)
+                .setTitle(activity.getString(R.string.stop_tracking) + " " + utils.getNickname(trackedWallet.getAddress()) + "?")
+                .setMessage(activity.getString(R.string.it_has_a_balance_of) + " " +
+                        utils.getBalanceOfAccount(trackedWallet.getAddress()))
+                .setPositiveButton(android.R.string.yes, v -> activity.handleRemoveSelectedAccount(trackedWallet, position))
+                .setNegativeButton(android.R.string.cancel, null)
                 .show();
     }
 }

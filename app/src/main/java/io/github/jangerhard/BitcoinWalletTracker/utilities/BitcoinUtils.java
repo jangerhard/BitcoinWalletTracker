@@ -4,16 +4,11 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.DateFormat;
 import java.text.NumberFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collections;
 import java.util.Currency;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 
-import android.graphics.Bitmap;
+import android.util.Log;
 import androidx.annotation.NonNull;
 import io.vavr.control.Option;
 import org.bitcoinj.core.Address;
@@ -22,11 +17,10 @@ import org.bitcoinj.params.MainNetParams;
 
 public class BitcoinUtils {
 
+    private static final String LOG_TAG = "BitcoinUtilities";
+
     private static final int BITCOIN_FACTOR = 100000000;
     private static final int MICRO_BITCOIN_FACTOR = 100000;
-
-    private List<BitcoinAccount> accountList;
-    private List<String> addresses;
 
     private io.vavr.collection.List<TrackedWallet> trackedWallets;
 
@@ -36,15 +30,12 @@ public class BitcoinUtils {
     private long totalBalance;
 
     public BitcoinUtils(SharedPreferencesHelper helper) {
-        accountList = new ArrayList<>();
-        addresses = new ArrayList<>();
         preferences = helper;
 
         trackedWallets = getAddressesFromPrefs();
 
-        addAddressesFromPrefs();
-        makeAccounts();
         currencyPair = helper.getCurrencyPair();
+
         totalBalance = calculateTotalBalance(trackedWallets);
     }
 
@@ -61,20 +52,14 @@ public class BitcoinUtils {
             trackedWallets = trackedWallets.append(new TrackedWallet(address));
             totalBalance = calculateTotalBalance(trackedWallets);
             preferences.saveTrackedWallets(trackedWallets);
-        }
+        } else
+            Log.d(LOG_TAG, "Already tracking " + address);
     }
 
     public io.vavr.collection.List<TrackedWallet> getAddressesFromPrefs() {
         return io.vavr.collection.List.of(preferences.getAccountsString().split(","))
+                .filter(BitcoinUtils::verifyAddress)
                 .map(TrackedWallet::new);
-    }
-
-    public List<BitcoinAccount> getAccounts() {
-        return accountList;
-    }
-
-    public List<String> getAddresses() {
-        return addresses;
     }
 
     public String getNickname(String address) {
@@ -94,42 +79,33 @@ public class BitcoinUtils {
     }
 
     private io.vavr.collection.List<TrackedWallet> updateTrackedWallets(BitcoinAccount account) {
+
         return trackedWallets.map(wallet -> {
             if (wallet.getAddress().equals(account.getAddress()))
-                wallet.setAssosiatedAccount(account);
-
-            return wallet;
+                return updateAssociatedAccount(wallet, account);
+            else
+                return wallet;
         });
     }
 
-    public void removeAccount(String selectedAccountTag) {
+    TrackedWallet updateAssociatedAccount(TrackedWallet wallet, BitcoinAccount account) {
+        return wallet.getNumberOfTransactions()
+                .onEmpty(() -> wallet.setAssosiatedAccount(account))
+                .map(numTransactions -> {
+                    if (numTransactions < account.getN_tx())
+                        wallet.setAssosiatedAccount(account);
 
-        deleteNicknameFromPrefs(selectedAccountTag);
-        accountList.remove(getAccountIndex(selectedAccountTag));
-        addresses.remove(selectedAccountTag);
+                    return wallet;
+                })
+                .getOrElse(wallet);
+    }
+
+    public void removeTrackedAccount(TrackedWallet trackedWallet) {
+
+        deleteNicknameFromPrefs(trackedWallet.getAddress());
+        trackedWallets = trackedWallets.remove(trackedWallet);
+        preferences.saveTrackedWallets(trackedWallets);
         totalBalance = calculateTotalBalance(trackedWallets);
-        saveAddressesToPrefs();
-    }
-
-    public boolean hasAddress(String displayValue) {
-        return addresses.contains(displayValue);
-    }
-
-    public int getNumberOfAccounts() {
-        return accountList.size();
-    }
-
-    /**
-     * @param accAddress Address of the account which index is needed.
-     * @return -1 if account does not exist, or index of account if it exists.
-     */
-    private int getAccountIndex(String accAddress) {
-
-        for (BitcoinAccount acc : accountList)
-            if (acc.getAddress().equals(accAddress))
-                return accountList.indexOf(acc);
-
-        return -1;
     }
 
     public static long calculateTotalBalance(io.vavr.collection.List<TrackedWallet> accounts) {
@@ -286,38 +262,6 @@ public class BitcoinUtils {
 
     public void updateCurrency(Double price) {
         currentPrice = price;
-    }
-
-    private void addAddressesFromPrefs() {
-
-        String savedString = preferences.getAccountsString();
-
-        if (savedString != null && savedString.length() != 0) {
-            String[] items = new String[1];
-
-            if (savedString.contains(","))
-                items = savedString.split(",");
-            else
-                items[0] = savedString;
-
-            Collections.addAll(addresses, items);
-        }
-    }
-
-    private void makeAccounts() {
-        if (accountList.size() != 0)
-            return;
-
-        BitcoinAccount acc;
-        for (String address : addresses) {
-            acc = new BitcoinAccount();
-            acc.setAddress(address);
-            accountList.add(acc);
-        }
-    }
-
-    private void saveAddressesToPrefs() {
-        preferences.saveAddresses(addresses);
     }
 
     public String getBalanceOfAccount(String selectedAccountAddress) {

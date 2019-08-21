@@ -2,8 +2,6 @@ package io.github.jangerhard.BitcoinWalletTracker.adapter;
 
 import java.util.HashSet;
 import java.util.Locale;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -13,13 +11,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 import androidx.appcompat.widget.PopupMenu;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.ramotion.foldingcell.FoldingCell;
-import com.yarolegovich.lovelydialog.LovelyStandardDialog;
-import com.yarolegovich.lovelydialog.LovelyTextInputDialog;
 import io.github.jangerhard.BitcoinWalletTracker.DialogMaker;
 import io.github.jangerhard.BitcoinWalletTracker.R;
 import io.github.jangerhard.BitcoinWalletTracker.utilities.BitcoinUtils;
@@ -31,8 +26,6 @@ public class AccountAdapter extends RecyclerView.Adapter<AccountAdapter.MyViewHo
 
     private Context mContext;
     private int selectedAccountPosition;
-    private String selectedAccountAddress;
-    private String selectedAccountNickname;
     private BitcoinUtils utils;
     private DialogMaker dialogMaker;
 
@@ -133,12 +126,9 @@ public class AccountAdapter extends RecyclerView.Adapter<AccountAdapter.MyViewHo
                 .peek(account -> {
 
                     holder.accBalance.setText(
-                            BitcoinUtils.formatBitcoinBalanceToString(
-                                    account.getFinal_balance())
-                    );
+                            BitcoinUtils.formatBitcoinBalanceToString(account.getFinal_balance()));
                     holder.accRate.setText(
                             utils.formatBTCtoCurrency(account.getFinal_balance()));
-
 
                     // unfolded
                     holder.tvAccNumTxs.setText(
@@ -165,8 +155,6 @@ public class AccountAdapter extends RecyclerView.Adapter<AccountAdapter.MyViewHo
      */
     private void showPopupMenu(View view) {
         // inflate menu
-        selectedAccountAddress = utils.getAccounts().get(selectedAccountPosition).getAddress();
-        selectedAccountNickname = utils.getNickname(selectedAccountAddress);
         PopupMenu popup = new PopupMenu(mContext, view);
         MenuInflater inflater = popup.getMenuInflater();
         inflater.inflate(R.menu.menu_account, popup.getMenu());
@@ -179,17 +167,16 @@ public class AccountAdapter extends RecyclerView.Adapter<AccountAdapter.MyViewHo
      */
     class MyMenuItemClickListener implements PopupMenu.OnMenuItemClickListener {
 
-        MyMenuItemClickListener() {
-        }
+        MyMenuItemClickListener() {}
 
         @Override
         public boolean onMenuItemClick(MenuItem menuItem) {
             switch (menuItem.getItemId()) {
                 case R.id.action_change_nickname:
-                    changeNicknameOnSelected();
+                    dialogMaker.changeNicknameOnSelected(selectedAccountPosition);
                     return true;
                 case R.id.action_remove_account:
-                    showRemoveConfirmDialog();
+                    dialogMaker.showRemoveConfirmDialog(selectedAccountPosition);
                     return true;
                 default:
             }
@@ -197,52 +184,13 @@ public class AccountAdapter extends RecyclerView.Adapter<AccountAdapter.MyViewHo
         }
     }
 
-    private void removeSelectedAccount() {
-        Toast.makeText(mContext,
-                "Removed account " + utils.getNickname(selectedAccountAddress),
-                Toast.LENGTH_SHORT).show();
-        utils.removeAccount(selectedAccountAddress);
-        notifyItemRemoved(selectedAccountPosition);
-    }
-
-    private void changeNicknameOnSelected() {
-
-        new LovelyTextInputDialog(mContext)
-                .setTopColorRes(R.color.dialog_edit)
-                .setTitle(R.string.edit_nickname)
-                .setIcon(R.drawable.ic_mode_edit_white_48dp)
-                .setHint(R.string.savings)
-                .setInitialInput(utils.getNickname(utils.getAddresses().get(selectedAccountPosition)))
-                .setInputFilter(R.string.text_input_error_message, text -> {
-                    if (text.length() > 30)
-                        return false;
-                    Pattern p = Pattern.compile("\\w+");
-                    Matcher m = p.matcher(text);
-                    return m.find();
-                })
-                .setConfirmButton(android.R.string.ok, text -> {
-                    utils.setNewNickname(selectedAccountAddress, text);
-                    notifyItemChanged(selectedAccountPosition);
-                })
-                .show();
-    }
-
-    private void showRemoveConfirmDialog() {
-
-        new LovelyStandardDialog(mContext)
-                .setTopColorRes(R.color.dialog_warning)
-                .setIcon(R.drawable.ic_delete_forever_white_48dp)
-                .setTitle(mContext.getString(R.string.stop_tracking) + " " + selectedAccountNickname + "?")
-                .setMessage(mContext.getString(R.string.it_has_a_balance_of) + " " +
-                        utils.getBalanceOfAccount(selectedAccountAddress))
-                .setPositiveButton(android.R.string.yes, v -> removeSelectedAccount())
-                .setNegativeButton(android.R.string.cancel, null)
-                .show();
+    public void handleRemoveSelectedAccount(int position) {
+        notifyItemRemoved(position);
     }
 
     @Override
     public int getItemCount() {
-        return utils.getNumberOfAccounts();
+        return utils.getTrackedWallets().length();
     }
 
     // simple methods for register cell state changes

@@ -37,6 +37,70 @@ public class BitcoinUtilsTest {
     }
 
     @Test
+    public void when_updating_tracked_wallet_with_updated_info_given_no_previous_info_return_new_wallet() {
+        String someAddress = "someAddress";
+        TrackedWallet wallet = new TrackedWallet(someAddress);
+        BitcoinAccount account = new BitcoinAccount();
+        account.setAddress(someAddress);
+        account.setFinal_balance(2000);
+        account.setN_tx(2);
+
+        assertFalse(wallet.getAssosiatedAccount().isDefined());
+
+        wallet = bitcoinUtils.updateAssociatedAccount(wallet, account);
+
+        assertTrue(wallet.getAssosiatedAccount().isDefined());
+        assertEquals(2000, wallet.getCurrentBalance().get().longValue());
+        assertEquals(2, wallet.getNumberOfTransactions().get().longValue());
+    }
+
+    @Test
+    public void when_updating_tracked_wallet_with_updated_info__given_old_info_return_new_wallet() {
+        String someAddress = "someAddress";
+        TrackedWallet wallet = new TrackedWallet(someAddress);
+        wallet.setAssosiatedAccount(
+                createBitcoinAccount(someAddress, 2000, 2));
+
+        assertTrue(wallet.getAssosiatedAccount().isDefined());
+        assertEquals(2000, wallet.getCurrentBalance().get().longValue());
+        assertEquals(2, wallet.getNumberOfTransactions().get().longValue());
+
+        wallet = bitcoinUtils.updateAssociatedAccount(wallet,
+                createBitcoinAccount(someAddress, 3000, 3));
+
+        assertTrue(wallet.getAssosiatedAccount().isDefined());
+        assertEquals(3000, wallet.getCurrentBalance().get().longValue());
+        assertEquals(3, wallet.getNumberOfTransactions().get().longValue());
+    }
+
+    @Test
+    public void when_updating_tracked_wallet_with_outdated_info_return_same_wallet() {
+        String someAddress = "someAddress";
+        TrackedWallet wallet = new TrackedWallet(someAddress);
+        wallet.setAssosiatedAccount(
+                createBitcoinAccount(someAddress, 2000, 2));
+
+        assertTrue(wallet.getAssosiatedAccount().isDefined());
+        assertEquals(2000, wallet.getCurrentBalance().get().longValue());
+        assertEquals(2, wallet.getNumberOfTransactions().get().longValue());
+
+        wallet = bitcoinUtils.updateAssociatedAccount(wallet,
+                createBitcoinAccount(someAddress, 0, 0));
+
+        assertTrue(wallet.getAssosiatedAccount().isDefined());
+        assertEquals(2000, wallet.getCurrentBalance().get().longValue());
+        assertEquals(2, wallet.getNumberOfTransactions().get().longValue());
+    }
+
+    private BitcoinAccount createBitcoinAccount(String address, long balance, long transactions) {
+        BitcoinAccount account = new BitcoinAccount();
+        account.setAddress(address);
+        account.setFinal_balance(balance);
+        account.setN_tx(transactions);
+        return account;
+    }
+
+    @Test
     public void testFormatingBalanceToString() {
 
         String bal = BitcoinUtils.formatBitcoinBalanceToString(2195820L);

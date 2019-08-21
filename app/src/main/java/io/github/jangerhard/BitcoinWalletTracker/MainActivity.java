@@ -33,6 +33,7 @@ import io.github.jangerhard.BitcoinWalletTracker.utilities.BitcoinAccount;
 import io.github.jangerhard.BitcoinWalletTracker.utilities.BitcoinUtils;
 import io.github.jangerhard.BitcoinWalletTracker.utilities.SharedPreferencesHelper;
 import io.github.jangerhard.BitcoinWalletTracker.utilities.TrackedWallet;
+import io.vavr.control.Option;
 import jp.wasabeef.recyclerview.animators.LandingAnimator;
 import mehdi.sakout.aboutpage.AboutPage;
 import mehdi.sakout.aboutpage.Element;
@@ -51,7 +52,7 @@ public class MainActivity extends AppCompatActivity {
     private CardView cv_no_accounts;
     private RecyclerView recyclerView;
     private EasyFlipView mFlipView;
-    private Boolean selectedDarkTheme, showGainPercentage, noAccounts;
+    private Boolean selectedDarkTheme, showGainPercentage;
 
     private SharedPreferencesHelper preferences;
 
@@ -79,10 +80,10 @@ public class MainActivity extends AppCompatActivity {
         utils = new BitcoinUtils(preferences);
 
         RequestQueue queue = Volley.newRequestQueue(this);
-        priceFetcher = new PriceFetcher(queue, this, utils);
+        priceFetcher = new PriceFetcher(queue, this);
         blockExplorer = new BlockExplorer(queue, this);
 
-        dialogMaker = new DialogMaker(this, blockExplorer, utils);
+        dialogMaker = new DialogMaker(this, utils);
 
         cv_no_accounts = findViewById(R.id.no_accounts_view);
         Button bNoAccAdd = findViewById(R.id.bNoAccountsAdd);
@@ -205,12 +206,14 @@ public class MainActivity extends AppCompatActivity {
 
     public void updateUI() {
 
-        if (noAccounts)
+        if (utils.getTrackedWallets().isEmpty())
             cv_no_accounts.setVisibility(View.VISIBLE);
         else
             cv_no_accounts.setVisibility(View.GONE);
 
-        allAccountsView.setRefreshing(false);
+        if (numRefreshed == utils.getTrackedWallets().length())
+            allAccountsView.setRefreshing(false);
+
         tvExchangeRate.setText(utils.getExchangeRate());
         tvTotalBalance.setText(utils.getTotalBalance());
         tvTotalValue.setText(utils.getTotalValue());
@@ -238,20 +241,22 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void refreshData() {
-
-        if (utils.getTrackedWallets().isEmpty()) {
-            Toast.makeText(getBaseContext(), R.string.no_accounts_initial, Toast.LENGTH_SHORT).show();
-            noAccounts = true;
-            updateUI();
-            return;
-        }
-        noAccounts = false;
         numRefreshed = 0;
-        priceFetcher.getCurrentPrice();
+        priceFetcher.getCurrentPrice(utils.getCurrencyPair());
     }
 
-    public void getAllWalletsInfo(io.vavr.collection.List<TrackedWallet> addresses) {
-        addresses.map(TrackedWallet::getAddress)
+    public void handleUpdatedPrice(Option<Double> maybePrice) {
+        maybePrice
+                .peek(newPrice -> {
+                    utils.updateCurrency(newPrice);
+                    updateAllTrackedWallets();
+                });
+
+        updateUI();
+    }
+
+    public void updateAllTrackedWallets() {
+        utils.getTrackedWallets().map(TrackedWallet::getAddress)
                 .forEach(address -> blockExplorer.getSingleWalletInfo(address));
     }
 
@@ -264,6 +269,7 @@ public class MainActivity extends AppCompatActivity {
             adapter.notifyItemInserted(adapter.getItemCount() - 1);
         else adapter.notifyItemInserted(0);
 
+        blockExplorer.getSingleWalletInfo(newAcc);
         refreshData();
     }
 
@@ -274,8 +280,20 @@ public class MainActivity extends AppCompatActivity {
                     adapter.notifyItemChanged(it);
                 });
 
-        if (numRefreshed == utils.getNumberOfAccounts())
-            updateUI();
+        updateUI();
+    }
+
+    public void handleUpdatedNickname(String address, String newNickname, int position) {
+        utils.setNewNickname(address, newNickname);
+        adapter.notifyItemChanged(position);
+    }
+
+    public void handleRemoveSelectedAccount(TrackedWallet trackedWallet, int position) {
+        Toast.makeText(this,
+                "Removed account " + utils.getNickname(trackedWallet.getAddress()),
+                Toast.LENGTH_SHORT).show();
+        utils.removeTrackedAccount(trackedWallet);
+        adapter.handleRemoveSelectedAccount(position);
     }
 
     private void addBarcode(String address) {
@@ -287,7 +305,7 @@ public class MainActivity extends AppCompatActivity {
 
         Log.i(LOG_TAG, "Address: " + address);
 
-        if (utils.hasAddress(address)) {
+        if (utils.alreadyTrackingWallet(address)) {
             Toast.makeText(getBaseContext(), R.string.account_already_added, Toast.LENGTH_SHORT).show();
         } else if (BitcoinUtils.verifyAddress(address)) {
             dialogMaker.showBitcoinAddressDialog(address);

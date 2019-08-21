@@ -11,9 +11,9 @@ import com.android.volley.ServerError;
 import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
-import io.github.jangerhard.BitcoinWalletTracker.utilities.BitcoinUtils;
 import io.github.jangerhard.BitcoinWalletTracker.MainActivity;
 import io.github.jangerhard.BitcoinWalletTracker.R;
+import io.vavr.control.Option;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -23,20 +23,18 @@ public class PriceFetcher {
     private String url_exchange = "https://api.coinbase.com/v2/prices/";
     private RequestQueue requestQueue;
     private MainActivity activity;
-    private BitcoinUtils utils;
 
-    public PriceFetcher(RequestQueue requestQueue, MainActivity activity, BitcoinUtils utils) {
+    public PriceFetcher(RequestQueue requestQueue, MainActivity activity) {
         this.requestQueue = requestQueue;
         this.activity = activity;
-        this.utils = utils;
     }
 
-    public void getCurrentPrice() {
+    public void getCurrentPrice(String currencyPair) {
 
         // Request a response from the provided URL.
         JsonObjectRequest jsObjRequest = new JsonObjectRequest
                 (Request.Method.GET,
-                        url_exchange + "BTC-" + utils.getCurrencyPair() + "/spot",
+                        url_exchange + "BTC-" + currencyPair + "/spot",
                         null,
                         this::handleRefreshedCurrency,
                         this::handleErrors);
@@ -59,7 +57,7 @@ public class PriceFetcher {
 
         Log.e(LOG_TAG, message);
         Toast.makeText(activity, message, Toast.LENGTH_SHORT).show();
-        activity.updateUI();
+        activity.handleUpdatedPrice(Option.none());
     }
 
     private void handleRefreshedCurrency(JSONObject response) {
@@ -76,7 +74,6 @@ public class PriceFetcher {
 
         Log.i(LOG_TAG, "Got price in pricefetcher: " + price);
         //Toast.makeText(mActivity, "Got price: " + price, Toast.LENGTH_SHORT).show();
-        utils.updateCurrency(price);
-        activity.getAllWalletsInfo(utils.getTrackedWallets());
+        activity.handleUpdatedPrice(Option.some(price));
     }
 }
