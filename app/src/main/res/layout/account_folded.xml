@@ -8,6 +8,19 @@
                                     android:layout_gravity="center"
                                     android:padding="16dp">
 
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:src="@color/text_dark_secondary"
+        android:alpha="0.1"/>
+
+    <ImageView
+        android:layout_width="2dp"
+        android:layout_height="match_parent"
+        android:layout_gravity="end"
+        android:src="@color/text_dark_secondary"
+        android:alpha="0.1"/>
+
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
@@ -54,8 +67,9 @@
             android:layout_alignBottom="@+id/tvAccountBalanceFolded"
             android:layout_alignParentEnd="true"
             android:contentDescription="@string/current_converted_price"
-            android:paddingBottom="@dimen/account_name_padding"
-            android:paddingEnd="@dimen/account_name_padding"
+            android:paddingBottom="@dimen/account_price_padding"
+            android:paddingStart="@dimen/account_price_padding"
+            android:paddingEnd="@dimen/account_price_padding"
             android:text="@string/loading" />
 
         <ImageView
@@ -69,5 +83,12 @@
             android:src="?attr/ic_account_settings" />
 
     </RelativeLayout>
+
+    <ImageView
+        android:layout_gravity="center|bottom"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_expand_more_white_24dp"
+        android:alpha="0.65" />
 
 </androidx.cardview.widget.CardView>
