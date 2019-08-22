@@ -49,6 +49,8 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@id/layout_top_buttons"
                 android:layout_centerInParent="true"
+                android:paddingTop="16dp"
+                android:paddingBottom="16dp"
                 android:orientation="vertical">
 
                 <TextView
