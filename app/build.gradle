@@ -50,7 +50,7 @@ dependencies {
     implementation 'com.github.Samourai-Wallet:ExtLibJ:0.0.6'           // Samurai External Lib    
     implementation 'io.vavr:vavr:0.10.2'                                // Vavr
     implementation 'com.android.volley:volley:1.1.0'                    // Used for HTTP requests
-    implementation 'com.google.code.gson:gson:2.8.5'                    // Used to serialize JSON
+    implementation 'io.vavr:vavr-gson:0.10.0'                    // Used to serialize JSON
     implementation 'com.google.android.gms:play-services-vision:18.0.0' // Used for QR scanning
     implementation 'com.google.zxing:core:3.3.2'                        // QR generation
     implementation 'com.journeyapps:zxing-android-embedded:3.6.0'       // QR generation

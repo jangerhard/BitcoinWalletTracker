@@ -11,9 +11,12 @@ import com.android.volley.ServerError;
 import com.android.volley.TimeoutError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import io.github.jangerhard.BitcoinWalletTracker.MainActivity;
 import io.github.jangerhard.BitcoinWalletTracker.R;
 import io.github.jangerhard.BitcoinWalletTracker.model.BlockinfoResponse;
+import io.vavr.gson.VavrGson;
+import org.json.JSONObject;
 
 public class BlockExplorer {
 
@@ -24,10 +27,15 @@ public class BlockExplorer {
 
     private RequestQueue requestQueue;
     private MainActivity activity;
+    private Gson gson;
 
     public BlockExplorer(RequestQueue requestQueue, MainActivity activity) {
         this.requestQueue = requestQueue;
         this.activity = activity;
+
+        GsonBuilder builder = new GsonBuilder();
+        VavrGson.registerAll(builder);
+        gson = builder.create();
     }
 
     public void getSingleWalletInfo(String address) {
@@ -36,10 +44,8 @@ public class BlockExplorer {
         JsonObjectRequest jsObjRequest = new JsonObjectRequest
                 (Request.Method.GET,
                         url_blockchain + "rawaddr/" + address + "?limit=5",
-                        null, response -> {
-                    BlockinfoResponse accountInfo = new Gson().fromJson(response.toString(), BlockinfoResponse.class);
-                    activity.handleRefreshedAccount(accountInfo);
-                }, error -> {
+                        null, this::handleRefreshedInfo,
+                        error -> {
 
                     String message = activity.getString(R.string.error_generic);
 
@@ -63,5 +69,10 @@ public class BlockExplorer {
         // Add the request to the RequestQueue.
         requestQueue.add(jsObjRequest);
 
+    }
+
+    private void handleRefreshedInfo(JSONObject response) {
+        BlockinfoResponse accountInfo = gson.fromJson(response.toString(), BlockinfoResponse.class);
+        activity.handleRefreshedAccount(accountInfo);
     }
 }
