@@ -11,6 +11,7 @@ import java.util.Locale;
 import android.util.Log;
 import androidx.annotation.NonNull;
 import com.samourai.wallet.util.FormatsUtilGeneric;
+import io.github.jangerhard.BitcoinWalletTracker.client.BlockinfoResponse;
 import io.vavr.collection.List;
 import io.vavr.control.Option;
 import org.bitcoinj.params.MainNetParams;
@@ -74,7 +75,7 @@ public class BitcoinUtils {
         saveNicknameToPrefs(selectedAccount, newNickname);
     }
 
-    public Option<Integer> handleUpdatedAccount(BitcoinAccount refreshedAccount) {
+    public Option<Integer> handleUpdatedAccount(BlockinfoResponse refreshedAccount) {
         trackedWallets = updateTrackedWallets(refreshedAccount);
         totalBalance = calculateTotalBalance(trackedWallets);
         return Option.of(trackedWallets.indexWhere(trackedWallet ->
@@ -82,7 +83,7 @@ public class BitcoinUtils {
         );
     }
 
-    private List<TrackedWallet> updateTrackedWallets(BitcoinAccount account) {
+    private List<TrackedWallet> updateTrackedWallets(BlockinfoResponse account) {
 
         return trackedWallets.map(wallet -> {
             if (wallet.getAddress().equals(account.getAddress()))
@@ -92,7 +93,7 @@ public class BitcoinUtils {
         });
     }
 
-    TrackedWallet updateAssociatedAccount(TrackedWallet wallet, BitcoinAccount account) {
+    TrackedWallet updateAssociatedAccount(TrackedWallet wallet, BlockinfoResponse account) {
         return wallet.getNumberOfTransactions()
                 .onEmpty(() -> wallet.setAssosiatedAccount(account))
                 .map(numTransactions -> {

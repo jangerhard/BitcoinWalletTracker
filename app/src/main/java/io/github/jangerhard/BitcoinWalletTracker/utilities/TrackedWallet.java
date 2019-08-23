@@ -3,6 +3,7 @@ package io.github.jangerhard.BitcoinWalletTracker.utilities;
 import java.util.Objects;
 
 import android.graphics.Bitmap;
+import io.github.jangerhard.BitcoinWalletTracker.client.BlockinfoResponse;
 import io.vavr.control.Option;
 
 import static io.github.jangerhard.BitcoinWalletTracker.qrStuff.BitmapCreator.QR_SIZE.BIG;
@@ -15,7 +16,7 @@ public class TrackedWallet {
     private Bitmap bigQRImage;
     private Bitmap regularQRImage;
 
-    private BitcoinAccount assosiatedAccount;
+    private BlockinfoResponse assosiatedAccount;
 
     public TrackedWallet(String address) {
         this.address = address;
@@ -53,11 +54,11 @@ public class TrackedWallet {
         return regularQRImage;
     }
 
-    public void setAssosiatedAccount(BitcoinAccount assosiatedAccount) {
+    public void setAssosiatedAccount(BlockinfoResponse assosiatedAccount) {
         this.assosiatedAccount = assosiatedAccount;
     }
 
-    public Option<BitcoinAccount> getAssosiatedAccount() {return Option.of(assosiatedAccount);}
+    public Option<BlockinfoResponse> getAssosiatedAccount() {return Option.of(assosiatedAccount);}
 
     @Override
     public boolean equals(Object o) {

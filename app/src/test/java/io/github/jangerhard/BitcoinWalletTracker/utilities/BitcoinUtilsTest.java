@@ -2,6 +2,7 @@ package io.github.jangerhard.BitcoinWalletTracker.utilities;
 
 import java.util.ArrayList;
 
+import io.github.jangerhard.BitcoinWalletTracker.client.BlockinfoResponse;
 import io.vavr.collection.List;
 import io.vavr.control.Option;
 import org.junit.Before;
@@ -41,7 +42,7 @@ public class BitcoinUtilsTest {
     public void when_updating_tracked_wallet_with_updated_info_given_no_previous_info_return_new_wallet() {
         String someAddress = "someAddress";
         TrackedWallet wallet = new TrackedWallet(someAddress);
-        BitcoinAccount account = new BitcoinAccount();
+        BlockinfoResponse account = new BlockinfoResponse();
         account.setAddress(someAddress);
         account.setFinal_balance(2000);
         account.setN_tx(2);
@@ -93,8 +94,8 @@ public class BitcoinUtilsTest {
         assertEquals(2, wallet.getNumberOfTransactions().get().longValue());
     }
 
-    private BitcoinAccount createBitcoinAccount(String address, long balance, long transactions) {
-        BitcoinAccount account = new BitcoinAccount();
+    private BlockinfoResponse createBitcoinAccount(String address, long balance, long transactions) {
+        BlockinfoResponse account = new BlockinfoResponse();
         account.setAddress(address);
         account.setFinal_balance(balance);
         account.setN_tx(transactions);
@@ -134,7 +135,7 @@ public class BitcoinUtilsTest {
 
         long a = 12345678;
         TrackedWallet wallet = new TrackedWallet("Someaddress");
-        BitcoinAccount acc = new BitcoinAccount();
+        BlockinfoResponse acc = new BlockinfoResponse();
         acc.setFinal_balance(a);
         wallet.setAssosiatedAccount(acc);
         List<TrackedWallet> accounts = List.of(

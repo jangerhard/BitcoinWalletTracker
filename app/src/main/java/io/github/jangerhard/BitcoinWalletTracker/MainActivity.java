@@ -29,7 +29,7 @@ import io.github.jangerhard.BitcoinWalletTracker.adapter.AccountAdapter;
 import io.github.jangerhard.BitcoinWalletTracker.client.BlockExplorer;
 import io.github.jangerhard.BitcoinWalletTracker.client.PriceFetcher;
 import io.github.jangerhard.BitcoinWalletTracker.qrStuff.barcode.BarcodeCaptureActivity;
-import io.github.jangerhard.BitcoinWalletTracker.utilities.BitcoinAccount;
+import io.github.jangerhard.BitcoinWalletTracker.client.BlockinfoResponse;
 import io.github.jangerhard.BitcoinWalletTracker.utilities.BitcoinUtils;
 import io.github.jangerhard.BitcoinWalletTracker.utilities.SharedPreferencesHelper;
 import io.github.jangerhard.BitcoinWalletTracker.utilities.TrackedWallet;
@@ -301,7 +301,7 @@ public class MainActivity extends AppCompatActivity {
         refreshData();
     }
 
-    public void handleRefreshedAccount(BitcoinAccount acc) {
+    public void handleRefreshedAccount(BlockinfoResponse acc) {
         utils.handleUpdatedAccount(acc)
                 .peek(it -> {
                     numRefreshed++;

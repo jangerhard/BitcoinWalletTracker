@@ -13,12 +13,14 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.google.gson.Gson;
 import io.github.jangerhard.BitcoinWalletTracker.MainActivity;
 import io.github.jangerhard.BitcoinWalletTracker.R;
-import io.github.jangerhard.BitcoinWalletTracker.utilities.BitcoinAccount;
 
 public class BlockExplorer {
 
     private String LOG_TAG = "BlockExplorer";
+
     private String url_blockchain = "https://blockchain.info/";
+    private String url_blockonomics = "https://www.blockonomics.co/api/balance";
+
     private RequestQueue requestQueue;
     private MainActivity activity;
 
@@ -34,7 +36,7 @@ public class BlockExplorer {
                 (Request.Method.GET,
                         url_blockchain + "rawaddr/" + address + "?limit=5",
                         null, response -> {
-                    BitcoinAccount accountInfo = new Gson().fromJson(response.toString(), BitcoinAccount.class);
+                    BlockinfoResponse accountInfo = new Gson().fromJson(response.toString(), BlockinfoResponse.class);
                     activity.handleRefreshedAccount(accountInfo);
                 }, error -> {
 

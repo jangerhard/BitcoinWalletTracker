@@ -1,8 +1,10 @@
-package io.github.jangerhard.BitcoinWalletTracker.utilities;
+package io.github.jangerhard.BitcoinWalletTracker.client;
 
 import java.util.ArrayList;
 
-public class BitcoinAccount {
+import io.github.jangerhard.BitcoinWalletTracker.utilities.Transaction;
+
+public class BlockinfoResponse {
 
     private String address;
     private long n_tx;
@@ -56,7 +58,7 @@ public class BitcoinAccount {
         if (this == obj) return true;
         if (obj == null || getClass() != obj.getClass()) return false;
 
-        BitcoinAccount acc = (BitcoinAccount) obj;
+        BlockinfoResponse acc = (BlockinfoResponse) obj;
 
         return (address.equals(acc.getAddress()) &&
                 n_tx == acc.n_tx &&
