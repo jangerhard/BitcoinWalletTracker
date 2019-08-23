@@ -10,10 +10,9 @@ import java.util.Locale;
 
 import android.util.Log;
 import androidx.annotation.NonNull;
+import com.samourai.wallet.util.FormatsUtilGeneric;
 import io.vavr.collection.List;
 import io.vavr.control.Option;
-import org.bitcoinj.core.Address;
-import org.bitcoinj.core.AddressFormatException;
 import org.bitcoinj.params.MainNetParams;
 
 public class BitcoinUtils {
@@ -235,21 +234,11 @@ public class BitcoinUtils {
 
         if (qrString == null) return Option.none();
 
-        try {
-            switch (Address.fromString(MainNetParams.get(), qrString).getOutputScriptType()) {
-                case P2PKH:
-                    return Option.some(ACCOUNT_TYPE.BITCOIN);
-                // case P2PK:
-                //    break;
-                // case P2SH:
-                //    break;
-                case P2WPKH:
-                    return Option.some(ACCOUNT_TYPE.SEGWIT);
-                // case P2WSH:
-                //    break;
-            }
-        } catch (AddressFormatException ignored) {
-        }
+        if (FormatsUtilGeneric.getInstance().isValidBitcoinAddress(qrString, MainNetParams.get()))
+            return Option.some(ACCOUNT_TYPE.BITCOIN);
+
+        if (FormatsUtilGeneric.getInstance().isValidXpub(qrString))
+            return Option.some(ACCOUNT_TYPE.SEGWIT);
 
         return Option.none();
     }

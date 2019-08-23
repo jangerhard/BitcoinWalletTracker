@@ -6,8 +6,6 @@ import io.vavr.collection.List;
 import io.vavr.control.Option;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 import org.mockito.Mockito;
 
 import static org.junit.Assert.assertEquals;
@@ -15,7 +13,6 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.when;
 
-@RunWith(JUnit4.class)
 public class BitcoinUtilsTest {
 
     private SharedPreferencesHelper preferences = Mockito.mock(SharedPreferencesHelper.class);
@@ -158,7 +155,8 @@ public class BitcoinUtilsTest {
     public void given_correct_bitcoin_address_return_BITCOIN_address() {
 
         // Real address, should return true
-        Option<BitcoinUtils.ACCOUNT_TYPE> maybeVerified = BitcoinUtils.verifyAddress("1LVuX2MLwerH6sFb25HnyCFS8Zcuxc2u1s");
+        Option<BitcoinUtils.ACCOUNT_TYPE> maybeVerified =
+                BitcoinUtils.verifyAddress("1LVuX2MLwerH6sFb25HnyCFS8Zcuxc2u1s");
         assertTrue(maybeVerified.isDefined());
         assertEquals(BitcoinUtils.ACCOUNT_TYPE.BITCOIN, maybeVerified.get());
 
@@ -169,9 +167,19 @@ public class BitcoinUtilsTest {
     }
 
     @Test
-    public void given_correct_segwit_address_return_SEGWIT_address() {
+    public void given_correct_segwit_address_using_xpub_return_SEGWIT_address() {
         // Real address, should return true
-        Option<BitcoinUtils.ACCOUNT_TYPE> maybeVerified = BitcoinUtils.verifyAddress("bc1qw508d6qejxtdg4y5r3zarvary0c5xw7kv8f3t4");
+        Option<BitcoinUtils.ACCOUNT_TYPE> maybeVerified =
+                BitcoinUtils.verifyAddress("xpub68KFnj3bqUx1s7mHejLDBPywCAKdJEu1b49uniEEn2WSbHmZ7xbLqFTjJbtx1LUcAt1DwhoqWHmo2s5WMJp6wi38CiF2hYD49qVViKVvAoi");
+        assertTrue(maybeVerified.isDefined());
+        assertEquals(BitcoinUtils.ACCOUNT_TYPE.SEGWIT, maybeVerified.get());
+    }
+
+    @Test
+    public void given_correct_segwit_address_using_ypub_return_SEGWIT_address() {
+        // Real address, should return true
+        Option<BitcoinUtils.ACCOUNT_TYPE> maybeVerified =
+                BitcoinUtils.verifyAddress("ypub6QqdH2c5z79681jUgdxjGJzGW9zpL4ryPCuhtZE4GpvrJoZqM823XQN6iSQeVbbbp2uCRQ9UgpeMcwiyV6qjvxTWVcxDn2XEAnioMUwsrQ5");
         assertTrue(maybeVerified.isDefined());
         assertEquals(BitcoinUtils.ACCOUNT_TYPE.SEGWIT, maybeVerified.get());
     }
