@@ -1,25 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
-                                    android:id="@+id/card_view"
-                                    style="@style/customCard"
-                                    android:layout_width="match_parent"
-                                    android:layout_height="wrap_content"
-                                    android:layout_gravity="center"
-                                    android:padding="16dp">
+    android:id="@+id/card_view"
+    style="@style/customCard"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center"
+    android:padding="16dp">
 
     <ImageView
         android:layout_width="match_parent"
         android:layout_height="2dp"
-        android:src="@color/text_dark_secondary"
-        android:alpha="0.1"/>
+        android:alpha="0.1"
+        android:src="@color/text_dark_secondary" />
 
     <ImageView
         android:layout_width="2dp"
         android:layout_height="match_parent"
         android:layout_gravity="end"
-        android:src="@color/text_dark_secondary"
-        android:alpha="0.1"/>
+        android:alpha="0.1"
+        android:src="@color/text_dark_secondary" />
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center|bottom"
+        android:alpha="0.65"
+        android:src="@drawable/ic_expand_more_white_24dp" />
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -29,48 +36,13 @@
             android:id="@+id/im_thumbnailFolded"
             android:layout_width="32dp"
             android:layout_height="32dp"
+            android:layout_centerVertical="true"
             android:layout_margin="16dp"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:clickable="true"
             android:contentDescription="@string/qr_code_associated_with_account"
             android:focusable="true"
-            android:layout_centerVertical="true"
-            android:scaleType="fitXY"
             android:src="@drawable/bitcoin_128" />
-
-        <TextView
-            android:id="@+id/tvAccountNameFolded"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_toEndOf="@+id/im_thumbnailFolded"
-            android:contentDescription="@string/account_nickname"
-            android:paddingTop="8dp"
-            android:text="@string/loading"
-            android:textSize="@dimen/album_title" />
-
-        <TextView
-            android:id="@+id/tvAccountBalanceFolded"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_toEndOf="@+id/im_thumbnailFolded"
-            android:layout_below="@id/tvAccountNameFolded"
-            android:contentDescription="@string/balance_in_btc"
-            android:paddingTop="8dp"
-            android:paddingBottom="8dp"
-            android:text="@string/loading" />
-
-        <TextView
-            android:id="@+id/tvAccountRateFolded"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignBaseline="@+id/tvAccountBalanceFolded"
-            android:layout_alignBottom="@+id/tvAccountBalanceFolded"
-            android:layout_alignParentEnd="true"
-            android:contentDescription="@string/current_converted_price"
-            android:paddingBottom="@dimen/account_price_padding"
-            android:paddingStart="@dimen/account_price_padding"
-            android:paddingEnd="@dimen/account_price_padding"
-            android:text="@string/loading" />
 
         <ImageView
             android:id="@+id/im_OverflowFolded"
@@ -82,13 +54,50 @@
             android:scaleType="centerCrop"
             android:src="?attr/ic_account_settings" />
 
-    </RelativeLayout>
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_toEndOf="@id/im_thumbnailFolded">
 
-    <ImageView
-        android:layout_gravity="center|bottom"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/ic_expand_more_white_24dp"
-        android:alpha="0.65" />
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/layout_name_and_balance"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/tvAccountNameFolded"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:contentDescription="@string/account_nickname"
+                    android:text="@string/temp_account_nickname"
+                    android:textColor="@color/text_dark_primary" />
+
+                <TextView
+                    android:id="@+id/tvAccountBalanceFolded"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:contentDescription="@string/balance_in_btc"
+                    android:text="@string/temp_balance_in_btc" />
+
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/tvAccountRateFolded"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_alignBottom="@id/layout_name_and_balance"
+                android:contentDescription="@string/current_converted_price"
+                android:layout_marginEnd="@dimen/ic_album_overflow_margin_end"
+                android:text="@string/loading" />
+
+
+        </RelativeLayout>
+
+    </RelativeLayout>
 
 </androidx.cardview.widget.CardView>

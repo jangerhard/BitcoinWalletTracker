@@ -22,35 +22,42 @@
     <string name="low_storage_error">Face detector dependencies cannot be downloaded due to low device storage</string>
 
     <!-- Strings related to XMLs -->
+
+    <!-- Accounts -->
     <string name="balance">Balance</string>
     <string name="no_activity_on_this_address">No activity on this address.</string>
     <string name="latest_transactions">Latest transactions</string>
     <string name="current_converted_price">Current converted price</string>
     <string name="loading">..loading..</string>
     <string name="balance_in_btc">Balance in BTC</string>
+    <string name="temp_balance_in_btc">16.1578 BTC</string>
     <string name="account_nickname">Account nickname</string>
-    <string name="qr_code_associated_with_account">QR Code associated with account</string>
-    <string name="qr_code_of_given_address">QR code of given address</string>
-    <string name="edit_nickname">Edit nickname</string>
-    <string name="text_input_error_message">The nickname cannot be empty or over 30 characters!</string>
-    <string name="savings">Savings</string>
-    <string name="stop_tracking">Stop tracking</string>
-    <string name="it_has_a_balance_of">It has a balance of </string>
-    <string name="share">Share</string>
-    <string name="change_investment">Change total investment</string>
-    <string name="total_amount_invested">Total amount invested</string>
+    <string name="temp_account_nickname">Wallet</string>
     <string name="error_investment_input">You have to enter a number!</string>
     <string name="change_currency_dialog_title">Change currency</string>
-    <string name="toast_message_changing_theme">Changing theme</string>
-    <string name="toast_message_show_gain_percentage">Showing gain in percentage</string>
-    <string name="toast_message_show_gain">Showing gain in fiat</string>
     <string name="no_accounts_view_info">No accounts added yet! Click the button below or the add-button in the overview.</string>
     <string name="add_new_account">Add new account</string>
-    <string name="donationAddress">1MArRnVPrMf6FR4FqtEThAa8piUbgfYDQ3</string>
     <string name="account_number_transactions">No. Transactions</string>
     <string name="account_total_received">Total Received</string>
     <string name="account_final_balance">Final Balance</string>
-
     <string name="account_error_balance">Unknown</string>
+
+    <!-- QR-stuff -->
+    <string name="qr_code_associated_with_account">QR Code associated with account</string>
+    <string name="qr_code_of_given_address">QR code of given address</string>
+
+    <!-- Activities -->
+    <string name="donationAddress">1MArRnVPrMf6FR4FqtEThAa8piUbgfYDQ3</string>
+    <string name="toast_message_show_gain">Showing gain in fiat</string>
+    <string name="toast_message_changing_theme">Changing theme</string>
+    <string name="toast_message_show_gain_percentage">Showing gain in percentage</string>
+    <string name="total_amount_invested">Total amount invested</string>
+    <string name="change_investment">Change total investment</string>
+    <string name="it_has_a_balance_of">It has a balance of </string>
+    <string name="stop_tracking">Stop tracking</string>
+    <string name="edit_nickname">Edit nickname</string>
+    <string name="text_input_error_message">The nickname cannot be empty or over 30 characters!</string>
+    <string name="savings">Savings</string>
+    <string name="share">Share</string>
 
 </resources>
