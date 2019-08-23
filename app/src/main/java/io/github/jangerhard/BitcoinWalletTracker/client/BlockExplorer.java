@@ -9,6 +9,7 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.ServerError;
 import com.android.volley.TimeoutError;
+import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -44,31 +45,33 @@ public class BlockExplorer {
         JsonObjectRequest jsObjRequest = new JsonObjectRequest
                 (Request.Method.GET,
                         url_blockchain + "rawaddr/" + address + "?limit=5",
-                        null, this::handleRefreshedInfo,
-                        error -> {
-
-                    String message = activity.getString(R.string.error_generic);
-
-                    if (error instanceof TimeoutError || error instanceof NoConnectionError) {
-                        message = activity.getString(R.string.error_no_internet);
-                    } else if (error instanceof ServerError) {
-                        message = activity.getString(R.string.error_server);
-                    } else if (error instanceof NetworkError) {
-                        message = activity.getString(R.string.Error_network);
-                    } else if (error instanceof ParseError) {
-                        message = activity.getString(R.string.error_parsing);
-                    }
-
-                    Log.e(LOG_TAG, message);
-                    Toast.makeText(activity,
-                            message,
-                            Toast.LENGTH_SHORT).show();
-                    activity.updateUI();
-                });
+                        null,
+                        this::handleRefreshedInfo,
+                        this::handleErrors);
 
         // Add the request to the RequestQueue.
         requestQueue.add(jsObjRequest);
 
+    }
+
+    private void handleErrors(VolleyError error) {
+        String message = activity.getString(R.string.error_generic);
+
+        if (error instanceof TimeoutError || error instanceof NoConnectionError) {
+            message = activity.getString(R.string.error_no_internet);
+        } else if (error instanceof ServerError) {
+            message = activity.getString(R.string.error_server);
+        } else if (error instanceof NetworkError) {
+            message = activity.getString(R.string.Error_network);
+        } else if (error instanceof ParseError) {
+            message = activity.getString(R.string.error_parsing);
+        }
+
+        Log.e(LOG_TAG, message);
+        Toast.makeText(activity,
+                message,
+                Toast.LENGTH_SHORT).show();
+        activity.updateUI();
     }
 
     private void handleRefreshedInfo(JSONObject response) {

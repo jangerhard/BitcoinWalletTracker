@@ -233,7 +233,7 @@ public class BitcoinUtilsTest {
 //    }
 
     @Test
-    public void testGetTransactionValue() {
+    public void correctly_map_to_negative_values() {
 
         String testAddress = "testAddr";
 
@@ -243,25 +243,28 @@ public class BitcoinUtilsTest {
         prevOut.setAddr("testAddr");
         prevOut.setValue(12345);
         i.setPrev_out(prevOut);
-        ArrayList<TransactionInput> tOList = new ArrayList<>();
-        tOList.add(i);
+        List<TransactionInput> tOList = List.of(i);
         t.setInputs(tOList);
 
         assertEquals(-12345, BitcoinUtils.getTransactionValue(t, testAddress));
+    }
 
-        t = new Transaction();
+    @Test
+    public void correctly_map_to_positive_values() {
+
+        String testAddress = "testAddr";
+
+        Transaction t = new Transaction();
+        TransactionInput i = new TransactionInput();
         TransactionOut o = new TransactionOut();
+        TransactionPrevOut prevOut = new TransactionPrevOut();
         o.setAddr(testAddress);
         o.setValue(12345);
-        ArrayList<TransactionOut> tL = new ArrayList<>();
-        tL.add(o);
+        List<TransactionOut> tL = List.of(o);
         t.setOut(tL);
-        i = new TransactionInput();
-        prevOut = new TransactionPrevOut();
         prevOut.setAddr("wrongAddr");
         i.setPrev_out(prevOut);
-        tOList.clear();
-        tOList.add(i);
+        List<TransactionInput> tOList = List.of(i);
         t.setInputs(tOList);
         assertEquals(12345, BitcoinUtils.getTransactionValue(t, testAddress));
     }
