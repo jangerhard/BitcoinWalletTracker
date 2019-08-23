@@ -29,7 +29,7 @@ import io.github.jangerhard.BitcoinWalletTracker.adapter.AccountAdapter;
 import io.github.jangerhard.BitcoinWalletTracker.client.BlockExplorer;
 import io.github.jangerhard.BitcoinWalletTracker.client.PriceFetcher;
 import io.github.jangerhard.BitcoinWalletTracker.qrStuff.barcode.BarcodeCaptureActivity;
-import io.github.jangerhard.BitcoinWalletTracker.client.BlockinfoResponse;
+import io.github.jangerhard.BitcoinWalletTracker.model.BlockinfoResponse;
 import io.github.jangerhard.BitcoinWalletTracker.utilities.BitcoinUtils;
 import io.github.jangerhard.BitcoinWalletTracker.utilities.SharedPreferencesHelper;
 import io.github.jangerhard.BitcoinWalletTracker.utilities.TrackedWallet;

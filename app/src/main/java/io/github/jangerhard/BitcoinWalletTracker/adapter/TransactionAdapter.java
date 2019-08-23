@@ -11,7 +11,7 @@ import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 import io.github.jangerhard.BitcoinWalletTracker.R;
 import io.github.jangerhard.BitcoinWalletTracker.utilities.BitcoinUtils;
-import io.github.jangerhard.BitcoinWalletTracker.utilities.Transaction;
+import io.github.jangerhard.BitcoinWalletTracker.model.Transaction;
 
 public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.MyViewHolder> {
 

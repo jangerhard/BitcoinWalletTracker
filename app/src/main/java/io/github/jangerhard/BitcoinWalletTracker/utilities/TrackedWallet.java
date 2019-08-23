@@ -3,7 +3,7 @@ package io.github.jangerhard.BitcoinWalletTracker.utilities;
 import java.util.Objects;
 
 import android.graphics.Bitmap;
-import io.github.jangerhard.BitcoinWalletTracker.client.BlockinfoResponse;
+import io.github.jangerhard.BitcoinWalletTracker.model.BlockinfoResponse;
 import io.vavr.control.Option;
 
 import static io.github.jangerhard.BitcoinWalletTracker.qrStuff.BitmapCreator.QR_SIZE.BIG;

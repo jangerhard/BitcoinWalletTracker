@@ -142,7 +142,7 @@ public class AccountAdapter extends RecyclerView.Adapter<AccountAdapter.MyViewHo
                         holder.tvRecentTransaction.setText(mContext.getResources().getString(R.string.latest_transactions));
 
                     TransactionAdapter transactionAdapter =
-                            new TransactionAdapter(mContext, account.getTxs(), account.getAddress());
+                            new TransactionAdapter(mContext, account.getTxs().toJavaList(), account.getAddress());
 
                     holder.transactionList.setAdapter(transactionAdapter);
                 });

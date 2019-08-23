@@ -13,6 +13,7 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.google.gson.Gson;
 import io.github.jangerhard.BitcoinWalletTracker.MainActivity;
 import io.github.jangerhard.BitcoinWalletTracker.R;
+import io.github.jangerhard.BitcoinWalletTracker.model.BlockinfoResponse;
 
 public class BlockExplorer {
 

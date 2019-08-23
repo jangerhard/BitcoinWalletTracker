@@ -1,18 +1,14 @@
-package io.github.jangerhard.BitcoinWalletTracker.utilities;
+package io.github.jangerhard.BitcoinWalletTracker.model;
 
-public class TransactionOut {
+/**
+ * Created by jangerhard on 23-Oct-17.
+ */
+
+public class TransactionPrevOut {
 
     private boolean spent;
-    private long value;
     private String addr;
-
-    public boolean isSpent() {
-        return spent;
-    }
-
-    public void setSpent(boolean spent) {
-        this.spent = spent;
-    }
+    private long value;
 
     public long getValue() {
         return value;
@@ -28,5 +24,13 @@ public class TransactionOut {
 
     public void setAddr(String addr) {
         this.addr = addr;
+    }
+
+    public boolean isSpent() {
+        return spent;
+    }
+
+    public void setSpent(boolean spent) {
+        this.spent = spent;
     }
 }

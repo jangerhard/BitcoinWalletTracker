@@ -1,8 +1,6 @@
-package io.github.jangerhard.BitcoinWalletTracker.client;
+package io.github.jangerhard.BitcoinWalletTracker.model;
 
-import java.util.ArrayList;
-
-import io.github.jangerhard.BitcoinWalletTracker.utilities.Transaction;
+import io.vavr.collection.List;
 
 public class BlockinfoResponse {
 
@@ -11,7 +9,7 @@ public class BlockinfoResponse {
     private long total_received;
     private long total_sent;
     private long final_balance;
-    private ArrayList<Transaction> txs;
+    private List<Transaction> txs;
 
     public String getAddress() {
         return address;
@@ -72,11 +70,11 @@ public class BlockinfoResponse {
         return address + " has a balance of " + getFinal_balance() + "btc.";
     }
 
-    public ArrayList<Transaction> getTxs() {
+    public List<Transaction> getTxs() {
         return txs;
     }
 
-    public void setTxs(ArrayList<Transaction> txs) {
+    public void setTxs(List<Transaction> txs) {
         this.txs = txs;
     }
 }

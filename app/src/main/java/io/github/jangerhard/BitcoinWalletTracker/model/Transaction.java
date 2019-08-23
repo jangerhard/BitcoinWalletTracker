@@ -1,12 +1,12 @@
-package io.github.jangerhard.BitcoinWalletTracker.utilities;
+package io.github.jangerhard.BitcoinWalletTracker.model;
 
-import java.util.ArrayList;
+import io.vavr.collection.List;
 
 public class Transaction {
 
     private long result;
-    private ArrayList<TransactionOut> out;
-    private ArrayList<TransactionInput> inputs;
+    private List<TransactionOut> out;
+    private List<TransactionInput> inputs;
     private long time;
 
     public long getResult() {
@@ -17,19 +17,19 @@ public class Transaction {
         this.result = result;
     }
 
-    public ArrayList<TransactionOut> getOut() {
+    public List<TransactionOut> getOut() {
         return out;
     }
 
-    public void setOut(ArrayList<TransactionOut> out) {
+    public void setOut(List<TransactionOut> out) {
         this.out = out;
     }
 
-    public ArrayList<TransactionInput> getInputs() {
+    public List<TransactionInput> getInputs() {
         return inputs;
     }
 
-    public void setInputs(ArrayList<TransactionInput> inputs) {
+    public void setInputs(List<TransactionInput> inputs) {
         this.inputs = inputs;
     }
 
