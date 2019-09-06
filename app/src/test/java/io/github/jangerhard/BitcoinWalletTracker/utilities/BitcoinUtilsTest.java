@@ -1,12 +1,7 @@
 package io.github.jangerhard.BitcoinWalletTracker.utilities;
 
-import java.util.ArrayList;
-
 import io.github.jangerhard.BitcoinWalletTracker.model.BlockinfoResponse;
 import io.github.jangerhard.BitcoinWalletTracker.model.Transaction;
-import io.github.jangerhard.BitcoinWalletTracker.model.TransactionInput;
-import io.github.jangerhard.BitcoinWalletTracker.model.TransactionOut;
-import io.github.jangerhard.BitcoinWalletTracker.model.TransactionPrevOut;
 import io.vavr.collection.List;
 import io.vavr.control.Option;
 import org.junit.Before;
@@ -46,10 +41,7 @@ public class BitcoinUtilsTest {
     public void when_updating_tracked_wallet_with_updated_info_given_no_previous_info_return_new_wallet() {
         String someAddress = "someAddress";
         TrackedWallet wallet = new TrackedWallet(someAddress);
-        BlockinfoResponse account = new BlockinfoResponse();
-        account.setAddress(someAddress);
-        account.setFinal_balance(2000);
-        account.setN_tx(2);
+        BlockinfoResponse account = new BlockinfoResponse(someAddress, 2, 4000, 2000, 2000, List.empty());
 
         assertFalse(wallet.getAssosiatedAccount().isDefined());
 
@@ -65,14 +57,14 @@ public class BitcoinUtilsTest {
         String someAddress = "someAddress";
         TrackedWallet wallet = new TrackedWallet(someAddress);
         wallet.setAssosiatedAccount(
-                createBitcoinAccount(someAddress, 2000, 2));
+                new BlockinfoResponse(someAddress, 2, 5000, 3000, 2000, List.empty()));
 
         assertTrue(wallet.getAssosiatedAccount().isDefined());
         assertEquals(2000, wallet.getCurrentBalance().get().longValue());
         assertEquals(2, wallet.getNumberOfTransactions().get().longValue());
 
         wallet = bitcoinUtils.updateAssociatedAccount(wallet,
-                createBitcoinAccount(someAddress, 3000, 3));
+                new BlockinfoResponse(someAddress, 3, 5000, 2000, 3000, List.empty()));
 
         assertTrue(wallet.getAssosiatedAccount().isDefined());
         assertEquals(3000, wallet.getCurrentBalance().get().longValue());
@@ -84,26 +76,18 @@ public class BitcoinUtilsTest {
         String someAddress = "someAddress";
         TrackedWallet wallet = new TrackedWallet(someAddress);
         wallet.setAssosiatedAccount(
-                createBitcoinAccount(someAddress, 2000, 2));
+                new BlockinfoResponse(someAddress, 2, 4000, 2000, 2000, List.empty()));
 
         assertTrue(wallet.getAssosiatedAccount().isDefined());
         assertEquals(2000, wallet.getCurrentBalance().get().longValue());
         assertEquals(2, wallet.getNumberOfTransactions().get().longValue());
 
         wallet = bitcoinUtils.updateAssociatedAccount(wallet,
-                createBitcoinAccount(someAddress, 0, 0));
+                new BlockinfoResponse(someAddress, 0, 0, 0, 0, List.empty()));
 
         assertTrue(wallet.getAssosiatedAccount().isDefined());
         assertEquals(2000, wallet.getCurrentBalance().get().longValue());
         assertEquals(2, wallet.getNumberOfTransactions().get().longValue());
-    }
-
-    private BlockinfoResponse createBitcoinAccount(String address, long balance, long transactions) {
-        BlockinfoResponse account = new BlockinfoResponse();
-        account.setAddress(address);
-        account.setFinal_balance(balance);
-        account.setN_tx(transactions);
-        return account;
     }
 
     @Test
@@ -139,8 +123,7 @@ public class BitcoinUtilsTest {
 
         long a = 12345678;
         TrackedWallet wallet = new TrackedWallet("Someaddress");
-        BlockinfoResponse acc = new BlockinfoResponse();
-        acc.setFinal_balance(a);
+        BlockinfoResponse acc = new BlockinfoResponse("Someaddress", 1, 1000, 0, a, List.empty());
         wallet.setAssosiatedAccount(acc);
         List<TrackedWallet> accounts = List.of(
                 wallet,
@@ -237,14 +220,10 @@ public class BitcoinUtilsTest {
 
         String testAddress = "testAddr";
 
-        Transaction t = new Transaction();
-        TransactionInput i = new TransactionInput();
-        TransactionPrevOut prevOut = new TransactionPrevOut();
-        prevOut.setAddr("testAddr");
-        prevOut.setValue(12345);
-        i.setPrev_out(prevOut);
-        List<TransactionInput> tOList = List.of(i);
-        t.setInputs(tOList);
+        Transaction.TransactionOut prevOut = new Transaction.TransactionOut(true, 12345, "testAddr");
+        Transaction.TransactionInput i = new Transaction.TransactionInput(prevOut);
+        List<Transaction.TransactionInput> tOList = List.of(i);
+        Transaction t = new Transaction(0, List.empty(), tOList, 0);
 
         assertEquals(-12345, BitcoinUtils.getTransactionValue(t, testAddress));
     }
@@ -254,18 +233,11 @@ public class BitcoinUtilsTest {
 
         String testAddress = "testAddr";
 
-        Transaction t = new Transaction();
-        TransactionInput i = new TransactionInput();
-        TransactionOut o = new TransactionOut();
-        TransactionPrevOut prevOut = new TransactionPrevOut();
-        o.setAddr(testAddress);
-        o.setValue(12345);
-        List<TransactionOut> tL = List.of(o);
-        t.setOut(tL);
-        prevOut.setAddr("wrongAddr");
-        i.setPrev_out(prevOut);
-        List<TransactionInput> tOList = List.of(i);
-        t.setInputs(tOList);
+        Transaction.TransactionOut o = new Transaction.TransactionOut(true, 12345, testAddress);
+        Transaction.TransactionOut prevOut = new Transaction.TransactionOut(true, 0, "wrongAddr");
+        Transaction.TransactionInput i = new Transaction.TransactionInput(prevOut);
+        List<Transaction.TransactionOut> tL = List.of(o);
+        Transaction t = new Transaction(0, tL, List.of(i), 0);
         assertEquals(12345, BitcoinUtils.getTransactionValue(t, testAddress));
     }
 

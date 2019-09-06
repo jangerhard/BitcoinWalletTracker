@@ -7,15 +7,13 @@ import java.text.NumberFormat;
 import java.util.Calendar;
 import java.util.Currency;
 import java.util.Locale;
+import java.util.Objects;
 
 import android.util.Log;
 import androidx.annotation.NonNull;
 import com.samourai.wallet.util.FormatsUtilGeneric;
 import io.github.jangerhard.BitcoinWalletTracker.model.BlockinfoResponse;
 import io.github.jangerhard.BitcoinWalletTracker.model.Transaction;
-import io.github.jangerhard.BitcoinWalletTracker.model.TransactionInput;
-import io.github.jangerhard.BitcoinWalletTracker.model.TransactionOut;
-import io.github.jangerhard.BitcoinWalletTracker.model.TransactionPrevOut;
 import io.vavr.collection.List;
 import io.vavr.control.Option;
 import org.bitcoinj.params.MainNetParams;
@@ -319,19 +317,18 @@ public class BitcoinUtils {
      * if paid. If no transaction is associated, returns 0.
      */
     public static long getTransactionValue(Transaction t, String address) {
-        if (t.getOut() == null && t.getInputs() == null)
-            return 0;
 
         // Paid
-        for (TransactionInput i : t.getInputs()) {
-            TransactionPrevOut p = i.getPrev_out();
-            if (p != null && p.getAddr() != null && p.getAddr().equals(address)) {
-                return -i.getPrev_out().getValue();
+        for (Transaction.TransactionInput i : t.getInputs()) {
+            Transaction.TransactionOut p = i.getPrevOut();
+            if (p != null && p.getAddr().equals(address)) {
+                return -i.getPrevOut().getValue();
             }
         }
+
         // Received
-        for (TransactionOut o : t.getOut()) {
-            if (o.getAddr() != null && o.getAddr().equals(address))
+        for (Transaction.TransactionOut o : Objects.requireNonNull(t.getOut())) {
+            if (o.getAddr().equals(address))
                 return o.getValue();
         }
 
