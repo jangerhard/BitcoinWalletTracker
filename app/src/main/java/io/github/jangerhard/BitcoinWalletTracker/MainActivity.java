@@ -10,12 +10,14 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.cardview.widget.CardView;
 import androidx.core.content.ContextCompat;
+import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.android.volley.RequestQueue;
@@ -189,6 +191,9 @@ public class MainActivity extends AppCompatActivity {
     private void setupAccountsUI() {
 
         recyclerView = findViewById(R.id.recycler_view);
+        DividerItemDecoration divider = new DividerItemDecoration(getApplicationContext(), LinearLayout.VERTICAL);
+        divider.setDrawable(this.getResources().getDrawable(R.drawable.list_divider, this.getTheme()));
+        recyclerView.addItemDecoration(divider);
 
         // listen refresh event
         allAccountsView = findViewById(R.id.allAccountsView);
