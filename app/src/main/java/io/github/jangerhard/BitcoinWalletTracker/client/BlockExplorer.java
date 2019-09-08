@@ -15,16 +15,19 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import io.github.jangerhard.BitcoinWalletTracker.MainActivity;
 import io.github.jangerhard.BitcoinWalletTracker.R;
-import io.github.jangerhard.BitcoinWalletTracker.model.BlockinfoResponse;
+import io.github.jangerhard.BitcoinWalletTracker.model.BlockonomicsBalanceResponse;
+import io.github.jangerhard.BitcoinWalletTracker.model.BlockonomicsTransactionsResponse;
+import io.vavr.collection.HashMap;
+import io.vavr.collection.Map;
 import io.vavr.gson.VavrGson;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 public class BlockExplorer {
 
     private String LOG_TAG = "BlockExplorer";
 
-    private String url_blockchain = "https://blockchain.info/";
-    private String url_blockonomics = "https://www.blockonomics.co/api/balance";
+    private String url_blockonomics = "https://www.blockonomics.co/api";
 
     private RequestQueue requestQueue;
     private MainActivity activity;
@@ -39,19 +42,44 @@ public class BlockExplorer {
         gson = builder.create();
     }
 
-    public void getSingleWalletInfo(String address) {
+    public void getUpdatedBalance(String address) {
 
-        // Request a response from the provided URL.
-        JsonObjectRequest jsObjRequest = new JsonObjectRequest
-                (Request.Method.GET,
-                        url_blockchain + "rawaddr/" + address + "?limit=5",
-                        null,
-                        this::handleRefreshedInfo,
-                        this::handleErrors);
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(
+                Request.Method.POST,
+                url_blockonomics + "/balance",
+                createParams(HashMap.of("addr", address)),
+                this::handleUpdatedBalance,
+                this::handleErrors
+        );
 
-        // Add the request to the RequestQueue.
-        requestQueue.add(jsObjRequest);
+        requestQueue.add(jsonObjectRequest);
+    }
 
+    public void getTransactions(String address) {
+
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(
+                Request.Method.POST,
+                url_blockonomics + "/searchhistory",
+                createParams(HashMap.of("addr", address)),
+                response -> handleUpdatedTransactions(address, response),
+                this::handleErrors
+        );
+
+        requestQueue.add(jsonObjectRequest);
+    }
+
+    private JSONObject createParams(Map<String, String> params) {
+        JSONObject object = new JSONObject();
+
+        params.forEach((s1, s2) -> {
+            try {
+                object.put(s1, s2);
+            } catch (JSONException e) {
+                e.printStackTrace();
+                Log.e(LOG_TAG, "Could not add to params: " + s1 + ":" + s2);
+            }
+        });
+        return object;
     }
 
     private void handleErrors(VolleyError error) {
@@ -74,8 +102,13 @@ public class BlockExplorer {
         activity.updateUI();
     }
 
-    private void handleRefreshedInfo(JSONObject response) {
-        BlockinfoResponse accountInfo = gson.fromJson(response.toString(), BlockinfoResponse.class);
-        activity.handleRefreshedAccount(accountInfo);
+    private void handleUpdatedBalance(JSONObject response) {
+        BlockonomicsBalanceResponse accountInfo = gson.fromJson(response.toString(), BlockonomicsBalanceResponse.class);
+        activity.handleUpdatedBalance(accountInfo.getResponse().get(0).getAddr(), accountInfo.getResponse().get(0).getConfirmed());
+    }
+
+    private void handleUpdatedTransactions(String address, JSONObject response) {
+        BlockonomicsTransactionsResponse transactions = gson.fromJson(response.toString(), BlockonomicsTransactionsResponse.class);
+        activity.handleUpdatedTransactions(address, transactions.getHistory());
     }
 }

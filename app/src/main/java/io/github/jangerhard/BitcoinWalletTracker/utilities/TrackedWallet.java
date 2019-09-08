@@ -3,8 +3,8 @@ package io.github.jangerhard.BitcoinWalletTracker.utilities;
 import java.util.Objects;
 
 import android.graphics.Bitmap;
-import io.github.jangerhard.BitcoinWalletTracker.model.BlockinfoResponse;
-import io.vavr.control.Option;
+import io.github.jangerhard.BitcoinWalletTracker.model.BlockonomicsTransactionsResponse.Transaction;
+import io.vavr.collection.List;
 
 import static io.github.jangerhard.BitcoinWalletTracker.qrStuff.BitmapCreator.QR_SIZE.BIG;
 import static io.github.jangerhard.BitcoinWalletTracker.qrStuff.BitmapCreator.QR_SIZE.REGULAR;
@@ -16,28 +16,17 @@ public class TrackedWallet {
     private Bitmap bigQRImage;
     private Bitmap regularQRImage;
 
-    private BlockinfoResponse assosiatedAccount;
+    private long final_balance;
+    private List<Transaction> transactions;
 
     public TrackedWallet(String address) {
         this.address = address;
+        final_balance = 0;
+        transactions = List.empty();
     }
 
     public String getFormattedBalance() {
-        return BitcoinUtils.formatBitcoinBalanceToString(
-                getCurrentBalance().getOrElse(0L)
-        );
-    }
-
-    public Option<Long> getCurrentBalance() {
-        if (assosiatedAccount == null) return Option.none();
-
-        return Option.of(assosiatedAccount.getFinal_balance());
-    }
-
-    public Option<Long> getNumberOfTransactions() {
-        if (assosiatedAccount == null) return Option.none();
-
-        return Option.of(assosiatedAccount.getN_tx());
+        return BitcoinUtils.formatBitcoinBalanceToString(final_balance);
     }
 
     public String getAddress() {
@@ -54,12 +43,6 @@ public class TrackedWallet {
         return regularQRImage;
     }
 
-    public void setAssosiatedAccount(BlockinfoResponse assosiatedAccount) {
-        this.assosiatedAccount = assosiatedAccount;
-    }
-
-    public Option<BlockinfoResponse> getAssosiatedAccount() {return Option.of(assosiatedAccount);}
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -71,5 +54,21 @@ public class TrackedWallet {
     @Override
     public int hashCode() {
         return Objects.hash(address);
+    }
+
+    public long getFinal_balance() {
+        return final_balance;
+    }
+
+    public void setFinal_balance(long final_balance) {
+        this.final_balance = final_balance;
+    }
+
+    public List<Transaction> getTransactions() {
+        return transactions;
+    }
+
+    public void setTransactions(List<Transaction> transactions) {
+        this.transactions = transactions;
     }
 }

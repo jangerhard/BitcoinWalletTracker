@@ -1,8 +1,5 @@
 package io.github.jangerhard.BitcoinWalletTracker.utilities;
 
-import io.github.jangerhard.BitcoinWalletTracker.model.BlockinfoResponse;
-import io.github.jangerhard.BitcoinWalletTracker.model.BlockinfoResponse.Transaction;
-import io.vavr.collection.List;
 import io.vavr.control.Option;
 import org.junit.Before;
 import org.junit.Test;
@@ -38,59 +35,6 @@ public class BitcoinUtilsTest {
     }
 
     @Test
-    public void when_updating_tracked_wallet_with_updated_info_given_no_previous_info_return_new_wallet() {
-        String someAddress = "someAddress";
-        TrackedWallet wallet = new TrackedWallet(someAddress);
-        BlockinfoResponse account = new BlockinfoResponse(someAddress, 2, 4000, 2000, 2000, List.empty());
-
-        assertFalse(wallet.getAssosiatedAccount().isDefined());
-
-        wallet = bitcoinUtils.updateAssociatedAccount(wallet, account);
-
-        assertTrue(wallet.getAssosiatedAccount().isDefined());
-        assertEquals(2000, wallet.getCurrentBalance().get().longValue());
-        assertEquals(2, wallet.getNumberOfTransactions().get().longValue());
-    }
-
-    @Test
-    public void when_updating_tracked_wallet_with_updated_info__given_old_info_return_new_wallet() {
-        String someAddress = "someAddress";
-        TrackedWallet wallet = new TrackedWallet(someAddress);
-        wallet.setAssosiatedAccount(
-                new BlockinfoResponse(someAddress, 2, 5000, 3000, 2000, List.empty()));
-
-        assertTrue(wallet.getAssosiatedAccount().isDefined());
-        assertEquals(2000, wallet.getCurrentBalance().get().longValue());
-        assertEquals(2, wallet.getNumberOfTransactions().get().longValue());
-
-        wallet = bitcoinUtils.updateAssociatedAccount(wallet,
-                new BlockinfoResponse(someAddress, 3, 5000, 2000, 3000, List.empty()));
-
-        assertTrue(wallet.getAssosiatedAccount().isDefined());
-        assertEquals(3000, wallet.getCurrentBalance().get().longValue());
-        assertEquals(3, wallet.getNumberOfTransactions().get().longValue());
-    }
-
-    @Test
-    public void when_updating_tracked_wallet_with_outdated_info_return_same_wallet() {
-        String someAddress = "someAddress";
-        TrackedWallet wallet = new TrackedWallet(someAddress);
-        wallet.setAssosiatedAccount(
-                new BlockinfoResponse(someAddress, 2, 4000, 2000, 2000, List.empty()));
-
-        assertTrue(wallet.getAssosiatedAccount().isDefined());
-        assertEquals(2000, wallet.getCurrentBalance().get().longValue());
-        assertEquals(2, wallet.getNumberOfTransactions().get().longValue());
-
-        wallet = bitcoinUtils.updateAssociatedAccount(wallet,
-                new BlockinfoResponse(someAddress, 0, 0, 0, 0, List.empty()));
-
-        assertTrue(wallet.getAssosiatedAccount().isDefined());
-        assertEquals(2000, wallet.getCurrentBalance().get().longValue());
-        assertEquals(2, wallet.getNumberOfTransactions().get().longValue());
-    }
-
-    @Test
     public void testFormatingBalanceToString() {
 
         String bal = BitcoinUtils.formatBitcoinBalanceToString(2195820L);
@@ -115,28 +59,6 @@ public class BitcoinUtilsTest {
 
         bal = BitcoinUtils.formatBitcoinBalanceToString(-541721794L);
         assertEquals("-5.4172 BTC", bal);
-    }
-
-
-    @Test
-    public void testCalculateTotalAmount() {
-
-        long a = 12345678;
-        TrackedWallet wallet = new TrackedWallet("Someaddress");
-        BlockinfoResponse acc = new BlockinfoResponse("Someaddress", 1, 1000, 0, a, List.empty());
-        wallet.setAssosiatedAccount(acc);
-        List<TrackedWallet> accounts = List.of(
-                wallet,
-                wallet,
-                wallet,
-                wallet,
-                wallet
-        );
-
-        assertEquals(61728390, BitcoinUtils.calculateTotalBalance(accounts));
-
-        assertEquals(0, BitcoinUtils.calculateTotalBalance(List.empty()));
-
     }
 
     @Test
@@ -187,58 +109,6 @@ public class BitcoinUtilsTest {
 
         maybeVerified = BitcoinUtils.verifyAddress(null);
         assertFalse(maybeVerified.isDefined());
-    }
-
-//    @Test
-//    public void testCurrency() throws Exception {
-//
-//        MainActivity mActivity = new MainActivity();
-//        SharedPreferences sharedPref = mActivity.getPreferences(Context.MODE_PRIVATE);
-//
-//        BitcoinUtils utils = new BitcoinUtils(sharedPref, mActivity.getString(R.string.bitcoinaddresses));
-//
-//        // 1 btc to NOK
-//        utils.updateCurrency(44783.44d);
-//        // 0.223 btc
-//        long balance = 2195820;
-//
-//        assertEquals("kr 983,36", utils.formatCurrency(utils.convertBTCtoCurrency(balance)));
-//
-//        // 1 btc to NOK
-//        utils.updateCurrency(45006.70d);
-//        // 0.223 btc
-//        balance = 23300000;
-//
-//        assertEquals("kr 10 486,56", utils.formatCurrency(utils.convertBTCtoCurrency(balance)));
-//
-//        assertEquals("kr 0,00", utils.formatCurrency(utils.convertBTCtoCurrency(0)));
-//
-//    }
-
-    @Test
-    public void correctly_map_to_negative_values() {
-
-        String testAddress = "testAddr";
-
-        Transaction.TransactionOut prevOut = new Transaction.TransactionOut(true, 12345, "testAddr");
-        Transaction.TransactionInput i = new Transaction.TransactionInput(prevOut);
-        List<Transaction.TransactionInput> tOList = List.of(i);
-        Transaction t = new Transaction(0, List.empty(), tOList, 0);
-
-        assertEquals(-12345, BitcoinUtils.getTransactionValue(t, testAddress));
-    }
-
-    @Test
-    public void correctly_map_to_positive_values() {
-
-        String testAddress = "testAddr";
-
-        Transaction.TransactionOut o = new Transaction.TransactionOut(true, 12345, testAddress);
-        Transaction.TransactionOut prevOut = new Transaction.TransactionOut(true, 0, "wrongAddr");
-        Transaction.TransactionInput i = new Transaction.TransactionInput(prevOut);
-        List<Transaction.TransactionOut> tL = List.of(o);
-        Transaction t = new Transaction(0, tL, List.of(i), 0);
-        assertEquals(12345, BitcoinUtils.getTransactionValue(t, testAddress));
     }
 
 }

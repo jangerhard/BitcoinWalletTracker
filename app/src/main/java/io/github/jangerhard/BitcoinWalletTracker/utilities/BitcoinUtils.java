@@ -7,13 +7,11 @@ import java.text.NumberFormat;
 import java.util.Calendar;
 import java.util.Currency;
 import java.util.Locale;
-import java.util.Objects;
 
 import android.util.Log;
 import androidx.annotation.NonNull;
 import com.samourai.wallet.util.FormatsUtilGeneric;
-import io.github.jangerhard.BitcoinWalletTracker.model.BlockinfoResponse;
-import io.github.jangerhard.BitcoinWalletTracker.model.BlockinfoResponse.Transaction;
+import io.github.jangerhard.BitcoinWalletTracker.model.BlockonomicsTransactionsResponse;
 import io.vavr.collection.List;
 import io.vavr.control.Option;
 import org.bitcoinj.params.MainNetParams;
@@ -77,34 +75,33 @@ public class BitcoinUtils {
         saveNicknameToPrefs(selectedAccount, newNickname);
     }
 
-    public Option<Integer> handleUpdatedAccount(BlockinfoResponse refreshedAccount) {
-        trackedWallets = updateTrackedWallets(refreshedAccount);
+    public Option<Integer> handleUpdatedBalance(String address, long newBalance) {
+
+        trackedWallets = trackedWallets.map(wallet -> {
+            if (wallet.getAddress().equals(address))
+                wallet.setFinal_balance(newBalance);
+
+            return wallet;
+        });
+
         totalBalance = calculateTotalBalance(trackedWallets);
         return Option.of(trackedWallets.indexWhere(trackedWallet ->
-                trackedWallet.getAddress().equals(refreshedAccount.getAddress()))
+                trackedWallet.getAddress().equals(address))
         );
     }
 
-    private List<TrackedWallet> updateTrackedWallets(BlockinfoResponse account) {
+    public Option<Integer> handleUpdatedTransactions(String address, List<BlockonomicsTransactionsResponse.Transaction> transactions) {
 
-        return trackedWallets.map(wallet -> {
-            if (wallet.getAddress().equals(account.getAddress()))
-                return updateAssociatedAccount(wallet, account);
-            else
-                return wallet;
+        trackedWallets = trackedWallets.map(wallet -> {
+            if (wallet.getAddress().equals(address))
+                wallet.setTransactions(transactions);
+
+            return wallet;
         });
-    }
 
-    TrackedWallet updateAssociatedAccount(TrackedWallet wallet, BlockinfoResponse account) {
-        return wallet.getNumberOfTransactions()
-                .onEmpty(() -> wallet.setAssosiatedAccount(account))
-                .map(numTransactions -> {
-                    if (numTransactions < account.getN_tx())
-                        wallet.setAssosiatedAccount(account);
-
-                    return wallet;
-                })
-                .getOrElse(wallet);
+        return Option.of(trackedWallets.indexWhere(trackedWallet ->
+                trackedWallet.getAddress().equals(address))
+        );
     }
 
     public void removeTrackedAccount(TrackedWallet trackedWallet) {
@@ -116,7 +113,7 @@ public class BitcoinUtils {
     }
 
     public static long calculateTotalBalance(List<TrackedWallet> accounts) {
-        return accounts.flatMap(TrackedWallet::getCurrentBalance).sum().longValue();
+        return accounts.map(TrackedWallet::getFinal_balance).sum().longValue();
     }
 
     public String getTotalBalance() {
@@ -305,34 +302,6 @@ public class BitcoinUtils {
 
     private Double getCurrentPrice() {
         return currentPrice;
-    }
-
-    /**
-     * Returns the value associated with the account address; Positive if received, and negative
-     * if paid.
-     *
-     * @param t       - Transaction related to an account
-     * @param address - The address of the account
-     * @return BigInteger value, positive if received, and negative
-     * if paid. If no transaction is associated, returns 0.
-     */
-    public static long getTransactionValue(Transaction t, String address) {
-
-        // Paid
-        for (Transaction.TransactionInput i : t.getInputs()) {
-            Transaction.TransactionOut p = i.getPrevOut();
-            if (p != null && p.getAddr().equals(address)) {
-                return -i.getPrevOut().getValue();
-            }
-        }
-
-        // Received
-        for (Transaction.TransactionOut o : t.getOut()) {
-            if (o.getAddr().equals(address))
-                return o.getValue();
-        }
-
-        return 0;
     }
 
     public static String getConvertedTimeStamp(Long time) {

@@ -28,11 +28,12 @@ import com.yarolegovich.lovelydialog.LovelyStandardDialog;
 import io.github.jangerhard.BitcoinWalletTracker.adapter.AccountAdapter;
 import io.github.jangerhard.BitcoinWalletTracker.client.BlockExplorer;
 import io.github.jangerhard.BitcoinWalletTracker.client.PriceFetcher;
+import io.github.jangerhard.BitcoinWalletTracker.model.BlockonomicsTransactionsResponse.Transaction;
 import io.github.jangerhard.BitcoinWalletTracker.qrStuff.barcode.BarcodeCaptureActivity;
-import io.github.jangerhard.BitcoinWalletTracker.model.BlockinfoResponse;
 import io.github.jangerhard.BitcoinWalletTracker.utilities.BitcoinUtils;
 import io.github.jangerhard.BitcoinWalletTracker.utilities.SharedPreferencesHelper;
 import io.github.jangerhard.BitcoinWalletTracker.utilities.TrackedWallet;
+import io.vavr.collection.List;
 import io.vavr.control.Option;
 import jp.wasabeef.recyclerview.animators.LandingAnimator;
 import mehdi.sakout.aboutpage.AboutPage;
@@ -285,7 +286,10 @@ public class MainActivity extends AppCompatActivity {
 
     public void updateAllTrackedWallets() {
         utils.getTrackedWallets().map(TrackedWallet::getAddress)
-                .forEach(address -> blockExplorer.getSingleWalletInfo(address));
+                .forEach(address -> {
+                    blockExplorer.getUpdatedBalance(address);
+                    //blockExplorer.getSingleWalletInfo(address);
+                });
     }
 
     public void handleAddedAccount(String newAcc) {
@@ -297,12 +301,22 @@ public class MainActivity extends AppCompatActivity {
             adapter.notifyItemInserted(adapter.getItemCount() - 1);
         else adapter.notifyItemInserted(0);
 
-        blockExplorer.getSingleWalletInfo(newAcc);
+        blockExplorer.getUpdatedBalance(newAcc);
         refreshData();
     }
 
-    public void handleRefreshedAccount(BlockinfoResponse acc) {
-        utils.handleUpdatedAccount(acc)
+    public void handleUpdatedBalance(String address, long newBalance) {
+        utils.handleUpdatedBalance(address, newBalance)
+                .peek(it -> {
+                    numRefreshed++;
+                    adapter.notifyItemChanged(it);
+                });
+
+        updateUI();
+    }
+
+    public void handleUpdatedTransactions(String address, List<Transaction> transactions) {
+        utils.handleUpdatedTransactions(address, transactions)
                 .peek(it -> {
                     numRefreshed++;
                     adapter.notifyItemChanged(it);

@@ -1,7 +1,6 @@
 package io.github.jangerhard.BitcoinWalletTracker.adapter;
 
 import java.util.HashSet;
-import java.util.Locale;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -116,36 +115,27 @@ public class AccountAdapter extends RecyclerView.Adapter<AccountAdapter.MyViewHo
                 new LinearLayoutManager(
                         mContext, RecyclerView.VERTICAL, false));
 
-        trackedWallet.getAssosiatedAccount()
-                .onEmpty(() -> {
-                    holder.accBalance.setText(mContext.getResources().getString(R.string.account_error_balance));
-                    holder.accRate.setText(mContext.getResources().getString(R.string.account_error_balance));
-                })
-                .peek(account -> {
+        holder.accBalance.setText(trackedWallet.getFormattedBalance());
+        holder.accRate.setText(
+                utils.formatBTCtoCurrency(trackedWallet.getFinal_balance()));
 
-                    holder.accBalance.setText(
-                            BitcoinUtils.formatBitcoinBalanceToString(account.getFinal_balance()));
-                    holder.accRate.setText(
-                            utils.formatBTCtoCurrency(account.getFinal_balance()));
+        // unfolded
+//        holder.tvAccNumTxs.setText(
+//                String.format(Locale.ENGLISH, "%d", account.getN_tx()));
+//        holder.tvAccTotReceived.setText(
+//                BitcoinUtils.formatBitcoinBalanceToString(account.getTotal_received()));
+//        holder.tvAccFinalBalance.setText(
+//                BitcoinUtils.formatBitcoinBalanceToString(account.getFinal_balance()));
 
-                    // unfolded
-                    holder.tvAccNumTxs.setText(
-                            String.format(Locale.ENGLISH, "%d", account.getN_tx()));
-                    holder.tvAccTotReceived.setText(
-                            BitcoinUtils.formatBitcoinBalanceToString(account.getTotal_received()));
-                    holder.tvAccFinalBalance.setText(
-                            BitcoinUtils.formatBitcoinBalanceToString(account.getFinal_balance()));
+        if (trackedWallet.getTransactions().size() >= 0)
+            holder.tvRecentTransaction.setText(mContext.getResources().getString(R.string.no_activity_on_this_address));
+        else
+            holder.tvRecentTransaction.setText(mContext.getResources().getString(R.string.latest_transactions));
 
-                    if (account.getN_tx() == 0)
-                        holder.tvRecentTransaction.setText(mContext.getResources().getString(R.string.no_activity_on_this_address));
-                    else
-                        holder.tvRecentTransaction.setText(mContext.getResources().getString(R.string.latest_transactions));
+        TransactionAdapter transactionAdapter =
+                new TransactionAdapter(mContext, trackedWallet.getTransactions(), trackedWallet.getAddress());
 
-                    TransactionAdapter transactionAdapter =
-                            new TransactionAdapter(mContext, account.getTxs().toJavaList(), account.getAddress());
-
-                    holder.transactionList.setAdapter(transactionAdapter);
-                });
+        holder.transactionList.setAdapter(transactionAdapter);
     }
 
     /**

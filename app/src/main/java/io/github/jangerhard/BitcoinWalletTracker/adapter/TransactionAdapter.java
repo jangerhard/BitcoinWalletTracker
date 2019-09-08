@@ -1,7 +1,5 @@
 package io.github.jangerhard.BitcoinWalletTracker.adapter;
 
-import java.util.List;
-
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,8 +8,9 @@ import android.widget.TextView;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 import io.github.jangerhard.BitcoinWalletTracker.R;
-import io.github.jangerhard.BitcoinWalletTracker.model.BlockinfoResponse.Transaction;
+import io.github.jangerhard.BitcoinWalletTracker.model.BlockonomicsTransactionsResponse.Transaction;
 import io.github.jangerhard.BitcoinWalletTracker.utilities.BitcoinUtils;
+import io.vavr.collection.List;
 
 public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.MyViewHolder> {
 
@@ -47,21 +46,21 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
     @Override
     public void onBindViewHolder(final MyViewHolder holder, int position) {
 
-        Transaction t = transactionList.get(position);
+        Transaction transaction = transactionList.get(position);
 
-        long transactionValue = BitcoinUtils.getTransactionValue(t, address);
+//        long transaction = BitcoinUtils.getTransactionValue(t, address);
 
-        int color = transactionValue < 0
+        int color = transaction.getValue() < 0
                 ? ContextCompat.getColor(mContext, R.color.transaction_paid)
                 : ContextCompat.getColor(mContext, R.color.transaction_received);
 
         holder.tvResult.setTextColor(color);
 
         holder.tvResult.setText(
-                BitcoinUtils.formatBitcoinBalanceToString(transactionValue)
+                BitcoinUtils.formatBitcoinBalanceToString(transaction.getValue())
         );
 
-        holder.tvTimestamp.setText(BitcoinUtils.getConvertedTimeStamp(t.getTime()));
+        holder.tvTimestamp.setText(BitcoinUtils.getConvertedTimeStamp(transaction.getTime()));
 //        holder.tvResult.setText("Test " + position);
 //        holder.tvTimestamp.setText("Test " + position);
     }
