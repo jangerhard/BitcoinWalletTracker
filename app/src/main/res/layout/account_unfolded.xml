@@ -115,7 +115,7 @@
             android:id="@+id/transactionList"
             android:paddingEnd="16dp"
             android:paddingStart="16dp"
-            android:paddingBottom="16dp"
+            android:layout_marginBottom="48dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@+id/tv_unfolded_last_transactions"
@@ -123,5 +123,12 @@
             tools:listitem="@layout/transaction_item" />
 
     </RelativeLayout>
+
+    <ImageView
+        android:layout_width="24dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center|bottom"
+        android:alpha="0.65"
+        android:src="@drawable/ic_expand_less_white_48dp" />
 
 </androidx.cardview.widget.CardView>
