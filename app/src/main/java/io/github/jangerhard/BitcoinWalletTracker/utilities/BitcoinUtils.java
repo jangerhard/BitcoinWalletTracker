@@ -13,7 +13,7 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 import com.samourai.wallet.util.FormatsUtilGeneric;
 import io.github.jangerhard.BitcoinWalletTracker.model.BlockinfoResponse;
-import io.github.jangerhard.BitcoinWalletTracker.model.Transaction;
+import io.github.jangerhard.BitcoinWalletTracker.model.BlockinfoResponse.Transaction;
 import io.vavr.collection.List;
 import io.vavr.control.Option;
 import org.bitcoinj.params.MainNetParams;
@@ -327,7 +327,7 @@ public class BitcoinUtils {
         }
 
         // Received
-        for (Transaction.TransactionOut o : Objects.requireNonNull(t.getOut())) {
+        for (Transaction.TransactionOut o : t.getOut()) {
             if (o.getAddr().equals(address))
                 return o.getValue();
         }

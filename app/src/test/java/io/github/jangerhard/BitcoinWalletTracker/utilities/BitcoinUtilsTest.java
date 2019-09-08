@@ -1,7 +1,7 @@
 package io.github.jangerhard.BitcoinWalletTracker.utilities;
 
 import io.github.jangerhard.BitcoinWalletTracker.model.BlockinfoResponse;
-import io.github.jangerhard.BitcoinWalletTracker.model.Transaction;
+import io.github.jangerhard.BitcoinWalletTracker.model.BlockinfoResponse.Transaction;
 import io.vavr.collection.List;
 import io.vavr.control.Option;
 import org.junit.Before;
