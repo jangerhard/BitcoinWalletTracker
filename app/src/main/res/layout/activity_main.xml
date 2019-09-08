@@ -7,7 +7,8 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:padding="16dp"
-    tools:context=".MainActivity">
+    tools:context=".MainActivity"
+    android:background="@drawable/background_color_dark">
 
     <com.wajahatkarim3.easyflipview.EasyFlipView
         android:id="@+id/flipview_layout"
@@ -35,17 +36,14 @@
     <com.baoyz.widget.PullRefreshLayout
         android:id="@+id/allAccountsView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:refreshColor="@color/colorPrimary"
+        android:layout_height="wrap_content"
+        app:refreshColor="@color/text_dark_primary_darker"
         app:refreshType="smartisan">
-
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recycler_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:clipChildren="false"
-            android:clipToPadding="false"
             android:fadeScrollbars="true"
             android:scrollbars="vertical"
             tools:listitem="@layout/account_folded" />

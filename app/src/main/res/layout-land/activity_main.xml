@@ -41,7 +41,7 @@
             android:id="@+id/allAccountsView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            app:refreshColor="@color/colorPrimary"
+            app:refreshColor="@color/text_dark_primary"
             app:refreshType="smartisan">
 
             <androidx.recyclerview.widget.RecyclerView
