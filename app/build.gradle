@@ -64,6 +64,7 @@ dependencies {
     implementation 'com.wajahatkarim3.EasyFlipView:EasyFlipView:2.1.2'  // Flip views
     implementation 'com.github.medyo:android-about-page:1.2.1'          // About page
 
+    testImplementation "io.mockk:mockk:1.9.3"
     testImplementation 'junit:junit:4.12'
     testImplementation 'org.mockito:mockito-core:2.23.0'
     testImplementation 'org.robolectric:robolectric:4.3'
