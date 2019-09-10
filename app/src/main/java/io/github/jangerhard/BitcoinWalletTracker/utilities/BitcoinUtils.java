@@ -39,7 +39,7 @@ public class BitcoinUtils {
 
         trackedWallets = getAddressesFromPrefs();
 
-        currencyPair = helper.getCurrencyPair();
+        currencyPair = helper.getCurrency().getOrElse("USD");
 
         totalBalance = calculateTotalBalance(trackedWallets);
     }
@@ -62,7 +62,7 @@ public class BitcoinUtils {
     }
 
     public List<TrackedWallet> getAddressesFromPrefs() {
-        return io.vavr.collection.List.of(preferences.getAccountsString().split(","))
+        return preferences.getAddresses()
                 .filter(it -> verifyAddress(it).isDefined())
                 .map(TrackedWallet::new);
     }
@@ -169,7 +169,7 @@ public class BitcoinUtils {
     }
 
     public long getTotalInvestment() {
-        return getInvestmentFromPrefs();
+        return preferences.getInvestment();
     }
 
     public String getTotalInvestmentFormated() {
@@ -249,10 +249,6 @@ public class BitcoinUtils {
 
     private void saveNicknameToPrefs(String address, String name) {
         preferences.saveNickname(address, name);
-    }
-
-    private long getInvestmentFromPrefs() {
-        return preferences.getInvestmentFromPrefs();
     }
 
     private void saveInvestmentToPrefs(long investment) {
