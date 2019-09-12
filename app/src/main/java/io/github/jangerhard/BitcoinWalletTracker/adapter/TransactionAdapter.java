@@ -29,7 +29,7 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
         }
     }
 
-    TransactionAdapter(Context mContext, List<Transaction> transactionList, String address) {
+    public TransactionAdapter(Context mContext, List<Transaction> transactionList, String address) {
         this.mContext = mContext;
         this.transactionList = transactionList;
         this.address = address;
