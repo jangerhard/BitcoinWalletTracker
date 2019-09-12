@@ -15,20 +15,20 @@ import static io.github.jangerhard.BitcoinWalletTracker.qrStuff.BitmapCreator.cr
 public class TrackedWallet implements Parcelable {
 
     private String address;
+    private String nickname = "Wallet";
     private Bitmap bigQRImage;
     private Bitmap regularQRImage;
 
-    private long final_balance;
-    private List<Transaction> transactions;
+    private long final_balance = 0;
+    private List<Transaction> transactions = List.empty();
 
     public TrackedWallet(String address) {
         this.address = address;
-        final_balance = 0;
-        transactions = List.empty();
     }
 
     protected TrackedWallet(Parcel in) {
         address = in.readString();
+        nickname = in.readString();
         bigQRImage = in.readParcelable(Bitmap.class.getClassLoader());
         regularQRImage = in.readParcelable(Bitmap.class.getClassLoader());
         final_balance = in.readLong();
@@ -37,6 +37,7 @@ public class TrackedWallet implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(address);
+        dest.writeString(nickname);
         dest.writeParcelable(bigQRImage, flags);
         dest.writeParcelable(regularQRImage, flags);
         dest.writeLong(final_balance);
@@ -104,5 +105,13 @@ public class TrackedWallet implements Parcelable {
 
     public void setTransactions(List<Transaction> transactions) {
         this.transactions = transactions;
+    }
+
+    public String getNickname() {
+        return nickname;
+    }
+
+    public void setNickname(String nickname) {
+        this.nickname = nickname;
     }
 }

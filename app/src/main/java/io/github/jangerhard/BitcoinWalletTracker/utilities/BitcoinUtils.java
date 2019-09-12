@@ -64,14 +64,19 @@ public class BitcoinUtils {
     public List<TrackedWallet> getAddressesFromPrefs() {
         return preferences.getAddresses()
                 .filter(it -> verifyAddress(it).isDefined())
-                .map(TrackedWallet::new);
-    }
-
-    public String getNickname(String address) {
-        return preferences.getNickname(address);
+                .map( address -> {
+                    TrackedWallet t = new TrackedWallet(address);
+                    t.setNickname(preferences.getNickname(address));
+                    return t;
+                });
     }
 
     public void setNewNickname(String selectedAccount, String newNickname) {
+        trackedWallets = trackedWallets.map(wallet -> {
+            if (wallet.getAddress().equals(selectedAccount))
+                wallet.setNickname(newNickname);
+            return wallet;
+        });
         saveNicknameToPrefs(selectedAccount, newNickname);
     }
 

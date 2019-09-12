@@ -17,7 +17,7 @@ class AccountDetailActivity : AppCompatActivity() {
                 .map {
 
                     findViewById<TextView>(R.id.tv_unfolded_address).text = it.address
-                    findViewById<TextView>(R.id.tv_unfolded_nickname).text = "Some Nickname"
+                    findViewById<TextView>(R.id.tv_unfolded_nickname).text = it.nickname
 
                     //findViewById<TextView>(R.id.tv_account_number_transactions)
                     //findViewById<TextView>(R.id.tv_account_total_received)

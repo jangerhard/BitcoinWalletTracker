@@ -77,8 +77,7 @@ public class AccountAdapter extends RecyclerView.Adapter<AccountAdapter.MyViewHo
 
         final TrackedWallet trackedWallet = utils.getTrackedWallets().get(position);
 
-        String nickname = utils.getNickname(trackedWallet.getAddress());
-        holder.accNickNameFolded.setText(nickname);
+        holder.accNickNameFolded.setText(trackedWallet.getNickname());
 
         holder.position = holder.getAdapterPosition();
         holder.qrCode.setImageBitmap(trackedWallet.getRegularQRImage());
@@ -144,7 +143,7 @@ public class AccountAdapter extends RecyclerView.Adapter<AccountAdapter.MyViewHo
         @Override
         public boolean onMenuItemClick(MenuItem menuItem) {
             TrackedWallet wallet = utils.getTrackedWallets().get(selectedAccountPosition);
-            String nickname = utils.getNickname(wallet.getAddress());
+            String nickname = wallet.getNickname();
 
             switch (menuItem.getItemId()) {
                 case R.id.action_change_nickname:

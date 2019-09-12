@@ -332,7 +332,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void handleRemoveSelectedAccount(TrackedWallet trackedWallet, int position) {
         Toast.makeText(this,
-                "Removed account " + utils.getNickname(trackedWallet.getAddress()),
+                "Removed account " + trackedWallet.getNickname(),
                 Toast.LENGTH_SHORT).show();
         utils.removeTrackedAccount(trackedWallet);
         adapter.handleRemoveSelectedAccount(position);
