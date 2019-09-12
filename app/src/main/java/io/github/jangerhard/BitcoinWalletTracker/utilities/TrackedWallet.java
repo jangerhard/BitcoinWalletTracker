@@ -3,6 +3,8 @@ package io.github.jangerhard.BitcoinWalletTracker.utilities;
 import java.util.Objects;
 
 import android.graphics.Bitmap;
+import android.os.Parcel;
+import android.os.Parcelable;
 import io.github.jangerhard.BitcoinWalletTracker.model.BlockonomicsTransactionsResponse.Transaction;
 import io.vavr.collection.List;
 
@@ -10,7 +12,7 @@ import static io.github.jangerhard.BitcoinWalletTracker.qrStuff.BitmapCreator.QR
 import static io.github.jangerhard.BitcoinWalletTracker.qrStuff.BitmapCreator.QR_SIZE.REGULAR;
 import static io.github.jangerhard.BitcoinWalletTracker.qrStuff.BitmapCreator.createQRThumbnail;
 
-public class TrackedWallet {
+public class TrackedWallet implements Parcelable {
 
     private String address;
     private Bitmap bigQRImage;
@@ -24,6 +26,38 @@ public class TrackedWallet {
         final_balance = 0;
         transactions = List.empty();
     }
+
+    protected TrackedWallet(Parcel in) {
+        address = in.readString();
+        bigQRImage = in.readParcelable(Bitmap.class.getClassLoader());
+        regularQRImage = in.readParcelable(Bitmap.class.getClassLoader());
+        final_balance = in.readLong();
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(address);
+        dest.writeParcelable(bigQRImage, flags);
+        dest.writeParcelable(regularQRImage, flags);
+        dest.writeLong(final_balance);
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    public static final Creator<TrackedWallet> CREATOR = new Creator<TrackedWallet>() {
+        @Override
+        public TrackedWallet createFromParcel(Parcel in) {
+            return new TrackedWallet(in);
+        }
+
+        @Override
+        public TrackedWallet[] newArray(int size) {
+            return new TrackedWallet[size];
+        }
+    };
 
     public String getFormattedBalance() {
         return BitcoinUtils.formatBitcoinBalanceToString(final_balance);

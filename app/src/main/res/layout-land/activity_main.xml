@@ -52,7 +52,7 @@
                 android:clipToPadding="false"
                 android:fadeScrollbars="true"
                 android:scrollbars="vertical"
-                tools:listitem="@layout/account_folded"/>
+                tools:listitem="@layout/account_list_item"/>
 
         </com.baoyz.widget.PullRefreshLayout>
 

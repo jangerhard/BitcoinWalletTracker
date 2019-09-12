@@ -1,11 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+<android.widget.LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    style="@style/customCard"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_gravity="center"
-    android:padding="16dp">
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp"
+    tools:context=".Activity.AccountDetailActivity"
+    android:background="@drawable/background_color_dark">
+
+    <RelativeLayout
+        android:padding="8dp"
+        android:id="@+id/layout_top_buttons"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <ImageButton
+            android:id="@+id/bAddAccount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:alpha="0.5"
+            android:rotation="90"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:src="@drawable/ic_expand_more_white_48dp" />
+
+    </RelativeLayout>
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -124,11 +142,4 @@
 
     </RelativeLayout>
 
-    <ImageView
-        android:layout_width="24dp"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center|bottom"
-        android:alpha="0.65"
-        android:src="@drawable/ic_expand_less_white_48dp" />
-
-</androidx.cardview.widget.CardView>
+</android.widget.LinearLayout>

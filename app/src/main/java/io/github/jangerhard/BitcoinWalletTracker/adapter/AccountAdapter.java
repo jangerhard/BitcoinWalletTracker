@@ -1,8 +1,7 @@
 package io.github.jangerhard.BitcoinWalletTracker.adapter;
 
-import java.util.HashSet;
-
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -11,17 +10,15 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 import androidx.appcompat.widget.PopupMenu;
-import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
-import com.ramotion.foldingcell.FoldingCell;
+import io.github.jangerhard.BitcoinWalletTracker.Activity.AccountDetailActivity;
 import io.github.jangerhard.BitcoinWalletTracker.DialogMaker;
 import io.github.jangerhard.BitcoinWalletTracker.R;
 import io.github.jangerhard.BitcoinWalletTracker.utilities.BitcoinUtils;
 import io.github.jangerhard.BitcoinWalletTracker.utilities.TrackedWallet;
 
 public class AccountAdapter extends RecyclerView.Adapter<AccountAdapter.MyViewHolder> {
-
-    private HashSet<Integer> unfoldedIndexes = new HashSet<>();
 
     private Context mContext;
     private int selectedAccountPosition;
@@ -36,9 +33,9 @@ public class AccountAdapter extends RecyclerView.Adapter<AccountAdapter.MyViewHo
         int position;
 
         // Unfolded
-        TextView accAddress, accNickNameUnfolded, tvAccNumTxs, tvAccTotReceived, tvAccFinalBalance,
-                tvRecentTransaction;
-        RecyclerView transactionList;
+//        TextView accAddress, accNickNameUnfolded, tvAccNumTxs, tvAccTotReceived, tvAccFinalBalance,
+//                tvRecentTransaction;
+//        RecyclerView transactionList;
 
         MyViewHolder(View view) {
             super(view);
@@ -49,15 +46,15 @@ public class AccountAdapter extends RecyclerView.Adapter<AccountAdapter.MyViewHo
             accRate = view.findViewById(R.id.tvAccountRateFolded);
             qrCode = view.findViewById(R.id.im_thumbnailFolded);
 
-            // Unfolded
-            accAddress = view.findViewById(R.id.tv_unfolded_address);
-            accNickNameUnfolded = view.findViewById(R.id.tv_unfolded_nickname);
-            overflow2 = view.findViewById(R.id.im_OverflowFolded2);
-            transactionList = view.findViewById(R.id.transactionList);
-            tvAccNumTxs = view.findViewById(R.id.tv_account_number_transactions);
-            tvAccTotReceived = view.findViewById(R.id.tv_account_total_received);
-            tvAccFinalBalance = view.findViewById(R.id.tv_account_final_balance);
-            tvRecentTransaction = view.findViewById(R.id.tv_unfolded_last_transactions);
+//            // Unfolded
+//            accAddress = view.findViewById(R.id.tv_unfolded_address);
+//            accNickNameUnfolded = view.findViewById(R.id.tv_unfolded_nickname);
+//            overflow2 = view.findViewById(R.id.im_OverflowFolded2);
+//            transactionList = view.findViewById(R.id.transactionList);
+//            tvAccNumTxs = view.findViewById(R.id.tv_account_number_transactions);
+//            tvAccTotReceived = view.findViewById(R.id.tv_account_total_received);
+//            tvAccFinalBalance = view.findViewById(R.id.tv_account_final_balance);
+//            tvRecentTransaction = view.findViewById(R.id.tv_unfolded_last_transactions);
         }
     }
 
@@ -69,8 +66,8 @@ public class AccountAdapter extends RecyclerView.Adapter<AccountAdapter.MyViewHo
 
     @Override
     public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        FoldingCell itemView = (FoldingCell) LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.account_layout, parent, false);
+        CardView itemView = (CardView) LayoutInflater.from(parent.getContext())
+                .inflate(R.layout.account_list_item, parent, false);
 
         return new MyViewHolder(itemView);
     }
@@ -87,22 +84,20 @@ public class AccountAdapter extends RecyclerView.Adapter<AccountAdapter.MyViewHo
         holder.qrCode.setImageBitmap(trackedWallet.getRegularQRImage());
 
         holder.itemView.setOnClickListener(view -> {
-
-            ((FoldingCell) view).toggle(false);
-            // register in adapter that state for selected cell is toggled
-            registerToggle(holder.position);
-
+            Intent intent = new Intent(view.getContext(), AccountDetailActivity.class);
+            intent.putExtra(AccountDetailActivity.SELECTED_WALLET, trackedWallet);
+            view.getContext().startActivity(intent);
         });
 
         holder.qrCode.setOnClickListener(view -> dialogMaker.showAccountShareDialog(trackedWallet));
 
         // Unfolded
-        holder.accAddress.setText(trackedWallet.getAddress());
-        holder.accNickNameUnfolded.setText(nickname);
-
-        holder.transactionList.setLayoutManager(
-                new LinearLayoutManager(
-                        mContext, RecyclerView.VERTICAL, false));
+//        holder.accAddress.setText(trackedWallet.getAddress());
+//        holder.accNickNameUnfolded.setText(nickname);
+//
+//        holder.transactionList.setLayoutManager(
+//                new LinearLayoutManager(
+//                        mContext, RecyclerView.VERTICAL, false));
 
         holder.accBalance.setText(trackedWallet.getFormattedBalance());
         holder.accRate.setText(
@@ -116,15 +111,15 @@ public class AccountAdapter extends RecyclerView.Adapter<AccountAdapter.MyViewHo
 //        holder.tvAccFinalBalance.setText(
 //                BitcoinUtils.formatBitcoinBalanceToString(account.getFinal_balance()));
 
-        if (trackedWallet.getTransactions().size() >= 0)
-            holder.tvRecentTransaction.setText(mContext.getResources().getString(R.string.no_activity_on_this_address));
-        else
-            holder.tvRecentTransaction.setText(mContext.getResources().getString(R.string.latest_transactions));
-
-        TransactionAdapter transactionAdapter =
-                new TransactionAdapter(mContext, trackedWallet.getTransactions(), trackedWallet.getAddress());
-
-        holder.transactionList.setAdapter(transactionAdapter);
+//        if (trackedWallet.getTransactions().size() >= 0)
+//            holder.tvRecentTransaction.setText(mContext.getResources().getString(R.string.no_activity_on_this_address));
+//        else
+//            holder.tvRecentTransaction.setText(mContext.getResources().getString(R.string.latest_transactions));
+//
+//        TransactionAdapter transactionAdapter =
+//                new TransactionAdapter(mContext, trackedWallet.getTransactions(), trackedWallet.getAddress());
+//
+//        holder.transactionList.setAdapter(transactionAdapter);
     }
 
     /**
@@ -171,22 +166,6 @@ public class AccountAdapter extends RecyclerView.Adapter<AccountAdapter.MyViewHo
     @Override
     public int getItemCount() {
         return utils.getTrackedWallets().length();
-    }
-
-    // simple methods for register cell state changes
-    private void registerToggle(int position) {
-        if (unfoldedIndexes.contains(position))
-            registerFold(position);
-        else
-            registerUnfold(position);
-    }
-
-    private void registerFold(int position) {
-        unfoldedIndexes.remove(position);
-    }
-
-    private void registerUnfold(int position) {
-        unfoldedIndexes.add(position);
     }
 
 }
