@@ -1,8 +1,12 @@
 package io.github.jangerhard.BitcoinWalletTracker.Activity
 
 import android.os.Bundle
+import android.transition.Explode
+import android.view.Window
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.RecyclerView
 import io.github.jangerhard.BitcoinWalletTracker.R
 import io.github.jangerhard.BitcoinWalletTracker.utilities.TrackedWallet
 import io.vavr.control.Option
@@ -19,6 +23,7 @@ class AccountDetailActivity : AppCompatActivity() {
                     findViewById<TextView>(R.id.tv_unfolded_address).text = it.address
                     findViewById<TextView>(R.id.tv_unfolded_nickname).text = it.nickname
 
+                    findViewById<ImageView>(R.id.im_account_details_image).setImageBitmap(it.bigQRImage)
                     //findViewById<TextView>(R.id.tv_account_number_transactions)
                     //findViewById<TextView>(R.id.tv_account_total_received)
                     findViewById<TextView>(R.id.tv_account_final_balance).text = it.formattedBalance

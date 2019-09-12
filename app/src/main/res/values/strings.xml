@@ -60,4 +60,9 @@
     <string name="savings">Savings</string>
     <string name="share">Share</string>
 
+
+    <!-- Transitions -->
+    <string name="transition_account_nickname">TRANSITION_ACCOUNT_NICKNAME</string>
+    <string name="transition_account_balance">TRANSITION_ACCOUNT_BALANCE</string>
+
 </resources>

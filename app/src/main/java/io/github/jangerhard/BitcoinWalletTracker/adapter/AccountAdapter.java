@@ -1,6 +1,6 @@
 package io.github.jangerhard.BitcoinWalletTracker.adapter;
 
-import android.content.Context;
+import android.app.Activity;
 import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.MenuInflater;
@@ -20,7 +20,7 @@ import io.github.jangerhard.BitcoinWalletTracker.utilities.TrackedWallet;
 
 public class AccountAdapter extends RecyclerView.Adapter<AccountAdapter.MyViewHolder> {
 
-    private Context mContext;
+    private Activity activity;
     private int selectedAccountPosition;
     private BitcoinUtils utils;
     private DialogMaker dialogMaker;
@@ -44,7 +44,7 @@ public class AccountAdapter extends RecyclerView.Adapter<AccountAdapter.MyViewHo
             accNickNameFolded = view.findViewById(R.id.tvAccountNameFolded);
             accBalance = view.findViewById(R.id.tvAccountBalanceFolded);
             accRate = view.findViewById(R.id.tvAccountRateFolded);
-            qrCode = view.findViewById(R.id.im_thumbnailFolded);
+            qrCode = view.findViewById(R.id.im_account_details_image);
 
 //            // Unfolded
 //            accAddress = view.findViewById(R.id.tv_unfolded_address);
@@ -58,8 +58,8 @@ public class AccountAdapter extends RecyclerView.Adapter<AccountAdapter.MyViewHo
         }
     }
 
-    public AccountAdapter(Context mContext, BitcoinUtils utils, DialogMaker dialogMaker) {
-        this.mContext = mContext;
+    public AccountAdapter(Activity activity, BitcoinUtils utils, DialogMaker dialogMaker) {
+        this.activity = activity;
         this.utils = utils;
         this.dialogMaker = dialogMaker;
     }
@@ -82,10 +82,19 @@ public class AccountAdapter extends RecyclerView.Adapter<AccountAdapter.MyViewHo
         holder.position = holder.getAdapterPosition();
         holder.qrCode.setImageBitmap(trackedWallet.getRegularQRImage());
 
+        holder.accBalance.setText(trackedWallet.getFormattedBalance());
+        holder.accRate.setText(
+                utils.formatBTCtoCurrency(trackedWallet.getFinal_balance()));
+
+//        ActivityOptions options = ActivityOptions.makeSceneTransitionAnimation(activity,
+//                Pair.create(holder.accNickNameFolded, activity.getString(R.string.transition_account_nickname)),
+//                Pair.create(holder.accBalance, activity.getString(R.string.transition_account_balance)));
+
         holder.itemView.setOnClickListener(view -> {
-            Intent intent = new Intent(view.getContext(), AccountDetailActivity.class);
+            Intent intent = new Intent(activity, AccountDetailActivity.class);
             intent.putExtra(AccountDetailActivity.SELECTED_WALLET, trackedWallet);
-            view.getContext().startActivity(intent);
+            //activity.startActivity(intent, options.toBundle());
+            activity.startActivity(intent);
         });
 
         holder.qrCode.setOnClickListener(view -> dialogMaker.showAccountShareDialog(trackedWallet));
@@ -97,10 +106,6 @@ public class AccountAdapter extends RecyclerView.Adapter<AccountAdapter.MyViewHo
 //        holder.transactionList.setLayoutManager(
 //                new LinearLayoutManager(
 //                        mContext, RecyclerView.VERTICAL, false));
-
-        holder.accBalance.setText(trackedWallet.getFormattedBalance());
-        holder.accRate.setText(
-                utils.formatBTCtoCurrency(trackedWallet.getFinal_balance()));
 
         // unfolded
 //        holder.tvAccNumTxs.setText(
@@ -126,7 +131,7 @@ public class AccountAdapter extends RecyclerView.Adapter<AccountAdapter.MyViewHo
      */
     private void showPopupMenu(View view) {
         // inflate menu
-        PopupMenu popup = new PopupMenu(mContext, view);
+        PopupMenu popup = new PopupMenu(activity, view);
         MenuInflater inflater = popup.getMenuInflater();
         inflater.inflate(R.menu.menu_account, popup.getMenu());
         popup.setOnMenuItemClickListener(new MyMenuItemClickListener());

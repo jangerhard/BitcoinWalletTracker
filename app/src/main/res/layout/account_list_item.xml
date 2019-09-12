@@ -20,7 +20,7 @@
         >
 
         <ImageView
-            android:id="@+id/im_thumbnailFolded"
+            android:id="@+id/im_account_details_image"
             android:layout_width="32dp"
             android:layout_height="32dp"
             android:layout_centerVertical="true"
@@ -35,7 +35,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
-            android:layout_toEndOf="@id/im_thumbnailFolded">
+            android:layout_toEndOf="@id/im_account_details_image">
 
             <LinearLayout
                 android:layout_width="wrap_content"
@@ -48,6 +48,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
+                    android:transitionName="@string/transition_account_nickname"
                     android:contentDescription="@string/account_nickname"
                     android:text="@string/temp_account_nickname"
                     android:textColor="@color/text_dark_primary" />
@@ -71,6 +72,7 @@
                 android:contentDescription="@string/current_converted_price"
                 android:text="@string/loading"
                 android:textColor="@color/text_dark_primary"
+                android:transitionName="@string/transition_account_balance"
                 tools:text="300.0 BTC" />
 
 
