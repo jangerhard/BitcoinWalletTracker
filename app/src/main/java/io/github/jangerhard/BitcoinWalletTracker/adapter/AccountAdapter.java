@@ -32,7 +32,7 @@ public class AccountAdapter extends RecyclerView.Adapter<AccountAdapter.MyViewHo
 
         // Folded
         TextView accNickNameFolded, accBalance, accRate;
-        private ImageView overflow, overflow2, qrCode;
+        private ImageView overflow2, qrCode;
         int position;
 
         // Unfolded
@@ -47,7 +47,6 @@ public class AccountAdapter extends RecyclerView.Adapter<AccountAdapter.MyViewHo
             accNickNameFolded = view.findViewById(R.id.tvAccountNameFolded);
             accBalance = view.findViewById(R.id.tvAccountBalanceFolded);
             accRate = view.findViewById(R.id.tvAccountRateFolded);
-            overflow = view.findViewById(R.id.im_OverflowFolded);
             qrCode = view.findViewById(R.id.im_thumbnailFolded);
 
             // Unfolded
@@ -96,16 +95,6 @@ public class AccountAdapter extends RecyclerView.Adapter<AccountAdapter.MyViewHo
         });
 
         holder.qrCode.setOnClickListener(view -> dialogMaker.showAccountShareDialog(trackedWallet));
-
-        holder.overflow.setOnClickListener(view -> {
-            selectedAccountPosition = holder.getAdapterPosition();
-            showPopupMenu(holder.overflow);
-        });
-
-        holder.overflow2.setOnClickListener(view -> {
-            selectedAccountPosition = holder.getAdapterPosition();
-            showPopupMenu(holder.overflow);
-        });
 
         // Unfolded
         holder.accAddress.setText(trackedWallet.getAddress());
