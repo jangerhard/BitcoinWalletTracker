@@ -29,7 +29,7 @@ class AccountDetailActivity : AppCompatActivity() {
         //findViewById<ImageView>(R.id.im_account_details_image).setImageBitmap(trackedWallet.regularQRImage)
         //findViewById<TextView>(R.id.tv_account_number_transactions)
         //findViewById<TextView>(R.id.tv_account_total_received)
-        findViewById<TextView>(R.id.tv_account_final_balance).text = trackedWallet.formattedBalance
+        findViewById<TextView>(R.id.tv_account_final_balance).text = trackedWallet.getBalanceAsString()
 
         findViewById<TextView>(R.id.tv_unfolded_last_transactions).text =
                 if (trackedWallet.transactions.size() >= 0)

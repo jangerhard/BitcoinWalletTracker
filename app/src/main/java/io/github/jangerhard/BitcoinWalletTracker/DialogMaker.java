@@ -117,7 +117,7 @@ public class DialogMaker {
                 .setTopColorRes(R.color.dialog_warning)
                 .setIcon(R.drawable.ic_delete_forever_white_48dp)
                 .setTitle(activity.getString(R.string.stop_tracking) + " " + nickname + "?")
-                .setMessage(activity.getString(R.string.it_has_a_balance_of) + " " + wallet.getFormattedBalance())
+                .setMessage(activity.getString(R.string.it_has_a_balance_of) + " " + wallet.getBalanceAsString())
                 .setPositiveButton(android.R.string.yes, v -> activity.handleRemoveSelectedAccount(wallet, position))
                 .setNegativeButton(android.R.string.cancel, null)
                 .show();

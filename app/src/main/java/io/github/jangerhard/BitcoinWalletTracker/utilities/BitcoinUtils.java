@@ -64,7 +64,7 @@ public class BitcoinUtils {
     public List<TrackedWallet> getAddressesFromPrefs() {
         return preferences.getAddresses()
                 .filter(it -> verifyAddress(it).isDefined())
-                .map( address -> {
+                .map(address -> {
                     TrackedWallet t = new TrackedWallet(address);
                     t.setNickname(preferences.getNickname(address));
                     return t;
@@ -84,7 +84,7 @@ public class BitcoinUtils {
 
         trackedWallets = trackedWallets.map(wallet -> {
             if (wallet.getAddress().equals(address))
-                wallet.setFinal_balance(newBalance);
+                wallet.setFinalBalance(newBalance);
 
             return wallet;
         });
@@ -118,7 +118,7 @@ public class BitcoinUtils {
     }
 
     public static long calculateTotalBalance(List<TrackedWallet> accounts) {
-        return accounts.map(TrackedWallet::getFinal_balance).sum().longValue();
+        return accounts.map(TrackedWallet::getFinalBalance).sum().longValue();
     }
 
     public String getTotalBalance() {

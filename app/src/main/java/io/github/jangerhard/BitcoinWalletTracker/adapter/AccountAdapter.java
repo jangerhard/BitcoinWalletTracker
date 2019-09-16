@@ -2,6 +2,7 @@ package io.github.jangerhard.BitcoinWalletTracker.adapter;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -62,9 +63,8 @@ public class AccountAdapter extends RecyclerView.Adapter<AccountAdapter.MyViewHo
         holder.position = holder.getAdapterPosition();
         holder.qrCode.setImageBitmap(trackedWallet.getRegularQRImage());
 
-        holder.accBalance.setText(trackedWallet.getFormattedBalance());
-        holder.accRate.setText(
-                utils.formatBTCtoCurrency(trackedWallet.getFinal_balance()));
+        holder.accBalance.setText(trackedWallet.getBalanceAsString());
+        holder.accRate.setText(utils.formatBTCtoCurrency(trackedWallet.getFinalBalance()));
 
 //        ActivityOptions options = ActivityOptions.makeSceneTransitionAnimation(activity,
 //                Pair.create(holder.accNickNameFolded, activity.getString(R.string.transition_account_nickname)),

@@ -1,115 +1,74 @@
-package io.github.jangerhard.BitcoinWalletTracker.utilities;
+package io.github.jangerhard.BitcoinWalletTracker.utilities
 
-import java.util.Objects;
+import android.graphics.Bitmap
+import android.os.Parcel
+import android.os.Parcelable
+import io.github.jangerhard.BitcoinWalletTracker.model.BlockonomicsTransactionsResponse.Transaction
+import io.github.jangerhard.BitcoinWalletTracker.qrStuff.BitmapCreator.QR_SIZE.BIG
+import io.github.jangerhard.BitcoinWalletTracker.qrStuff.BitmapCreator.QR_SIZE.REGULAR
+import io.github.jangerhard.BitcoinWalletTracker.qrStuff.BitmapCreator.createQRThumbnail
+import io.vavr.collection.List
 
-import android.graphics.Bitmap;
-import android.os.Parcel;
-import android.os.Parcelable;
-import io.github.jangerhard.BitcoinWalletTracker.model.BlockonomicsTransactionsResponse.Transaction;
-import io.vavr.collection.List;
+class TrackedWallet(
+        var address: String
+) : Parcelable {
 
-import static io.github.jangerhard.BitcoinWalletTracker.qrStuff.BitmapCreator.QR_SIZE.BIG;
-import static io.github.jangerhard.BitcoinWalletTracker.qrStuff.BitmapCreator.QR_SIZE.REGULAR;
-import static io.github.jangerhard.BitcoinWalletTracker.qrStuff.BitmapCreator.createQRThumbnail;
+    var nickname: String = "Wallet"
 
-public class TrackedWallet implements Parcelable {
+    var finalBalance: Long = 0
 
-    private String address;
-    private String nickname = "Wallet";
+    private var bigQRImage: Bitmap? = null
+    private var regularQRImage: Bitmap? = null
 
-    private long final_balance = 0;
+    var transactions: List<Transaction> = List.empty<Transaction>()
 
-    private Bitmap bigQRImage;
-    private Bitmap regularQRImage;
+    fun getBalanceAsString() = BitcoinUtils.formatBitcoinBalanceToString(this.finalBalance)
 
-    private List<Transaction> transactions = List.empty();
-
-    public TrackedWallet(String address) {
-        this.address = address;
+    constructor(parcel: Parcel) : this(parcel.readString()) {
+        nickname = parcel.readString()
+        finalBalance = parcel.readLong()
+        bigQRImage = parcel.readParcelable(Bitmap::class.java.classLoader)
+        regularQRImage = parcel.readParcelable(Bitmap::class.java.classLoader)
     }
 
-    protected TrackedWallet(Parcel in) {
-        address = in.readString();
-        nickname = in.readString();
-        final_balance = in.readLong();
+    fun getBigQRImage(): Bitmap? {
+        if (bigQRImage == null) bigQRImage = createQRThumbnail(address, BIG)
+        return bigQRImage
     }
 
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(address);
-        dest.writeString(nickname);
-        dest.writeLong(final_balance);
+    fun getRegularQRImage(): Bitmap? {
+        if (regularQRImage == null) regularQRImage = createQRThumbnail(address, REGULAR)
+        return regularQRImage
     }
 
-    @Override
-    public int describeContents() {
-        return 0;
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as TrackedWallet
+
+        if (address != other.address) return false
+
+        return true
     }
 
-    public static final Creator<TrackedWallet> CREATOR = new Creator<TrackedWallet>() {
-        @Override
-        public TrackedWallet createFromParcel(Parcel in) {
-            return new TrackedWallet(in);
+    override fun hashCode(): Int = address.hashCode() ?: 0
+
+    override fun writeToParcel(parcel: Parcel, flags: Int) {
+        parcel.writeString(address)
+        parcel.writeString(nickname)
+        parcel.writeLong(finalBalance)
+    }
+
+    override fun describeContents(): Int = 0
+
+    companion object CREATOR : Parcelable.Creator<TrackedWallet> {
+        override fun createFromParcel(parcel: Parcel): TrackedWallet {
+            return TrackedWallet(parcel)
         }
 
-        @Override
-        public TrackedWallet[] newArray(int size) {
-            return new TrackedWallet[size];
+        override fun newArray(size: Int): Array<TrackedWallet?> {
+            return arrayOfNulls(size)
         }
-    };
-
-    public String getFormattedBalance() {
-        return BitcoinUtils.formatBitcoinBalanceToString(final_balance);
-    }
-
-    public String getAddress() {
-        return address;
-    }
-
-    public Bitmap getBigQRImage() {
-        if (bigQRImage == null) bigQRImage = createQRThumbnail(address, BIG);
-        return bigQRImage;
-    }
-
-    public Bitmap getRegularQRImage() {
-        if (regularQRImage == null) regularQRImage = createQRThumbnail(address, REGULAR);
-        return regularQRImage;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        TrackedWallet that = (TrackedWallet) o;
-        return address.equals(that.address);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(address);
-    }
-
-    public long getFinal_balance() {
-        return final_balance;
-    }
-
-    public void setFinal_balance(long final_balance) {
-        this.final_balance = final_balance;
-    }
-
-    public List<Transaction> getTransactions() {
-        return transactions;
-    }
-
-    public void setTransactions(List<Transaction> transactions) {
-        this.transactions = transactions;
-    }
-
-    public String getNickname() {
-        return nickname;
-    }
-
-    public void setNickname(String nickname) {
-        this.nickname = nickname;
     }
 }
