@@ -5,7 +5,6 @@ import java.util.Objects;
 import android.graphics.Bitmap;
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.util.Log;
 import io.github.jangerhard.BitcoinWalletTracker.model.BlockonomicsTransactionsResponse.Transaction;
 import io.vavr.collection.List;
 

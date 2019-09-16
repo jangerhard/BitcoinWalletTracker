@@ -27,21 +27,10 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-        <ImageView
-            android:id="@+id/im_account_details_image"
-            android:layout_width="85dp"
-            android:layout_height="85dp"
-            android:layout_margin="16dp"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:clickable="true"
-            android:contentDescription="@string/qr_code_associated_with_account"
-            android:focusable="true"
-            android:src="@drawable/bitcoin_128" />
+        android:layout_height="match_parent"
+        android:padding="16dp">
 
         <TextView
-            android:paddingTop="16dp"
             android:id="@+id/tv_unfolded_nickname"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -69,15 +58,25 @@
             android:transitionName="@string/transition_account_balance"
             tools:text="30 000 BTC" />
 
+        <View
+            android:id="@+id/vLineBreak"
+            android:layout_width="75dp"
+            android:layout_height="1dp"
+            android:alpha="0.25"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="16dp"
+            android:layout_centerHorizontal="true"
+            android:layout_below="@id/tv_account_final_balance"
+            android:background="@color/primaryTextColor"
+            />
+
         <TextView
             android:id="@+id/tv_unfolded_last_transactions"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@id/im_account_details_image"
+            android:layout_below="@id/vLineBreak"
             android:layout_centerHorizontal="true"
-            android:paddingTop="8dp"
             android:text="@string/latest_transactions" />
-
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/transactionList"

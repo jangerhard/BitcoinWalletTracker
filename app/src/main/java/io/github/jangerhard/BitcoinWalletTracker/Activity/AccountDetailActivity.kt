@@ -11,7 +11,6 @@ import io.github.jangerhard.BitcoinWalletTracker.adapter.TransactionAdapter
 import io.github.jangerhard.BitcoinWalletTracker.utilities.TrackedWallet
 
 class AccountDetailActivity : AppCompatActivity() {
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.account_details)
@@ -27,7 +26,7 @@ class AccountDetailActivity : AppCompatActivity() {
         findViewById<TextView>(R.id.tv_unfolded_address).text = trackedWallet.address
         findViewById<TextView>(R.id.tv_unfolded_nickname).text = trackedWallet.nickname
 
-        findViewById<ImageView>(R.id.im_account_details_image).setImageBitmap(trackedWallet.bigQRImage)
+        //findViewById<ImageView>(R.id.im_account_details_image).setImageBitmap(trackedWallet.regularQRImage)
         //findViewById<TextView>(R.id.tv_account_number_transactions)
         //findViewById<TextView>(R.id.tv_account_total_received)
         findViewById<TextView>(R.id.tv_account_final_balance).text = trackedWallet.formattedBalance
