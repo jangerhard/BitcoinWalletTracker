@@ -256,12 +256,8 @@ public class BitcoinUtils {
         preferences.saveNickname(address, name);
     }
 
-    private void saveInvestmentToPrefs(long investment) {
-        preferences.saveInvestment(investment);
-    }
-
     public void saveInvestment(long investment) {
-        saveInvestmentToPrefs(investment);
+        preferences.saveInvestment(investment);
     }
 
     public void updateCurrency(Double price) {
