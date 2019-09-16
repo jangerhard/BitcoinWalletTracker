@@ -5,6 +5,7 @@ import java.util.Objects;
 import android.graphics.Bitmap;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.util.Log;
 import io.github.jangerhard.BitcoinWalletTracker.model.BlockonomicsTransactionsResponse.Transaction;
 import io.vavr.collection.List;
 
@@ -16,10 +17,12 @@ public class TrackedWallet implements Parcelable {
 
     private String address;
     private String nickname = "Wallet";
+
+    private long final_balance = 0;
+
     private Bitmap bigQRImage;
     private Bitmap regularQRImage;
 
-    private long final_balance = 0;
     private List<Transaction> transactions = List.empty();
 
     public TrackedWallet(String address) {
@@ -29,8 +32,6 @@ public class TrackedWallet implements Parcelable {
     protected TrackedWallet(Parcel in) {
         address = in.readString();
         nickname = in.readString();
-        bigQRImage = in.readParcelable(Bitmap.class.getClassLoader());
-        regularQRImage = in.readParcelable(Bitmap.class.getClassLoader());
         final_balance = in.readLong();
     }
 
@@ -38,8 +39,6 @@ public class TrackedWallet implements Parcelable {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(address);
         dest.writeString(nickname);
-        dest.writeParcelable(bigQRImage, flags);
-        dest.writeParcelable(regularQRImage, flags);
         dest.writeLong(final_balance);
     }
 
@@ -74,7 +73,7 @@ public class TrackedWallet implements Parcelable {
     }
 
     public Bitmap getRegularQRImage() {
-        if (bigQRImage == null) regularQRImage = createQRThumbnail(address, REGULAR);
+        if (regularQRImage == null) regularQRImage = createQRThumbnail(address, REGULAR);
         return regularQRImage;
     }
 
