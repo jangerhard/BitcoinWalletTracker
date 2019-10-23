@@ -1,95 +1,94 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<FrameLayout android:layout_height="wrap_content"
     android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:padding="@dimen/activity_horizontal_margin"
-    app:cardBackgroundColor="@color/colorPrimary"
-    android:layout_weight="2"
-    app:cardCornerRadius="3dp">
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto">
 
-    <RelativeLayout
-        android:id="@+id/totalOverview"
+    <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
         android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:padding="16dp">
-
-        <LinearLayout
-            android:id="@+id/layout_balance"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:orientation="vertical">
-
-            <TextView
-                android:id="@+id/tvTotalBalance"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:paddingBottom="8dp"
-                android:text="@string/balance"
-                android:textColor="@color/common_google_signin_btn_text_dark"
-                android:textSize="20sp"
-                android:textStyle="italic" />
-
-            <TextView
-                android:id="@+id/tvCalculatedBalance"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:fontFamily="@font/ptc_caption"
-                android:textColor="@color/common_google_signin_btn_text_dark"
-                android:textSize="28sp" />
-
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center">
-
-                <TextView
-                    android:id="@+id/tvTotalInvestment"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:paddingEnd="8dp"
-                    android:layout_gravity="center"
-                    android:textColor="@color/common_google_signin_btn_text_dark"
-                    android:textSize="20sp" />
-
-                <TextView
-                    android:id="@+id/tvInvestmentGain"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:textColor="@color/common_google_signin_btn_text_dark"
-                    android:textSize="16sp" />
-
-            </LinearLayout>
-        </LinearLayout>
+        android:layout_height="wrap_content"
+        android:padding="@dimen/activity_horizontal_margin"
+        card_view:cardBackgroundColor="@android:color/transparent"
+        card_view:cardElevation="0dp"
+        app:cardCornerRadius="3dp">
 
         <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true">
+            android:id="@+id/totalOverview"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:padding="16dp">
 
-            <ImageButton
-                android:id="@+id/bAddAccount"
+            <LinearLayout
+                android:id="@+id/layout_balance"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignParentStart="true"
-                android:background="?attr/selectableItemBackgroundBorderless"
-                android:src="@drawable/ic_add_circle_outline_white_36dp" />
+                android:layout_centerInParent="true"
+                android:orientation="vertical">
 
-            <ImageButton
-                android:id="@+id/bSettings"
-                android:layout_width="wrap_content"
+                <TextView
+                    android:id="@+id/tvCalculatedBalance"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:fontFamily="@font/ptc_caption"
+                    tools:text="300.0 mBTC"
+                    android:textColor="@color/common_google_signin_btn_text_dark"
+                    android:textSize="28sp" />
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center">
+
+                    <TextView
+                        android:id="@+id/tvTotalInvestment"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:paddingEnd="8dp"
+                        android:layout_gravity="center"
+                        tools:text="kr 20000"
+                        android:textColor="@color/common_google_signin_btn_text_dark"
+                        android:textSize="20sp" />
+
+                    <TextView
+                        android:id="@+id/tvInvestmentGain"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        tools:text="(+99.82%)"
+                        android:textColor="@color/common_google_signin_btn_text_dark"
+                        android:textSize="16sp" />
+
+                </LinearLayout>
+            </LinearLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
-                android:background="?attr/selectableItemBackgroundBorderless"
-                android:src="@drawable/ic_menu_white_36dp" />
+                android:layout_alignParentBottom="true">
+
+                <ImageButton
+                    android:id="@+id/bAddAccount"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:src="@drawable/ic_add_circle_outline_white_36dp" />
+
+                <ImageButton
+                    android:id="@+id/bSettings"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:src="@drawable/ic_menu_white_36dp" />
+
+            </RelativeLayout>
 
         </RelativeLayout>
 
-    </RelativeLayout>
-
-</android.support.v7.widget.CardView>
+    </androidx.cardview.widget.CardView>
+</FrameLayout>

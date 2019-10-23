@@ -1,80 +1,65 @@
 package io.github.jangerhard.BitcoinWalletTracker;
 
 import android.app.Activity;
-import android.content.ClipData;
-import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.app.AppCompatDelegate;
-import android.support.v7.widget.CardView;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import com.android.volley.NetworkError;
-import com.android.volley.NoConnectionError;
-import com.android.volley.ParseError;
-import com.android.volley.Request;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
+import androidx.cardview.widget.CardView;
+import androidx.core.content.ContextCompat;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.ServerError;
-import com.android.volley.TimeoutError;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.baoyz.widget.PullRefreshLayout;
 import com.google.android.gms.common.api.CommonStatusCodes;
 import com.google.android.gms.vision.barcode.Barcode;
-import com.google.gson.Gson;
 import com.wajahatkarim3.easyflipview.EasyFlipView;
-import com.yarolegovich.lovelydialog.LovelyChoiceDialog;
-import com.yarolegovich.lovelydialog.LovelyCustomDialog;
 import com.yarolegovich.lovelydialog.LovelyStandardDialog;
-import com.yarolegovich.lovelydialog.LovelyTextInputDialog;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.util.List;
-
+import io.github.jangerhard.BitcoinWalletTracker.adapter.AccountAdapter;
+import io.github.jangerhard.BitcoinWalletTracker.client.BlockExplorer;
+import io.github.jangerhard.BitcoinWalletTracker.client.PriceFetcher;
+import io.github.jangerhard.BitcoinWalletTracker.model.BlockonomicsTransactionsResponse.Transaction;
 import io.github.jangerhard.BitcoinWalletTracker.qrStuff.barcode.BarcodeCaptureActivity;
+import io.github.jangerhard.BitcoinWalletTracker.utilities.BitcoinUtils;
+import io.github.jangerhard.BitcoinWalletTracker.utilities.SharedPreferencesHelper;
+import io.github.jangerhard.BitcoinWalletTracker.utilities.TrackedWallet;
+import io.vavr.collection.List;
+import io.vavr.control.Option;
 import jp.wasabeef.recyclerview.animators.LandingAnimator;
 import mehdi.sakout.aboutpage.AboutPage;
 import mehdi.sakout.aboutpage.Element;
 
 public class MainActivity extends AppCompatActivity {
 
-    private static final int BARCODE_READER_REQUEST_CODE = 1337;
-    private static final String DARK_THEME_SELECTED = "dark_theme_selected";
-    private static final String REFRESHING_THEME = "refreshing_theme";
-    private static final String SHOW_GAIN_PERCENTAGE = "show_gain_percentage";
+    public static final int BARCODE_READER_REQUEST_CODE = 1337;
     private static final String LOG_TAG = "MainActivity";
 
-    private RequestQueue mRequestQueue;
-    String url_blockchain = "https://blockchain.info/";
-    String url_exchange = "https://api.coinbase.com/v2/prices/";
-    Activity mActivity;
-    AccountAdapter adapter;
-    TextView tvTotalBalance, tvTotalValue,
+    private Activity mActivity;
+    private AccountAdapter adapter;
+    private TextView tvTotalBalance, tvTotalValue,
             tvInvestmentGain, tvTotalInvestmentSettings, tvExchangeRate;
-    BitcoinUtils utils;
-    PullRefreshLayout allAccountsView;
-    CardView cv_no_accounts;
-    RecyclerView recyclerView;
-    EasyFlipView mFlipView;
-    SharedPreferences sharedPref;
-    Boolean selectedDarkTheme, showGainPercentage, noAccounts;
+    private BitcoinUtils utils;
+    private PullRefreshLayout allAccountsView;
+    private CardView cv_no_accounts;
+    private RecyclerView recyclerView;
+    private EasyFlipView mFlipView;
+    private Boolean selectedDarkTheme, showGainPercentage;
+
+    private SharedPreferencesHelper preferences;
+
+    private PriceFetcher priceFetcher;
+    private BlockExplorer blockExplorer;
+    private DialogMaker dialogMaker;
 
     private int numRefreshed;
 
@@ -82,27 +67,28 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
 
         AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
+        preferences = new SharedPreferencesHelper(this.getPreferences(Context.MODE_PRIVATE));
 
-        sharedPref = this.getPreferences(Context.MODE_PRIVATE);
-        selectedDarkTheme = sharedPref.getBoolean(DARK_THEME_SELECTED, true);
-        showGainPercentage = sharedPref.getBoolean(SHOW_GAIN_PERCENTAGE, true);
+        selectedDarkTheme = preferences.isDarkTheme();
+        showGainPercentage = preferences.shouldShowGainInPercentage();
         setTheme(selectedDarkTheme ? R.style.AppThemeDark : R.style.AppThemeLight);
 
         super.onCreate(savedInstanceState);
+
         mActivity = this;
         setContentView(R.layout.activity_main);
 
-        utils = new BitcoinUtils(sharedPref, getString(R.string.bitcoinaddresses));
-        utils.setup();
+        utils = new BitcoinUtils(preferences);
+
+        RequestQueue queue = Volley.newRequestQueue(this);
+        priceFetcher = new PriceFetcher(queue, this);
+        blockExplorer = new BlockExplorer(queue, this);
+
+        dialogMaker = new DialogMaker(this);
 
         cv_no_accounts = findViewById(R.id.no_accounts_view);
         Button bNoAccAdd = findViewById(R.id.bNoAccountsAdd);
-        bNoAccAdd.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                showAddAccountDialog();
-            }
-        });
+        bNoAccAdd.setOnClickListener(view -> dialogMaker.showAddAccountDialog());
 
         // Overview
         setupOverviewUI();
@@ -122,28 +108,18 @@ public class MainActivity extends AppCompatActivity {
         tvTotalValue = findViewById(R.id.tvTotalInvestment);
 
         ImageButton bAddAccount = findViewById(R.id.bAddAccount);
-        bAddAccount.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showAddAccountDialog();
-            }
-        });
+        bAddAccount.setOnClickListener(v -> dialogMaker.showAddAccountDialog());
 
         mFlipView = findViewById(R.id.flipview_layout);
 
-        if (sharedPref.getBoolean(REFRESHING_THEME, false)) {
+        if (preferences.isThemeRefreshing()) {
             mFlipView.flipTheView(false);
-            sharedPref.edit().putBoolean(REFRESHING_THEME, false).apply();
+            preferences.stopThemeRefreshing();
         }
 
         ImageButton bOpenSettings = findViewById(R.id.bSettings);
         ImageView bCloseSettings = findViewById(R.id.bSettingsClose);
-        View.OnClickListener clFlip = new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                mFlipView.flipTheView();
-            }
-        };
+        View.OnClickListener clFlip = view -> mFlipView.flipTheView();
         bOpenSettings.setOnClickListener(clFlip);
         bCloseSettings.setOnClickListener(clFlip);
     }
@@ -154,145 +130,59 @@ public class MainActivity extends AppCompatActivity {
         tvExchangeRate = findViewById(R.id.tv_exchange_rate);
 
         ImageButton bChangeCurrency = findViewById(R.id.bChangeCurrency);
-        bChangeCurrency.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                String[] items = getResources().getStringArray(R.array.currencyNames);
-                new LovelyChoiceDialog(mActivity)
-                        .setTopColorRes(R.color.dialog_currencies)
-                        .setTitle(R.string.change_currency_dialog_title)
-                        .setIcon(R.drawable.ic_language_white_48dp)
-                        .setItems(items, new LovelyChoiceDialog.OnItemSelectedListener<String>() {
-                            @Override
-                            public void onItemSelected(int position, String item) {
-                                String pair = getResources().getStringArray(R.array.currencies)[position];
-                                utils.setCurrencyPair(pair);
-                                refreshData();
-                            }
-                        })
-                        .show();
-            }
-        });
+        bChangeCurrency.setOnClickListener(view -> dialogMaker.showCurrencySelectorDialog());
 
         ImageButton bChangeInvestment = findViewById(R.id.bAddInvestment);
-        bChangeInvestment.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                new LovelyTextInputDialog(mActivity)
-                        .setTopColorRes(R.color.dialog_investment)
-                        .setTitle(R.string.change_investment)
-                        .setIcon(R.drawable.ic_attach_money_white_48dp)
-                        .setHint(R.string.total_amount_invested)
-                        .setInitialInput("" + utils.getTotalInvestment())
-                        .setInputFilter(R.string.error_investment_input, new LovelyTextInputDialog.TextFilter() {
-                            @Override
-                            public boolean check(String text) {
-                                return text.trim().length() == 0 || text.trim().matches("\\d+");
-                            }
-                        })
-                        .setConfirmButton(android.R.string.ok, new LovelyTextInputDialog.OnTextInputConfirmListener() {
-                            @Override
-                            public void onTextInputConfirmed(String text) {
-                                if (text.trim().length() == 0)
-                                    utils.saveInvestment(Long.parseLong("0"));
-                                else utils.saveInvestment(Long.parseLong(text.trim()));
-                                updateUI();
-                            }
-                        })
-                        .show();
-            }
-        });
+        bChangeInvestment.setOnClickListener(view -> dialogMaker.showInvestmentChangeDialog(utils.getTotalInvestment()));
 
         CheckBox cbTheme = findViewById(R.id.checkbox_darktheme);
         cbTheme.setChecked(selectedDarkTheme);
-        cbTheme.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                Toast.makeText(mActivity, R.string.toast_message_changing_theme, Toast.LENGTH_SHORT).show();
+        cbTheme.setOnCheckedChangeListener((compoundButton, b) -> {
+            Toast.makeText(mActivity, R.string.toast_message_changing_theme, Toast.LENGTH_SHORT).show();
 
-                sharedPref.edit().putBoolean(DARK_THEME_SELECTED, b).apply();
-                sharedPref.edit().putBoolean(REFRESHING_THEME, true).apply();
+            preferences.toggleDarkThemeSelected(b);
 
-                Intent intent = new Intent(mActivity, mActivity.getClass());
-                startActivity(intent);
-                finish();
-            }
+            Intent intent = new Intent(mActivity, mActivity.getClass());
+            startActivity(intent);
+            finish();
         });
         CheckBox cbInvestmentGain = findViewById(R.id.checkbox_investment_gain);
         cbInvestmentGain.setChecked(showGainPercentage);
-        cbInvestmentGain.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                if (b)
-                    Toast.makeText(mActivity, R.string.toast_message_show_gain_percentage, Toast.LENGTH_SHORT).show();
-                else
-                    Toast.makeText(mActivity, R.string.toast_message_show_gain, Toast.LENGTH_SHORT).show();
+        cbInvestmentGain.setOnCheckedChangeListener((compoundButton, b) -> {
+            if (b)
+                Toast.makeText(mActivity, R.string.toast_message_show_gain_percentage, Toast.LENGTH_SHORT).show();
+            else
+                Toast.makeText(mActivity, R.string.toast_message_show_gain, Toast.LENGTH_SHORT).show();
 
-                sharedPref.edit().putBoolean(SHOW_GAIN_PERCENTAGE, b).apply();
-                showGainPercentage = b;
+            preferences.setShowGainInPercentage(b);
+            showGainPercentage = b;
 
-                updateUI();
-            }
+            updateUI();
         });
 
         Button bAbout = findViewById(R.id.about_page);
-        bAbout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
+        bAbout.setOnClickListener(view -> {
 
-                Element donationElement = new Element();
-                donationElement.setIconDrawable(R.drawable.ic_attach_money);
-                donationElement.setTitle("Donation");
-                donationElement.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        final String donationAddress = "1MArRnVPrMf6FR4FqtEThAa8piUbgfYDQ3";
-                        new LovelyStandardDialog(mActivity)
-                                .setTopColorRes(R.color.dialog_qr)
-                                .setIcon(utils.getBigQRThumbnail(donationAddress))
-                                .setTitle(donationAddress)
-                                .setNegativeButton("Copy", new View.OnClickListener() {
-                                    @Override
-                                    public void onClick(View view) {
-                                        ClipboardManager clipboard = (ClipboardManager) mActivity.getSystemService(Context.CLIPBOARD_SERVICE);
-                                        ClipData clip = ClipData.newPlainText("qrCode", donationAddress);
-                                        if (clipboard != null) {
-                                            Toast.makeText(mActivity, "Address copied to clipboard", Toast.LENGTH_SHORT).show();
-                                            clipboard.setPrimaryClip(clip);
-                                        }
-                                    }
-                                })
-                                .setPositiveButton(R.string.share, new View.OnClickListener() {
-                                    @Override
-                                    public void onClick(View v) {
-                                        Intent sendIntent = new Intent();
-                                        sendIntent.setAction(Intent.ACTION_SEND);
-                                        sendIntent.putExtra(Intent.EXTRA_TEXT, donationAddress);
-                                        sendIntent.setType("text/plain");
-                                        mActivity.startActivity(sendIntent);
-                                    }
-                                })
-                                .show();
-                    }
-                });
+            TrackedWallet donationWallet = new TrackedWallet(getString(R.string.donationAddress));
 
-                View aboutPage = new AboutPage(mActivity)
-                        .isRTL(false)
-                        .setImage(R.drawable.avatar_android)
-                        .setDescription("Thanks for downloading the app! " +
-                                "Feel free to email me about any weird bugs or any other feedback. " +
-                                "I'd love to hear from you!")
-                        .addEmail("jgschoepp@gmail.com", "Contact me")
-                        .addWebsite("http://jangerhard.github.io/", "Visit my website")
-                        .addGitHub("jangerhard", "Check out my github")
-                        .addItem(donationElement)
-                        .create();
+            Element donationElement = new Element();
+            donationElement.setIconDrawable(R.drawable.ic_attach_money);
+            donationElement.setTitle("Donation");
+            donationElement.setOnClickListener(view1 -> dialogMaker.showAccountShareDialog(donationWallet));
 
-                new LovelyCustomDialog(mActivity)
-                        .setView(aboutPage)
-                        .setTopColorRes(R.color.cardview_dark_background)
-                        .show();
-            }
+            View aboutPage = new AboutPage(mActivity)
+                    .isRTL(false)
+                    .setImage(R.drawable.avatar_android)
+                    .setDescription("Thanks for downloading the app! " +
+                            "Feel free to email me about any weird bugs or any other feedback. " +
+                            "I'd love to hear from you!")
+                    .addEmail("jgschoepp@gmail.com", "Contact me")
+                    .addWebsite("https://janschoepp.com/", "Visit my website")
+                    .addGitHub("jangerhard", "Check out my github")
+                    .addItem(donationElement)
+                    .create();
+
+            dialogMaker.showCustomViewDialog(aboutPage);
         });
     }
 
@@ -302,31 +192,29 @@ public class MainActivity extends AppCompatActivity {
 
         // listen refresh event
         allAccountsView = findViewById(R.id.allAccountsView);
-        allAccountsView.setOnRefreshListener(new PullRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                // start refresh
-                refreshData();
-            }
-        });
 
-        adapter = new AccountAdapter(this, utils);
+        // start refresh
+        allAccountsView.setOnRefreshListener(this::refreshData);
+
+        adapter = new AccountAdapter(this, utils, dialogMaker);
 //        adapter.notifyDataSetChanged();
 
         recyclerView.setLayoutManager(new LinearLayoutManager(this,
-                LinearLayoutManager.VERTICAL, false));
+                RecyclerView.VERTICAL, false));
         recyclerView.setItemAnimator(new LandingAnimator());
         recyclerView.setAdapter(adapter);
     }
 
-    private void updateUI() {
+    public void updateUI() {
 
-        if (noAccounts)
+        if (utils.getTrackedWallets().isEmpty())
             cv_no_accounts.setVisibility(View.VISIBLE);
         else
             cv_no_accounts.setVisibility(View.GONE);
 
-        allAccountsView.setRefreshing(false);
+        if (numRefreshed == utils.getTrackedWallets().length())
+            allAccountsView.setRefreshing(false);
+
         tvExchangeRate.setText(utils.getExchangeRate());
         tvTotalBalance.setText(utils.getTotalBalance());
         tvTotalValue.setText(utils.getTotalValue());
@@ -353,214 +241,119 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void refreshData() {
-
-        if (utils.getAddresses().isEmpty()) {
-            Toast.makeText(getBaseContext(), R.string.no_accounts_initial, Toast.LENGTH_SHORT).show();
-            noAccounts = true;
-            updateUI();
-            return;
-        }
-        noAccounts = false;
+    public void refreshData() {
         numRefreshed = 0;
-        getCurrentPrice(utils.getCurrencyPair());
+        priceFetcher.getCurrentPrice(utils.getCurrencyPair());
     }
 
-    private void getSingleWalletInfo(String address, final boolean firstTime) {
-
-        // Request a response from the provided URL.
-        JsonObjectRequest jsObjRequest = new JsonObjectRequest
-                (Request.Method.GET,
-                        url_blockchain + "rawaddr/" + address + "?limit=5",
-                        null, new Response.Listener<JSONObject>() {
-
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        BitcoinAccount newAcc = new Gson().fromJson(response.toString(), BitcoinAccount.class);
-                        if (firstTime)
-                            handleAddedAccount(newAcc);
-                        else
-                            handleRefreshedAccount(newAcc);
-                    }
-                }, new Response.ErrorListener() {
-
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-
-                        String message = getString(R.string.error_generic);
-
-                        if (error instanceof TimeoutError || error instanceof NoConnectionError) {
-                            message = getString(R.string.error_no_internet);
-                        } else if (error instanceof ServerError) {
-                            message = getString(R.string.error_server);
-                        } else if (error instanceof NetworkError) {
-                            message = getString(R.string.Error_network);
-                        } else if (error instanceof ParseError) {
-                            message = getString(R.string.error_parsing);
-                        }
-
-                        Log.e(LOG_TAG, message);
-                        Toast.makeText(getBaseContext(),
-                                message,
-                                Toast.LENGTH_SHORT).show();
-                        updateUI();
-                    }
+    public void handleUpdatedPrice(Option<Double> maybePrice) {
+        maybePrice
+                .peek(newPrice -> {
+                    utils.updateCurrency(newPrice);
+                    updateAllTrackedWallets();
                 });
 
-        // Add the request to the RequestQueue.
-        getVolleyRequestQueue().add(jsObjRequest);
-
+        updateUI();
     }
 
-    private void getAllWalletsInfo(List<String> addresses) {
-
-        for (String address : addresses) {
-            getSingleWalletInfo(address, false);
-        }
+    public void handleOpenCamera() {
+        Toast.makeText(this, "Launching camera", Toast.LENGTH_SHORT).show();
+        Intent intent = new Intent(this, BarcodeCaptureActivity.class);
+        startActivityForResult(intent, BARCODE_READER_REQUEST_CODE);
     }
 
-    private void getCurrentPrice(String currencyPair) {
+    public void handleOpenShare(String address) {
+        Intent sendIntent = new Intent();
+        sendIntent.setAction(Intent.ACTION_SEND);
+        sendIntent.putExtra(Intent.EXTRA_TEXT, address);
+        sendIntent.setType("text/plain");
+        startActivity(sendIntent);
+    }
 
-        // Request a response from the provided URL.
-        JsonObjectRequest jsObjRequest = new JsonObjectRequest
-                (Request.Method.GET,
-                        url_exchange + "BTC-" + currencyPair + "/spot",
-                        null, new Response.Listener<JSONObject>() {
+    public void handleChangeCurrency(int position) {
+        String pair = getResources().getStringArray(R.array.currencies)[position];
+        utils.setCurrencyPair(pair);
+        priceFetcher.getCurrentPrice(pair);
+    }
 
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        handleRefreshedCurrency(response);
-                    }
-                }, new Response.ErrorListener() {
+    public void handleUpdateInvestment(String newInvestment) {
+        if (newInvestment.trim().length() == 0)
+            utils.saveInvestment(Long.parseLong("0"));
+        else
+            utils.saveInvestment(Long.parseLong(newInvestment.trim()));
+        updateUI();
+    }
 
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-
-                        String message = getString(R.string.error_generic);
-
-                        if (error instanceof TimeoutError || error instanceof NoConnectionError) {
-                            message = getString(R.string.error_no_internet);
-                        } else if (error instanceof ServerError) {
-                            message = getString(R.string.error_server);
-                        } else if (error instanceof NetworkError) {
-                            message = getString(R.string.Error_network);
-                        } else if (error instanceof ParseError) {
-                            message = getString(R.string.error_parsing);
-                        }
-
-                        Log.e(LOG_TAG, message);
-                        Toast.makeText(getBaseContext(),
-                                message,
-                                Toast.LENGTH_SHORT).show();
-                        updateUI();
-                    }
+    public void updateAllTrackedWallets() {
+        utils.getTrackedWallets().map(TrackedWallet::getAddress)
+                .forEach(address -> {
+                    blockExplorer.getUpdatedBalance(address);
+                    //blockExplorer.getSingleWalletInfo(address);
                 });
-
-        getVolleyRequestQueue().add(jsObjRequest);
     }
 
-    private void handleRefreshedCurrency(JSONObject response) {
+    public void handleAddedAccount(String newAcc) {
 
-        Double price = 0.0;
-
-        try {
-            response = response.getJSONObject("data");
-            price = response.getDouble("amount");
-        } catch (JSONException e) {
-            Log.e(LOG_TAG, "Error parsing price information");
-        }
-
-        Log.i(LOG_TAG, "Got price: " + price);
-        //Toast.makeText(mActivity, "Got price: " + price, Toast.LENGTH_SHORT).show();
-        utils.updateCurrency(price);
-        getAllWalletsInfo(utils.getAddresses());
-
-    }
-
-    private void handleAddedAccount(BitcoinAccount newAcc) {
-        utils.addNewAccount(newAcc);
+        utils.addTrackedWallet(newAcc);
 
         recyclerView.smoothScrollToPosition(adapter.getItemCount());
         if (adapter.getItemCount() > 0)
             adapter.notifyItemInserted(adapter.getItemCount() - 1);
         else adapter.notifyItemInserted(0);
+
+        blockExplorer.getUpdatedBalance(newAcc);
         refreshData();
     }
 
-    private void handleRefreshedAccount(BitcoinAccount acc) {
+    public void handleUpdatedBalance(String address, long newBalance) {
+        utils.handleUpdatedBalance(address, newBalance)
+                .peek(it -> {
+                    numRefreshed++;
+                    adapter.notifyItemChanged(it);
+                });
 
-        numRefreshed++;
-        int index = utils.updateAccount(acc);
-        adapter.notifyItemChanged(index);
+        updateUI();
+    }
 
-        if (numRefreshed == utils.getNumberOfAccounts())
-            updateUI();
+    public void handleUpdatedTransactions(String address, List<Transaction> transactions) {
+        utils.handleUpdatedTransactions(address, transactions)
+                .peek(it -> {
+                    numRefreshed++;
+                    adapter.notifyItemChanged(it);
+                });
 
+        updateUI();
+    }
+
+    public void handleUpdatedNickname(String address, String newNickname, int position) {
+        utils.setNewNickname(address, newNickname);
+        adapter.notifyItemChanged(position);
+    }
+
+    public void handleRemoveSelectedAccount(TrackedWallet trackedWallet, int position) {
+        Toast.makeText(this,
+                "Removed account " + trackedWallet.getNickname(),
+                Toast.LENGTH_SHORT).show();
+        utils.removeTrackedAccount(trackedWallet);
+        adapter.handleRemoveSelectedAccount(position);
+        updateUI();
     }
 
     private void addBarcode(String address) {
 
         if (address.contains(":"))
-            address = address.substring(address.indexOf(":") + 1, address.length());
+            address = address.substring(address.indexOf(":") + 1);
         if (address.contains("?"))
             address = address.substring(0, address.indexOf("?"));
 
         Log.i(LOG_TAG, "Address: " + address);
 
-        if (utils.hasAddress(address)) {
+        if (utils.alreadyTrackingWallet(address)) {
             Toast.makeText(getBaseContext(), R.string.account_already_added, Toast.LENGTH_SHORT).show();
-        } else if (BitcoinUtils.verifyAddress(address)) {
-            showBitcoinAddressDialog(address);
+        } else if (BitcoinUtils.verifyAddress(address).isDefined()) {
+            dialogMaker.showBitcoinAddressDialog(address);
         } else
             Toast.makeText(getBaseContext(), R.string.invalid_address, Toast.LENGTH_SHORT).show();
-    }
-
-    private void showBitcoinAddressDialog(final String address) {
-
-        new LovelyStandardDialog(this)
-                .setTopColorRes(R.color.dialog_info)
-                .setTitle(R.string.new_address)
-                .setIcon(R.drawable.bitcoin_128)
-                .setMessage(getString(R.string.question_correct_address) + "\n\n" + address)
-                .setPositiveButton(android.R.string.yes, new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        utils.addAddress(address);
-                        getSingleWalletInfo(address, true);
-                    }
-                })
-                .setNegativeButton(android.R.string.no, null)
-                .show();
-    }
-
-    private void showAddAccountDialog() {
-        new LovelyTextInputDialog(mActivity)
-                .setTopColorRes(R.color.dialog_info)
-                .setTitle("Add address")
-                .setIcon(R.drawable.bitcoin_128)
-                .setHint("1FfmbHfnpaZjKFvyi1okTjJJusN455paPH")
-                .setInputFilter("That is not a valid address!", new LovelyTextInputDialog.TextFilter() {
-                    @Override
-                    public boolean check(String text) {
-                        return BitcoinUtils.verifyAddress(text);
-                    }
-                })
-                .setConfirmButton(android.R.string.ok, new LovelyTextInputDialog.OnTextInputConfirmListener() {
-                    @Override
-                    public void onTextInputConfirmed(String text) {
-                        utils.addAddress(text);
-                        getSingleWalletInfo(text, true);
-                    }
-                })
-                .setNegativeButton("Scan", new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        Toast.makeText(mActivity, "Launching camera", Toast.LENGTH_SHORT).show();
-                        Intent intent = new Intent(getApplicationContext(), BarcodeCaptureActivity.class);
-                        startActivityForResult(intent, BARCODE_READER_REQUEST_CODE);
-                    }
-                })
-                .show();
     }
 
     @Override
@@ -577,14 +370,6 @@ public class MainActivity extends AppCompatActivity {
         } else super.onActivityResult(requestCode, resultCode, data);
     }
 
-    public RequestQueue getVolleyRequestQueue() {
-        if (mRequestQueue == null) {
-            mRequestQueue = Volley.newRequestQueue(this);
-        }
-
-        return mRequestQueue;
-    }
-
     @Override
     public void onBackPressed() {
 
@@ -592,14 +377,9 @@ public class MainActivity extends AppCompatActivity {
             mFlipView.flipTheView();
         else {
             new LovelyStandardDialog(this)
-                    .setPositiveButton("Quit", new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            finish();
-                        }
-                    })
+                    .setPositiveButton("Quit", view -> finish())
                     .setTitle("Quit the app?")
-                    .setTopColor(getResources().getColor(R.color.about_instagram_color))
+                    .setTopColor(ContextCompat.getColor(this, R.color.about_instagram_color))
                     .show();
         }
     }

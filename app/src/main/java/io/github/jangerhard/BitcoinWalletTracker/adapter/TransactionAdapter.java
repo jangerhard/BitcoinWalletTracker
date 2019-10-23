@@ -1,14 +1,16 @@
-package io.github.jangerhard.BitcoinWalletTracker;
+package io.github.jangerhard.BitcoinWalletTracker.adapter;
 
 import android.content.Context;
-import android.graphics.Color;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-
-import java.util.List;
+import androidx.core.content.ContextCompat;
+import androidx.recyclerview.widget.RecyclerView;
+import io.github.jangerhard.BitcoinWalletTracker.R;
+import io.github.jangerhard.BitcoinWalletTracker.model.BlockonomicsTransactionsResponse.Transaction;
+import io.github.jangerhard.BitcoinWalletTracker.utilities.BitcoinUtils;
+import io.vavr.collection.List;
 
 public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.MyViewHolder> {
 
@@ -27,7 +29,7 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
         }
     }
 
-    TransactionAdapter(Context mContext, List<Transaction> transactionList, String address) {
+    public TransactionAdapter(Context mContext, List<Transaction> transactionList, String address) {
         this.mContext = mContext;
         this.transactionList = transactionList;
         this.address = address;
@@ -44,24 +46,21 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
     @Override
     public void onBindViewHolder(final MyViewHolder holder, int position) {
 
-        Transaction t = transactionList.get(position);
+        Transaction transaction = transactionList.get(position);
 
-        long transactionValue = BitcoinUtils.getTransactionValue(t, address);
+//        long transaction = BitcoinUtils.getTransactionValue(t, address);
 
-        // Received BTC
-        if (transactionValue > 0)
-            holder.tvResult.setTextColor(mContext.getResources().getColor(R.color.transaction_received));
-            // Paid BTC
-        else if (transactionValue < 0)
-            holder.tvResult.setTextColor(mContext.getResources().getColor(R.color.transaction_paid));
-        else
-            holder.tvResult.setTextColor(Color.BLUE);
+        int color = transaction.getValue() < 0
+                ? ContextCompat.getColor(mContext, R.color.transaction_paid)
+                : ContextCompat.getColor(mContext, R.color.transaction_received);
+
+        holder.tvResult.setTextColor(color);
 
         holder.tvResult.setText(
-                BitcoinUtils.formatBitcoinBalanceToString(transactionValue)
+                BitcoinUtils.formatBitcoinBalanceToString(transaction.getValue())
         );
 
-        holder.tvTimestamp.setText(BitcoinUtils.getConvertedTimeStamp(t.getTime()));
+        holder.tvTimestamp.setText(BitcoinUtils.getConvertedTimeStamp(transaction.getTime()));
 //        holder.tvResult.setText("Test " + position);
 //        holder.tvTimestamp.setText("Test " + position);
     }

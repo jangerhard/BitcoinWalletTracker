@@ -7,7 +7,8 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:padding="16dp"
-    tools:context=".MainActivity">
+    tools:context=".MainActivity"
+    android:background="@drawable/background_color_dark">
 
     <com.wajahatkarim3.easyflipview.EasyFlipView
         android:id="@+id/flipview_layout"
@@ -15,7 +16,10 @@
         android:layout_height="wrap_content"
         app:flipOnTouch="false"
         app:flipEnabled="true"
-        app:flipDuration="400">
+        app:flipDuration="400"
+        app:flipFrom="left"
+        app:autoFlipBack="false"
+        app:flipType="horizontal">
 
         <!-- Back Layout Goes Here -->
         <include layout="@layout/overview_settings" />
@@ -27,24 +31,22 @@
 
     <include
         layout="@layout/no_accounts"
-        android:visibility="gone"></include>
+        android:visibility="gone" />
 
     <com.baoyz.widget.PullRefreshLayout
         android:id="@+id/allAccountsView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:refreshColor="@color/colorPrimary"
+        android:layout_height="wrap_content"
+        app:refreshColor="@color/text_dark_primary_darker"
         app:refreshType="smartisan">
 
-
-        <android.support.v7.widget.RecyclerView
+        <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recycler_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:clipChildren="false"
-            android:clipToPadding="false"
             android:fadeScrollbars="true"
-            android:scrollbars="vertical" />
+            android:scrollbars="vertical"
+            tools:listitem="@layout/account_list_item" />
 
     </com.baoyz.widget.PullRefreshLayout>
 

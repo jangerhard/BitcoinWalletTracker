@@ -1,15 +1,16 @@
 apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-android-extensions'
 
 android {
-    compileSdkVersion 27
-    buildToolsVersion '26.0.2'
+    compileSdkVersion 28
     defaultConfig {
         applicationId 'io.github.jangerhard.BitcoinWalletTracker'
         minSdkVersion 21
-        targetSdkVersion 27
-        versionCode 5
-        versionName "1.0.4"
-        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        targetSdkVersion 28
+        versionCode 6
+        versionName '2.0.0'
+        testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
         vectorDrawables.useSupportLibrary = true
     }
     buildTypes {
@@ -30,30 +31,46 @@ android {
         exclude 'org/bitcoinj/crypto/mnemonic/wordlist/english.txt'
         exclude 'org/bitcoinj/crypto/cacerts'
     }
+    compileOptions {
+        sourceCompatibility = '1.8'
+        targetCompatibility = '1.8'
+    }
+    kotlinOptions {
+        jvmTarget = "1.8"
+    }
 }
 
 dependencies {
-    compile fileTree(include: ['*.jar'], dir: 'libs')
-    androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    androidTestImplementation('androidx.test.espresso:espresso-core:3.1.0-alpha4', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
-    compile 'com.android.support:appcompat-v7:27.0.1'
-    compile 'com.android.support:recyclerview-v7:27.0.1'
-    compile 'com.android.support:cardview-v7:27.0.1'
-    compile 'com.android.support.constraint:constraint-layout:1.0.2'
+    implementation 'androidx.appcompat:appcompat:1.1.0-rc01'
+    implementation 'androidx.cardview:cardview:1.0.0'
+    implementation 'androidx.recyclerview:recyclerview:1.1.0-beta02'
+    implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
 
-    compile 'com.android.volley:volley:1.0.0'                    // Used for HTTP requests
-    compile 'com.google.code.gson:gson:2.8.2'                    // Used to serialize JSON
-    compile 'com.google.android.gms:play-services-vision:11.6.0' // Used for QR scanning
-    compile 'com.google.zxing:core:3.2.1'                        // QR generation
-    compile 'com.journeyapps:zxing-android-embedded:3.2.0@aar'   // QR generation
-    compile 'com.baoyz.pullrefreshlayout:library:1.2.0'          // Pull to refresh library
-    compile 'jp.wasabeef:recyclerview-animators:2.2.7'           // Scroll animations
-    compile 'com.yarolegovich:lovely-dialog:1.0.7'               // Material Dialogs
-    compile 'com.ramotion.foldingcell:folding-cell:1.2.1'        // Foldable
-    compile 'com.wajahatkarim3.EasyFlipView:EasyFlipView:1.0.2'  // Flip views
-    compile 'com.github.medyo:android-about-page:1.2.1'          // About page
-    compile 'org.bitcoinj:bitcoinj-core:0.14.5'                  // Bitcoin support library
+    implementation 'com.github.Samourai-Wallet:ExtLibJ:0.0.6'           // Samurai External Lib
+    implementation 'io.vavr:vavr:0.10.2'                                // Vavr
+    implementation 'com.android.volley:volley:1.1.0'                    // Used for HTTP requests
+    implementation 'io.vavr:vavr-gson:0.10.0'                    // Used to serialize JSON
+    implementation 'com.google.android.gms:play-services-vision:18.0.0' // Used for QR scanning
+    implementation 'com.google.zxing:core:3.3.2'                        // QR generation
+    implementation 'com.journeyapps:zxing-android-embedded:3.6.0'       // QR generation
+    implementation 'com.baoyz.pullrefreshlayout:library:1.2.0'          // Pull to refresh library
+    implementation 'jp.wasabeef:recyclerview-animators:2.2.7'           // Scroll animations
+    implementation 'com.yarolegovich:lovely-dialog:1.0.7'               // Material Dialogs
+    implementation 'com.wajahatkarim3.EasyFlipView:EasyFlipView:2.1.2'  // Flip views
+    implementation 'com.github.medyo:android-about-page:1.2.1'          // About page
 
-    testCompile 'junit:junit:4.12'
+    testImplementation "io.mockk:mockk:1.9.3"
+    testImplementation 'junit:junit:4.12'
+    testImplementation 'org.mockito:mockito-core:2.23.0'
+    testImplementation 'org.robolectric:robolectric:4.3'
+    testImplementation 'org.slf4j:log4j-over-slf4j:1.7.1'
+    androidTestImplementation 'com.android.support.test:runner:1.0.2'
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+}
+repositories {
+    mavenCentral()
 }

@@ -1,129 +1,137 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+
+<FrameLayout android:layout_height="wrap_content"
     android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:padding="@dimen/activity_horizontal_margin"
-    app:cardBackgroundColor="@color/colorPrimary"
-    app:cardCornerRadius="3dp">
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto">
 
-    <RelativeLayout
-        android:id="@+id/totalOverview"
-        android:layout_width="match_parent"
+    <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:orientation="vertical"
-        android:padding="16dp">
+        android:padding="@dimen/activity_horizontal_margin"
+        card_view:cardBackgroundColor="@android:color/transparent"
+        card_view:cardElevation="0dp"
+        app:cardCornerRadius="3dp">
 
-        <ImageView
-            android:id="@+id/bSettingsClose"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:layout_marginTop="@dimen/ic_album_overflow_margin_top"
-            android:scaleType="centerCrop"
-            android:src="@drawable/ic_close_white_24dp" />
-
-        <LinearLayout
-            android:id="@+id/layout_settings"
+        <RelativeLayout
+            android:id="@+id/totalOverview"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/bSettingsClose"
-            android:gravity="center_horizontal"
+            android:layout_gravity="center_horizontal"
             android:orientation="vertical"
-            android:paddingLeft="32dp"
-            android:paddingRight="32dp">
+            android:padding="16dp">
 
-            <RelativeLayout
+            <ImageView
+                android:id="@+id/bSettingsClose"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_marginTop="@dimen/ic_album_overflow_margin_top"
+                android:scaleType="centerCrop"
+                android:src="@drawable/ic_close_white_24dp" />
+
+            <LinearLayout
+                android:id="@+id/layout_settings"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_below="@+id/bSettingsClose"
                 android:gravity="center_horizontal"
-                android:paddingEnd="8dp"
-                android:paddingStart="8dp">
+                android:orientation="vertical"
+                android:paddingLeft="32dp"
+                android:paddingRight="32dp">
 
-                <ImageButton
-                    android:id="@+id/bChangeCurrency"
-                    android:layout_width="wrap_content"
+                <RelativeLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentEnd="true"
-                    android:layout_marginEnd="8dp"
-                    android:layout_marginStart="8dp"
-                    android:background="@drawable/ic_language_white_48dp"
-                    android:contentDescription="Change Currency" />
-
-                <ImageButton
-                    android:id="@+id/bAddInvestment"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentEnd="true"
-                    android:layout_below="@id/bChangeCurrency"
-                    android:layout_marginEnd="8dp"
-                    android:layout_marginStart="8dp"
-                    android:layout_marginTop="8dp"
-                    android:background="@drawable/ic_attach_money_white_48dp"
-                    android:contentDescription="Add investment" />
-
-                <TextView
-                    android:id="@+id/tv_exchange_rate"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignBottom="@id/bChangeCurrency"
-                    android:layout_toStartOf="@id/bChangeCurrency"
-                    android:fontFamily="@font/ptc_caption"
-                    android:paddingBottom="12dp"
+                    android:gravity="center_horizontal"
                     android:paddingEnd="8dp"
-                    android:paddingStart="8dp"
-                    android:text="Rate: xxx"
-                    android:textColor="@color/colorCardsText"
-                    android:textSize="18sp" />
+                    android:paddingStart="8dp">
 
-                <TextView
-                    android:id="@+id/tv_total_investment_settings"
+                    <ImageButton
+                        android:id="@+id/bChangeCurrency"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentEnd="true"
+                        android:layout_marginEnd="8dp"
+                        android:layout_marginStart="8dp"
+                        android:background="@drawable/ic_language_white_48dp"
+                        android:contentDescription="Change Currency" />
+
+                    <ImageButton
+                        android:id="@+id/bAddInvestment"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentEnd="true"
+                        android:layout_below="@id/bChangeCurrency"
+                        android:layout_marginEnd="8dp"
+                        android:layout_marginStart="8dp"
+                        android:layout_marginTop="8dp"
+                        android:background="@drawable/ic_attach_money_white_48dp"
+                        android:contentDescription="Add investment" />
+
+                    <TextView
+                        android:id="@+id/tv_exchange_rate"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignBottom="@id/bChangeCurrency"
+                        android:layout_toStartOf="@id/bChangeCurrency"
+                        android:fontFamily="@font/ptc_caption"
+                        android:paddingBottom="12dp"
+                        android:paddingEnd="8dp"
+                        android:paddingStart="8dp"
+                        android:text="Rate: xxx"
+                        android:textColor="@color/colorCardsText"
+                        android:textSize="18sp" />
+
+                    <TextView
+                        android:id="@+id/tv_total_investment_settings"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignBottom="@id/bAddInvestment"
+                        android:layout_toStartOf="@id/bAddInvestment"
+                        android:fontFamily="@font/ptc_caption"
+                        android:paddingBottom="12dp"
+                        android:paddingEnd="8dp"
+                        android:paddingStart="8dp"
+                        android:text="xxx kr"
+                        android:textColor="@color/colorCardsText"
+                        android:textSize="18sp" />
+
+
+                </RelativeLayout>
+
+                <CheckBox
+                    android:id="@+id/checkbox_darktheme"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignBottom="@id/bAddInvestment"
-                    android:layout_toStartOf="@id/bAddInvestment"
-                    android:fontFamily="@font/ptc_caption"
-                    android:paddingBottom="12dp"
-                    android:paddingEnd="8dp"
-                    android:paddingStart="8dp"
-                    android:text="xxx kr"
-                    android:textColor="@color/colorCardsText"
-                    android:textSize="18sp" />
+                    android:layout_marginTop="16dp"
+                    android:checked="true"
+                    android:text="Dark Theme"
+                    android:textColor="@color/colorCardsText" />
 
+                <CheckBox
+                    android:id="@+id/checkbox_investment_gain"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:checked="true"
+                    android:text="Show gain in percentage"
+                    android:textColor="@color/colorCardsText" />
 
-            </RelativeLayout>
+            </LinearLayout>
 
-            <CheckBox
-                android:id="@+id/checkbox_darktheme"
+            <Button
+                android:id="@+id/about_page"
+                style="@style/Widget.AppCompat.Button.Borderless"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_below="@id/layout_settings"
+                android:layout_centerHorizontal="true"
                 android:layout_marginTop="16dp"
-                android:checked="true"
-                android:text="Dark Theme"
+                android:text="About"
                 android:textColor="@color/colorCardsText" />
 
-            <CheckBox
-                android:id="@+id/checkbox_investment_gain"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:checked="true"
-                android:text="Show gain in percentage"
-                android:textColor="@color/colorCardsText" />
+        </RelativeLayout>
 
-        </LinearLayout>
-
-        <Button
-            android:id="@+id/about_page"
-            style="@style/Widget.AppCompat.Button.Borderless"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/layout_settings"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="16dp"
-            android:text="About"
-            android:textColor="@color/colorCardsText" />
-
-    </RelativeLayout>
-
-</android.support.v7.widget.CardView>
+    </androidx.cardview.widget.CardView>
+</FrameLayout>
